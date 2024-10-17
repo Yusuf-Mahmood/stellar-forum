@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../reset.css">
+    <link rel="stylesheet" href="auth.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&family=Outfit:wght@300;700&display=swap" rel="stylesheet">
+    <title>Authentication</title>
+</head>
+<body>
+    <div class="blur"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <!-- Register Container -->
+    <div class="container2" id="container2">
+        <header><div class="loginTitle">REGISTER</div></header>
+<form action="#" method="post">
+            <div class="loginContainer registerCon">
+                <input type="text" name="username" autocomplete="off" title="Enter your username" maxlength="50" placeholder=" " required>
+                <div class="labelline ll1">Enter username</div>
+                <i class='bx bxs-user i1'></i>
+                <input type="email" name="email" autocomplete="off" title="Enter your email" maxlength="50" placeholder=" " required>
+                <div class="labelline ll2">Enter email</div>
+                <i class='bx bxs-envelope i2'></i>
+                <input type="password" name="password" title="Enter your password" maxlength="50" placeholder=" " required>
+                <div class="labelline ll3">Enter password</div>
+                <i class='bx bxs-lock i3'></i>
+                <input type="password" class="secondpass" name="secondpass" title="Re-Enter your password" maxlength="50" placeholder=" " required>
+                <div class="labelline ll4">Re-Enter password</div>
+                <i class='bx bxs-key i4'></i>
+            </div>
+            <div class="butSp"><input type="submit" value="Submit"></div>
+            <p>Already have an account? <a href="#container" class="signUp logIn">Login</a></p>
+    </div>
+    <!-- Login Container -->
+    <div class="container" id="container">
+        <header><div class="loginTitle">LOGIN</div></header>
+            <div class="loginContainer">
+                <input type="text" name="username" autocomplete="off" title="Enter your username" maxlength="50" placeholder=" " required>
+                <div class="labelline ll1">Enter username</div>
+                <i class='bx bxs-user i1'></i>
+                <input type="password" name="password" title="Enter your password" maxlength="50" placeholder=" " required>
+                <div class="labelline lll2">Enter password</div>
+                <i class='bx bxs-lock ii2'></i>
+            </div>
+            <div class="butSp"><input type="submit" value="Submit"></div>
+            <p>Don't have an account? <a href="#container2" class="signUp">Sign Up</a></p>
+    </div>
+</form>
+</body>
+</html>
