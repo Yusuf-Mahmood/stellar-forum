@@ -45,7 +45,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 	func Auth(w http.ResponseWriter, r *http.Request) {
-		fmt.Print("++++++++++++++++++++++++++++")  // Debug line
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
