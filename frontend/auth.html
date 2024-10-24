@@ -24,7 +24,7 @@
     <!-- Register Container -->
     <div class="container2" id="container2">
         <header><div class="loginTitle">REGISTER</div></header>
-<form action="auth" method="post">
+<form method="post" action="register">
             <div class="loginContainer registerCon">
                 <input type="text" name="username" autocomplete="off" title="Enter your username" maxlength="50" placeholder=" " required>
                 <div class="labelline ll1">Enter username</div>
@@ -39,12 +39,14 @@
                 <div class="labelline ll4">Re-Enter password</div>
                 <i class='bx bxs-key i4'></i>
             </div>
-            <div class="butSp"><input type="submit" value="Submit" formaction="register"></div>
+            <div class="butSp"><input type="submit" value="Submit" ></div>
             <p>Already have an account? <a href="#container" class="signUp logIn">Login</a></p>
+        </form>
     </div>
     <!-- Login Container -->
     <div class="container" id="container">
         <header><div class="loginTitle">LOGIN</div></header>
+<form method="post" action="login">
             <div class="loginContainer">
                 <input type="text" name="username" autocomplete="off" title="Enter your username" maxlength="50" placeholder=" " required>
                 <div class="labelline ll1">Enter username</div>
@@ -53,9 +55,9 @@
                 <div class="labelline lll2">Enter password</div>
                 <i class='bx bxs-lock ii2'></i>
             </div>
-            <div class="butSp"><input type="submit" value="Submit" formaction="login"></div>
+            <div class="butSp"><input type="submit" value="Submit" ></div>
             <p>Don't have an account? <a href="#container2" class="signUp">Sign Up</a></p>
+        </form>
     </div>
-</form>
 </body>
 </html>
