@@ -198,8 +198,8 @@ input[type="email"]:focus, input[type="text"]:focus, input[type="password"]:focu
     z-index: 1111;
 }
 
-input[type="text"]:focus ~ .i1, input[type="email"]:focus ~ .i2, input[type="password"]:focus ~ .i3, input[type="password"]:focus ~ .ii2, .secondpass:focus ~ .i4,
-input[type="text"]:valid ~ .i1, input[type="email"]:valid ~ .i2, input[type="password"]:valid ~ .i3, input[type="password"]:valid ~ .ii2, .secondpass:valid ~ .i4 
+input[type="text"]:focus ~ .i1, input[type="text"]:focus ~ .ii1, input[type="email"]:focus ~ .i2, input[type="password"]:focus ~ .i3, input[type="password"]:focus ~ .ii2, .secondpass:focus ~ .i4,
+input[type="text"]:valid ~ .i1, input[type="text"]:valid ~ .ii1, input[type="email"]:valid ~ .i2, input[type="password"]:valid ~ .i3, input[type="password"]:valid ~ .ii2, .secondpass:valid ~ .i4 
 {
     color: white;
 }
@@ -237,9 +237,8 @@ input[type="submit"]:hover {
 i {
     position: absolute;
     margin-bottom: 10px;
-    right: 4%;
+    margin-left: 16rem;
     color: #8080d7;
-    margin-right: 50px;
 }
 
 .i1 {
@@ -248,6 +247,10 @@ i {
 
 .i2 {
     margin-top: 91.5px;
+}
+
+.ii1 {
+    margin-top: 16.5px;
 }
 
 .ii2 {
