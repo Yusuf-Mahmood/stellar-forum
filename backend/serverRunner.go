@@ -14,13 +14,15 @@ func ServerRunner() {
 	http.HandleFunc("/auth", Auth)       // Authentication page
 	http.HandleFunc("/register", Register) // Registration form
 	http.HandleFunc("/login", Login)     // Login form
+	http.HandleFunc("/404", NotFound)
+	http.HandleFunc("/500", InternalServerError)
 	fs := http.FileServer(http.Dir("./frontend/css"))
 	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
 
 	// Now listening for HTTPS on port 8080
 	fmt.Print("The server is running on HTTPS port :8080\n")
-	// err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
+	// err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println("Server error:", err)
 	}
@@ -147,5 +149,34 @@ func Login(w http.ResponseWriter, r *http .Request) {
 
 		fmt.Printf("User logged in: %s (Email: %s)\n", username, email)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./frontend/html/errors/404.html")
+	if err != nil {
+		http.Error(w, "404 not found", http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
+	err = t.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "404 not found", http.StatusNotFound)
+		return
+	}
+}
+
+
+func InternalServerError(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./frontend/html/errors/500.html")
+	if err != nil {
+		http.Error(w, "500 not found", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusInternalServerError)
+	err = t.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "500 not found", http.StatusInternalServerError)
+		return
 	}
 }
