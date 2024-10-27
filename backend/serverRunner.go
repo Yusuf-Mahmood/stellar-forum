@@ -7,15 +7,20 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func ServerRunner() {
-	http.HandleFunc("/", RootHandler)    // Home page
-	http.HandleFunc("/auth", Auth)       // Authentication page
-	http.HandleFunc("/register", Register) // Registration form
-	http.HandleFunc("/login", Login)     // Login form
+	http.HandleFunc("/", RootHandler)                  // Home page
+	http.HandleFunc("/auth", Auth)                     // Authentication page
+	http.HandleFunc("/register", Register)             // Registration form
+	http.HandleFunc("/login", Login)                   // Login form
+	http.HandleFunc("/auth/google", handleGoogleLogin) // Google login
+	http.HandleFunc("/auth/callback", handleGoogleCallback)
+	http.HandleFunc("/auth/github", handleGitHubLogin) // GitHub login
+	http.HandleFunc("/auth/github/callback", handleGitHubCallback)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
 	fs := http.FileServer(http.Dir("./frontend/css"))
@@ -82,7 +87,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		username, password,email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"),r.FormValue("email")
+		username, password, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
 			http.Error(w, "Username must be between 3-5 character and password must be between 8-50 character", http.StatusBadRequest)
@@ -93,9 +98,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		valid,msg := ValidateInput(username,email)
+		valid, msg := ValidateInput(username, email)
 		if !valid {
-			http.Error(w,msg,http.StatusBadRequest)
+			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
 
@@ -110,9 +115,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-
 		// Check if the username already exists
-		existsEmail , err := database.CheckEmailExists(email)
+		existsEmail, err := database.CheckEmailExists(email)
 		if err != nil {
 			http.Error(w, "Error checking Email availability", http.StatusInternalServerError)
 			return
@@ -121,7 +125,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Email already taken", http.StatusConflict)
 			return
 		}
-
 
 		// Hash the password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -142,8 +145,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
-
 
 // Login handles user login
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -170,8 +171,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	
-
 		/// Create a unique session token using gofrs/uuid
 		sessionToken, err := uuid.NewV4() // This generates a new UUID version 4
 		if err != nil {
@@ -179,19 +178,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-			// Convert UUID to string for storage
-			err = database.StoreSessionToken(username, sessionToken.String())
-			if err != nil {
-				http.Error(w, "Error creating session", http.StatusInternalServerError)
-				return
-			}
+		// Convert UUID to string for storage
+		err = database.StoreSessionToken(username, sessionToken.String())
+		if err != nil {
+			http.Error(w, "Error creating session", http.StatusInternalServerError)
+			return
+		}
 
 		// Set the session cookie
 		http.SetCookie(w, &http.Cookie{
-			Name:    "session_token",
-			Value:   sessionToken.String(),
-			Expires: time.Now().Add(1 * time.Hour), // 1 hour only
-			Path:    "/",
+			Name:     "session_token",
+			Value:    sessionToken.String(),
+			Expires:  time.Now().Add(1 * time.Hour), // 1 hour only
+			Path:     "/",
 			HttpOnly: true,
 		})
 
