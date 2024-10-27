@@ -270,6 +270,12 @@ input::selection {
     position: none;
     margin-bottom: 0;
     margin-left: 0;
+    
+    &:hover{
+        transition: 0.2s ease;
+        color: white;
+        scale: 1.2;
+    }
 }
 
 .extraAuth{
