@@ -10,9 +10,9 @@ func ValidateInput(username, email string) (bool, string) {
 	}
 
 	// Email validation: allows only specific domains
-	emailRegex := `^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|yahoo\.com)$`
+	emailRegex := `^[a-zA-Z0-9]([.]?[a-zA-Z0-9]+)*@(gmail\.com|hotmail\.com|yahoo\.com)$`
 	if matched, _ := regexp.MatchString(emailRegex, email); !matched {
-		return false, "Email must be from gmail.com, hotmail.com, or yahoo.com."
+		return false, "Email can only contain alphanumerics and ( . ) which can not be placed in the beginning or end of the email and should be from gmail.com, hotmail.com, or yahoo.com."
 	}
 
 	return true, ""

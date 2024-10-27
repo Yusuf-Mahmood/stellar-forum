@@ -55,11 +55,39 @@ func InsertUser(email, username, passwordHash string) error {
 }
 	
 // fetchUserByUsername fetches user data based on the username
-func FetchUserByUsername(username string) (string, string, error) {
-    var email, passwordHash string
-    err := db.QueryRow("SELECT email, password_hash FROM users WHERE username = ?", username).Scan(&email, &passwordHash)
+func FetchUserByUsername(username string) ( string, error) {
+    var  passwordHash string
+    err := db.QueryRow("SELECT password_hash FROM users WHERE username = ?", username).Scan(&passwordHash)
     if err != nil {
-        return "", "", err
+        return  "", err
     }
-    return email, passwordHash, nil
+    return  passwordHash, nil
+}
+
+// StoreSessionToken saves the session token in the database
+func StoreSessionToken(username, token string) error {
+	_, err := db.Exec("UPDATE users SET cookies = ? WHERE username = ?", token, username)
+	return err
+}
+
+// IsValidSession checks if the provided session token is valid
+func IsValidSession(token string) bool {
+	var username string
+	err := db.QueryRow("SELECT username FROM users WHERE cookies = ?", token).Scan(&username)
+	return err == nil && username != ""
+}
+
+
+// CheckUsernameExists checks if a user already exists with the given username
+func CheckUsernameExists(username string) (bool, error) {
+    var exists bool
+    err := db.QueryRow("SELECT COUNT(1) FROM users WHERE username = ?", username).Scan(&exists)
+    return exists, err
+}
+    
+// CheckEmailExists checks if a user already exists with the given email
+func CheckEmailExists(email string) (bool, error) {
+    var exists bool
+    err := db.QueryRow("SELECT COUNT(1) FROM users WHERE email = ?", email).Scan(&exists)
+    return exists, err
 }
