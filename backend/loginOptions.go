@@ -18,7 +18,7 @@ var (
 	clientSecret    = "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"
 	redirectURI     = "https://localhost:8080/auth/callback"
 	gitclientID     = "Ov23liPieKMThOkBnEuc"
-	gitclientSecret = "71e4c478f2f305fada52f6187a143898d959db11"
+	gitclientSecret = "9b0898e61a95e167e657106a2cabce9ceb448a8d"
 	gitRedirectURI  = "https://localhost:8080/auth/github/callback"
 )
 
@@ -240,7 +240,6 @@ func setGitHubUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
     email, ok := userInfo["email"].(string)
     if !ok || email == "" {
         // Optionally fetch the email directly from GitHub API if it's not public
-		fmt.Println("Email is private, fetching from GitHub API...")
         email, err = fetchGitHubEmail(accessToken)
         if err != nil {
             http.Error(w, "Failed to retrieve email", http.StatusInternalServerError)
