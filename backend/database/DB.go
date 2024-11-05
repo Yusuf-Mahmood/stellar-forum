@@ -25,7 +25,8 @@ func InitDB() {
             email TEXT NOT NULL UNIQUE,
             username TEXT NOT NULL,
             password_hash TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            cookies TEXT
         );`,
 		`CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
