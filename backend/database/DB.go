@@ -67,6 +67,14 @@ func InitDB() {
             FOREIGN KEY (post_id) REFERENCES posts (id),
             FOREIGN KEY (comment_id) REFERENCES comments (id)
         );`,
+		`CREATE TABLE IF NOT EXISTS media (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            post_id INTEGER NOT NULL,
+            file_path TEXT NOT NULL,
+            file_type TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (post_id) REFERENCES posts (id)
+        );`,
 	}
 
 	for _, query := range createTableQueries {
@@ -125,4 +133,38 @@ func CheckEmailExists(email string) (bool, error) {
 	var exists bool
 	err := db.QueryRow("SELECT COUNT(1) FROM users WHERE email = ?", email).Scan(&exists)
 	return exists, err
+}
+
+func InsertMedia(postID, filePath, fileType string) error {
+	stmt, err := db.Prepare("INSERT INTO media (post_id, file_path, file_type) VALUES (?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(postID, filePath, fileType)
+	return err
+}
+
+// Media represents a media file linked to a post
+type Media struct {
+	FilePath string
+	FileType string
+}
+
+// FetchMediaByPostID retrieves all media files associated with a specific post ID
+func FetchMediaByPostID(postID int) ([]Media, error) {
+	rows, err := db.Query("SELECT file_path, file_type FROM media WHERE post_id = ?", postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var mediaFiles []Media
+	for rows.Next() {
+		var media Media
+		if err := rows.Scan(&media.FilePath, &media.FileType); err != nil {
+			return nil, err
+		}
+		mediaFiles = append(mediaFiles, media)
+	}
+	return mediaFiles, nil
 }

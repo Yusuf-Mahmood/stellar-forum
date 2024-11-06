@@ -2,7 +2,10 @@ package root
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	database "root/backend/database"
 	"strings"
 	"text/template"
@@ -227,4 +230,66 @@ func InternalServerError(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "500 not found", http.StatusInternalServerError)
 		return
 	}
+}
+
+func UploadMedia(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse the form data with a max upload size of 10 MB
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "File too large", http.StatusBadRequest)
+		return
+	}
+
+	// Retrieve the file from form data
+	file, handler, err := r.FormFile("media")
+	if err != nil {
+		http.Error(w, "Unable to retrieve file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Create the uploads directory if it doesn't exist
+	uploadDir := "./uploads"
+	os.MkdirAll(uploadDir, os.ModePerm)
+
+	// Create a unique file name and save the file
+	fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), handler.Filename)
+	filePath := filepath.Join(uploadDir, fileName)
+
+	dst, err := os.Create(filePath)
+	if err != nil {
+		http.Error(w, "Failed to save file", http.StatusInternalServerError)
+		return
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, file)
+	if err != nil {
+		http.Error(w, "Failed to save file", http.StatusInternalServerError)
+		return
+	}
+
+	// Determine file type (image or video) based on file extension
+	fileType := "image"
+	ext := filepath.Ext(handler.Filename)
+	if ext == ".mp4" || ext == ".mov" || ext == ".avi" {
+		fileType = "video"
+	}
+
+	// Save media file details in the database
+	postID := r.FormValue("post_id") // Ensure post_id is provided in the form data
+	err = database.InsertMedia(postID, filePath, fileType)
+	if err != nil {
+		http.Error(w, "Error saving media details", http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with success
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "File uploaded successfully")
 }
