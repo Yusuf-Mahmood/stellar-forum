@@ -2,13 +2,13 @@ package root
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	database "root/backend/database"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -93,17 +93,17 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		username, password, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			http.Error(w, "Username must be between 3-5 character and password must be between 8-50 character", http.StatusBadRequest)
+			renderLoginPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
 			return
 		}
 		if username == "" || password == "" || email == "" {
-			http.Error(w, "All fields are required!", http.StatusBadRequest)
+			renderLoginPage(w, "All fields are required!")
 			return
 		}
 
 		valid, msg := ValidateInput(username, email)
 		if !valid {
-			http.Error(w, msg, http.StatusBadRequest)
+			renderLoginPage(w, msg)
 			return
 		}
 
@@ -114,7 +114,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if exists {
-			http.Error(w, "Username already taken", http.StatusConflict)
+			renderLoginPage(w, "Username already taken")
 			return
 		}
 
@@ -125,7 +125,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existsEmail {
-			http.Error(w, "Email already taken", http.StatusConflict)
+			renderLoginPage(w, "Email already taken")
 			return
 		}
 
@@ -149,56 +149,69 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Login handles user login
+var templates = template.Must(template.ParseGlob("./frontend/html/*.html"))
+
+// Login handles user login and renders the login page with error messages if needed
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			renderLoginPage(w, "Invalid form data")
 			return
 		}
 
 		username, password := r.FormValue("username"), r.FormValue("password")
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			http.Error(w, "Username must be betweeen 3-50 character\nPssword must be between 8-50 character", http.StatusBadRequest)
+			renderLoginPage(w, "Username must be between 3-50 characters and password between 8-50 characters")
 			return
 		}
 		if username == "" || password == "" {
-			http.Error(w, "All fields are required!", http.StatusBadRequest)
+			renderLoginPage(w, "All fields are required")
 			return
 		}
 
-		// Fetch user data from the database
 		storedHashedPassword, err := database.FetchUserByUsername(username)
 		if err != nil || bcrypt.CompareHashAndPassword([]byte(storedHashedPassword), []byte(password)) != nil {
-			http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
+			renderLoginPage(w, "Invalid username or password")
 			return
 		}
 
-		/// Create a unique session token using gofrs/uuid
-		sessionToken, err := uuid.NewV4() // This generates a new UUID version 4
+		sessionToken, err := uuid.NewV4()
 		if err != nil {
-			http.Error(w, "Error creating session", http.StatusInternalServerError)
+			renderLoginPage(w, "Error creating session")
 			return
 		}
 
-		// Convert UUID to string for storage
 		err = database.StoreSessionToken(username, sessionToken.String())
 		if err != nil {
-			http.Error(w, "Error creating session", http.StatusInternalServerError)
+			renderLoginPage(w, "Error storing session")
 			return
 		}
 
-		// Set the session cookie
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session_token",
 			Value:    sessionToken.String(),
-			Expires:  time.Now().Add(1 * time.Hour), // 1 hour only
+			Expires:  time.Now().Add(1 * time.Hour),
 			Path:     "/",
 			HttpOnly: true,
 		})
 
-		// Redirect to homepage
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		renderLoginPage(w, "")
+	}
+}
+
+// renderLoginPage renders the login page with an optional error message
+func renderLoginPage(w http.ResponseWriter, errorMessage string) {
+	data := struct {
+		ErrorMessage string
+	}{
+		ErrorMessage: errorMessage,
+	}
+
+	err := templates.ExecuteTemplate(w, "auth.html", data)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
