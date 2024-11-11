@@ -3,6 +3,7 @@
   --dark-color: #2a255f;
   --darker-color: rgb(21, 3, 59);
   --light-color: #8080d7;
+  --lighter-color: #a2a2ee;
 }
 
 body{
@@ -18,7 +19,7 @@ body{
   height: 100%;
   z-index: 1; 
   backdrop-filter: blur(5px); 
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .stars {
@@ -143,25 +144,25 @@ nav{
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
-  transform: translateY(-75%);
+  transform: translateY(-88%);
   height: 15rem;
-  padding: 10px;
   opacity: 0.4;
   background-color: #342e74;
-  width: 650px;
-  border-radius: 50%;
+  width: 80%;
+  border-radius: 10px;
   box-shadow: 0 0 20px var(--dark-color);
-  z-index: 1;
+  z-index: 2;
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 .spaceNav i{
-  color: var(--light-color);
+  color: var(--lighter-color);
   transition: 0.5s ease;
+  margin-bottom: 5px;
 }
 
 .spaceNav a{
-  color: var(--light-color);
+  color: var(--lighter-color);
 }
 
 .wrapOptions{
@@ -172,13 +173,13 @@ nav{
 }
 
 .spaceNav:hover{
-  transition: 1s ease;
+  transition: 0.3s ease;
   transform: translateY(-55%);
   opacity: 1;
 }
 
 .spaceNav:hover i{
-  transition: 1s ease;
+  transition: 0.3s ease;
   transform: rotate(180deg);
 }
 
@@ -193,6 +194,7 @@ nav{
 .option{
   transition: 0.2s ease;
   margin-top: 168px;
+  padding-bottom: 26px;
   border-bottom: 3px solid var(--light-color);
 }
 
@@ -235,4 +237,61 @@ nav{
     scale: 1;
     transform: translateY(7%) rotate(360deg);
   }
+}
+
+.logout{
+  position: absolute;
+  left: 1.5%;
+  font-size: 26px;
+  padding: 5px;
+  top: 28.5%;
+}
+
+.createPost{
+  position: absolute;
+  right: 1.5%;
+  font-size: 26px;
+  padding: 5px;
+  top: 28.5%;
+}
+
+.logout:hover, .createPost:hover{
+  color: var(--light-color);
+}
+
+.mainContainer{
+  display: flex;
+  justify-content: space-around;
+  height: 500px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+main{
+  border-radius: 10px;
+  background-color: var(--dark-color);
+  height: 500px;
+  width: 40rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+aside{
+  border-radius: 10px;
+  background-color: var(--dark-color);
+  width: 20rem;
+}
+
+.post{
+  width: 7rem;
+  height: 10%;
+  margin-top: 10px;
+  background-color: var(--light-color);
+}
+
+.asideAvailableUsers{
+  width: 10rem;
 }
