@@ -168,3 +168,8 @@ func FetchMediaByPostID(postID int) ([]Media, error) {
 	}
 	return mediaFiles, nil
 }
+// DeleteSession removes a session token from the database
+func DeleteSession(sessionToken string) error {
+	_, err := db.Exec("DELETE FROM sessions WHERE token = ?", sessionToken)
+	return err
+}
