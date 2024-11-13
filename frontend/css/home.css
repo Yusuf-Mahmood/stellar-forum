@@ -290,8 +290,10 @@ nav{
 main{
   position: relative;
   box-shadow: 0 0 10px var(--dark-color);
-  height: 480px;
+  height: 420px;
   width: 100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
   gap: 10%;
   display: flex;
   justify-content: center;
@@ -309,8 +311,7 @@ aside{
 .post{
   width: 90%;
   height: 60px;
-  margin-top: 10px;
-  background-color: white;
+  box-shadow: 0 0 10px var(--dark-color);
   border-radius: 10px;
 }
 
