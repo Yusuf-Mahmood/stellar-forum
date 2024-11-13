@@ -138,6 +138,8 @@ func setGoogleUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 		Expires:  time.Now().Add(1 * time.Hour), // 1 hour only
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,                    // Set Secure flag for HTTPS
+		SameSite: http.SameSiteStrictMode, // Prevents cross-site requests
 	})
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -232,20 +234,20 @@ func setGitHubUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 	}
 
 	username, ok := userInfo["login"].(string)
-    if !ok {
-        http.Error(w, "Username not found", http.StatusInternalServerError)
-        return
-    }
+	if !ok {
+		http.Error(w, "Username not found", http.StatusInternalServerError)
+		return
+	}
 
-    email, ok := userInfo["email"].(string)
-    if !ok || email == "" {
-        // Optionally fetch the email directly from GitHub API if it's not public
-        email, err = fetchGitHubEmail(accessToken)
-        if err != nil {
-            http.Error(w, "Failed to retrieve email", http.StatusInternalServerError)
-            return
-        } 
-    }
+	email, ok := userInfo["email"].(string)
+	if !ok || email == "" {
+		// Optionally fetch the email directly from GitHub API if it's not public
+		email, err = fetchGitHubEmail(accessToken)
+		if err != nil {
+			http.Error(w, "Failed to retrieve email", http.StatusInternalServerError)
+			return
+		}
+	}
 
 	exists, err := database.CheckEmailExists(email)
 	if err != nil {
@@ -288,34 +290,34 @@ func setGitHubUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 }
 
 func fetchGitHubEmail(accessToken string) (string, error) {
-    req, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-    if err != nil {
-        return "", err
-    }
-    req.Header.Set("Authorization", "Bearer "+accessToken)
+	req, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        return "", err
-    }
-    defer resp.Body.Close()
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
 
-    var emails []struct {
-        Email   string `json:"email"`
-        Primary bool   `json:"primary"`
-        Verified bool  `json:"verified"`
-    }
+	var emails []struct {
+		Email    string `json:"email"`
+		Primary  bool   `json:"primary"`
+		Verified bool   `json:"verified"`
+	}
 
-    if err := json.NewDecoder(resp.Body).Decode(&emails); err != nil {
-        return "", err
-    }
+	if err := json.NewDecoder(resp.Body).Decode(&emails); err != nil {
+		return "", err
+	}
 
-    // Check for the first verified, primary email
-    for _, email := range emails {
-        if email.Primary && email.Verified {
-            return email.Email, nil
-        }
-    }
-    return "", fmt.Errorf("no primary verified email found")
+	// Check for the first verified, primary email
+	for _, email := range emails {
+		if email.Primary && email.Verified {
+			return email.Email, nil
+		}
+	}
+	return "", fmt.Errorf("no primary verified email found")
 }

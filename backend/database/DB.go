@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -29,6 +30,7 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             cookies TEXT NOT NULL
         );`,
+
 		`CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -37,6 +39,7 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id)
         );`,
+
 		`CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             post_id INTEGER NOT NULL,
@@ -46,10 +49,12 @@ func InitDB() {
             FOREIGN KEY (post_id) REFERENCES posts (id),
             FOREIGN KEY (user_id) REFERENCES users (id)
         );`,
+
 		`CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
         );`,
+
 		`CREATE TABLE IF NOT EXISTS post_categories (
             post_id INTEGER NOT NULL,
             category_id INTEGER NOT NULL,
@@ -57,6 +62,7 @@ func InitDB() {
             FOREIGN KEY (post_id) REFERENCES posts (id),
             FOREIGN KEY (category_id) REFERENCES categories (id)
         );`,
+
 		`CREATE TABLE IF NOT EXISTS likes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -67,6 +73,7 @@ func InitDB() {
             FOREIGN KEY (post_id) REFERENCES posts (id),
             FOREIGN KEY (comment_id) REFERENCES comments (id)
         );`,
+
 		`CREATE TABLE IF NOT EXISTS media (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             post_id INTEGER NOT NULL,
@@ -75,6 +82,15 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (post_id) REFERENCES posts (id)
         );`,
+
+		`CREATE TABLE IF NOT EXISTS sessions (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL,
+			token TEXT NOT NULL UNIQUE,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			expires_at DATETIME,
+			FOREIGN KEY (user_id) REFERENCES users (id)
+		);`,
 	}
 
 	for _, query := range createTableQueries {
@@ -98,27 +114,45 @@ func InsertUser(email, username, passwordHash string) error {
 	return err
 }
 
-// fetchUserByUsername fetches user data based on the username
+// FetchUserByUsername fetches user data based on the username
 func FetchUserByUsername(username string) (string, error) {
+	var userID int
 	var passwordHash string
-	err := db.QueryRow("SELECT password_hash FROM users WHERE username = ?", username).Scan(&passwordHash)
+	err := db.QueryRow("SELECT id, password_hash FROM users WHERE username = ?", username).Scan(&userID, &passwordHash)
 	if err != nil {
 		return "", err
 	}
 	return passwordHash, nil
 }
 
-// StoreSessionToken saves the session token in the database
-func StoreSessionToken(username, token string) error {
-	_, err := db.Exec("UPDATE users SET cookies = ? WHERE username = ?", token, username)
+// StoreSessionToken saves the session token in the database (sessions table)
+func StoreSessionToken(username string, token string) error {
+	expiryTime := time.Now().Add(1 * time.Hour).Format("2006-01-02 15:04:05") // 1 hour expiry
+	stmt, err := db.Prepare("INSERT INTO sessions (username, token, expires_at) VALUES (?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(username, token, expiryTime)
 	return err
 }
 
 // IsValidSession checks if the provided session token is valid
 func IsValidSession(token string) bool {
-	var username string
-	err := db.QueryRow("SELECT username FROM users WHERE cookies = ?", token).Scan(&username)
-	return err == nil && username != ""
+	var userID int
+	var expiresAt string
+	err := db.QueryRow("SELECT username, expires_at FROM sessions WHERE token = ?", token).Scan(&userID, &expiresAt)
+	if err != nil || userID == 0 {
+		return false
+	}
+
+	// Parse the expiration time
+	expiryTime, err := time.Parse("2006-01-02 15:04:05", expiresAt)
+	if err != nil || time.Now().After(expiryTime) {
+		// Session expired
+		return false
+	}
+
+	return true
 }
 
 // CheckUsernameExists checks if a user already exists with the given username
@@ -168,7 +202,8 @@ func FetchMediaByPostID(postID int) ([]Media, error) {
 	}
 	return mediaFiles, nil
 }
-// DeleteSession removes a session token from the database
+
+// DeleteSession removes a session token from the sessions table
 func DeleteSession(sessionToken string) error {
 	_, err := db.Exec("DELETE FROM sessions WHERE token = ?", sessionToken)
 	return err
