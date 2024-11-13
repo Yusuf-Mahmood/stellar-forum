@@ -25,31 +25,58 @@
         </div>
         <div class="container">
             <div class="mainheader">
-                <a href=""><div class="logout" title="Logout"><i class='bx bx-log-out'></i></div></a>
+                <a href="logout"><div class="logout" title="Logout"><i class='bx bx-log-out'></i></div></a>
                 <div class="title"><p>STELLAR &nbsp F<i class='bx bxs-planet'></i>RUM</p></div>
-                <a href=""><div class="createPost" title="Create Post"><i class='bx bx-plus'></i></div></a>
+                <a href=""><div class="something"><i class='bx bx-user'></i></div></a>
             </div>
             <nav> 
                 <div class="spaceNav">
                     <div class="wrapOptions">
-                        <a href=""><div class="likedposts option"><p class="navTitles">Liked Posts</p></div></a>
-                        <a href=""><div class="categories option"><p class="navTitles">Created Posts</p></div></a>
-                        <a href=""><div class="createdposts option"><p class="navTitles">Categories</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Memes</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Gaming</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Education</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Technology</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Science</p></div></a>
+                        <a href=""><div class="option"><p class="navTitles">Sports</p></div></a>
                     </div>
-                    <i class='bx bxs-chevron-down' ></i>
+                    <p class="aboveIcon">Choose a category</p>
+                    <i class='bx bxs-chevron-down'></i>
                 </div> 
             </nav>
 
             <div class="mainContainer">
-                <aside class="asideProfile"></aside>
-                <main>
-                    <div class="post"></div>
-                    <div class="post"></div>
-                    <div class="post"></div>
-                    <div class="post"></div>
-                    <div class="post"></div>
-                </main>
-                <aside class="asideAvailableUsers"></aside>
+                <aside class="spaceNews"><p>Space News</p></aside>
+                <div class="combinedMain">
+<form action="createpost" method="post">
+                    <div class="createPost">
+                        <input type="text" name="postText" placeholder="Launch a new post..." autocomplete="off" maxlength="1000">
+                        <div class="categoryInput"><i class='bx bx-category'></i></div>
+                        <label for="imageUpload" class="uploadLabel" title="Upload Image">
+                            <i class='bx bx-image-add icon'></i>
+                        </label>
+                        <input type="file" id="imageUpload" class="imageUpload" name="postImage">
+                        <div class="launchSp"> 
+                            <label for="submitBtn" class="submitLabel">
+                                <i class='bx bx-rocket' title="Launch"></i>
+                            </label>
+                            <input type="submit" id="submitBtn" hidden>
+                        </div>
+                    </div>
+</form>
+                    <main>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                        <div class="post"></div>
+                    </main>
+                </div>
+                <aside class="profileContainer"></aside>
             </div>
         </div>
     </body>
