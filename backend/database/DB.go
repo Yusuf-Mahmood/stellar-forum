@@ -28,7 +28,7 @@ func InitDB() {
             username TEXT NOT NULL,
             password_hash TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            cookies TEXT NOT NULL
+            cookies TEXT
         );`,
 
 		`CREATE TABLE IF NOT EXISTS posts (
@@ -205,6 +205,6 @@ func FetchMediaByPostID(postID int) ([]Media, error) {
 
 // DeleteSession removes a session token from the sessions table
 func DeleteSession(sessionToken string) error {
-	_, err := db.Exec("DELETE FROM sessions WHERE token = ?", sessionToken)
+	_, err := db.Exec("UPDATE users SET cookies = NULL WHERE cookies = ? ", sessionToken)
 	return err
 }

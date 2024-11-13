@@ -10,7 +10,14 @@ body{
   background-color: var(--darker-color);
   font-family: var(--main-font);
   color: white;
-  overflow: hidden;
+}
+
+*{
+  font-family: var(--main-font);
+}
+
+*::-webkit-scrollbar{
+display: none;
 }
 
 .blur {
@@ -19,7 +26,11 @@ body{
   height: 100%;
   z-index: 1; 
   backdrop-filter: blur(5px); 
-  opacity: 0.7;
+  opacity: 0.65;
+}
+
+input::selection {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .stars {
@@ -144,7 +155,7 @@ nav{
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
-  transform: translateY(-88%);
+  transform: translateY(-85.5%);
   height: 15rem;
   opacity: 0.4;
   background-color: #342e74;
@@ -152,13 +163,19 @@ nav{
   border-radius: 10px;
   box-shadow: 0 0 20px var(--dark-color);
   z-index: 2;
-  transition: transform 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .spaceNav i{
   color: var(--lighter-color);
   transition: 0.5s ease;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+}
+
+.aboveIcon{
+  margin-top: 205px;
+  color: var(--lighter-color);
+  font-size: 12px;
 }
 
 .spaceNav a{
@@ -167,9 +184,13 @@ nav{
 
 .wrapOptions{
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   width: 80%;
+}
+
+.wrapOptions a{
+  height: 0;
 }
 
 .spaceNav:hover{
@@ -192,10 +213,8 @@ nav{
 }
 
 .option{
-  transition: 0.2s ease;
+  transition: 0.5s ease;
   margin-top: 168px;
-  padding-bottom: 26px;
-  border-bottom: 3px solid var(--light-color);
 }
 
 .navTitles{
@@ -244,10 +263,10 @@ nav{
   left: 1.5%;
   font-size: 26px;
   padding: 5px;
-  top: 28.5%;
+  top: 25%;
 }
 
-.createPost{
+.something{
   position: absolute;
   right: 1.5%;
   font-size: 26px;
@@ -255,14 +274,13 @@ nav{
   top: 28.5%;
 }
 
-.logout:hover, .createPost:hover{
+.logout:hover{
   color: var(--light-color);
 }
 
 .mainContainer{
   display: flex;
   justify-content: space-around;
-  height: 500px;
   width: 100%;
   position: relative;
   z-index: 1;
@@ -270,28 +288,150 @@ nav{
 }
 
 main{
-  border-radius: 10px;
-  background-color: var(--dark-color);
-  height: 500px;
-  width: 40rem;
+  position: relative;
+  box-shadow: 0 0 10px var(--dark-color);
+  height: 420px;
+  width: 100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  gap: 10%;
   display: flex;
   justify-content: center;
   flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
 
 aside{
   border-radius: 10px;
-  background-color: var(--dark-color);
+  box-shadow: 0 0 10px var(--dark-color);
   width: 20rem;
 }
 
 .post{
-  width: 7rem;
-  height: 10%;
-  margin-top: 10px;
-  background-color: var(--light-color);
+  width: 90%;
+  height: 60px;
+  box-shadow: 0 0 10px var(--dark-color);
+  border-radius: 10px;
 }
 
-.asideAvailableUsers{
+.spaceNews{
   width: 10rem;
+  text-align: center;
+}
+
+.spaceNews p{
+  margin-top: 10px;
+}
+
+.createPost{
+  width: 50rem;
+  box-shadow: 0 0 10px var(--dark-color);
+  display: flex;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 5px;
+}
+
+.createPost input{
+  background-color: var(--dark-color);
+  border: none;
+  color: white;
+  outline: none;
+  border-radius: 10px;
+}
+
+.createPost input[type="text"]{
+  padding: 15px;
+  padding-right: 90px;
+  margin-left: 10px;
+  width: 100%;
+}
+
+.createPost input[type="text"]:focus ~ .launchSp .submitLabel i{
+  animation: preLaunch 1.2s ease-in-out infinite;
+}
+
+.createPost input[type="file"]{
+  display: none;
+}
+
+.uploadLabel{
+  position: absolute;
+  cursor: pointer;
+  bottom: 22%;
+  right: 9.5%;
+  scale: 0.85;
+  font-size: 1.9rem;
+}
+
+.uploadLabel i{
+  transition: 0.3s ease;
+}
+
+.uploadLabel i:hover{
+  color: var(--light-color);
+}
+
+.launchSp input[type="submit"]{
+  display: none;
+}
+
+.launchSp{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 10%;
+  display: flex;
+  justify-content: center;
+}
+
+.createPost input::placeholder{
+  color: white;
+}
+
+.profileContainer{
+  width: 10rem;
+}
+
+.submitLabel{
+  transition: 0.3s ease;
+  scale: 0.8;
+}
+
+.submitLabel:hover{
+  color: var(--light-color);
+}
+
+@keyframes preLaunch {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.submitLabel i{
+  cursor: pointer;
+  font-size: 1.9rem;
+}
+
+.categoryInput{
+  position: absolute;
+  cursor: pointer;
+  bottom: 26%;
+  right: 15%;
+  scale: 0.8;
+}
+
+.categoryInput i{
+  cursor: pointer;
+  font-size: 1.9rem;
+  transition: 0.3s ease;
+}
+
+.categoryInput i:hover{
+  color: var(--light-color);
 }
