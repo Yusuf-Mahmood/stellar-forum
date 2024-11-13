@@ -189,8 +189,20 @@ nav{
   width: 80%;
 }
 
+.option{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .wrapOptions a{
   height: 0;
+}
+
+.spaceNav .wrapOptions .option i{
+  font-size: 24px;
+  transform: rotate(360deg);
 }
 
 .spaceNav:hover{
@@ -208,23 +220,27 @@ nav{
   border: none;
 }
 
+.spaceNav:hover .aboveIcon{
+  display: none;
+}
+
 .spaceNav:hover .navTitles{
   opacity: 1;
 }
 
 .option{
   transition: 0.5s ease;
-  margin-top: 168px;
+  margin-top: 160px;
 }
 
 .navTitles{
   opacity: 0;
+  font-size: 14px;
 }
 
-.option:hover{
+.option:hover, .option:hover i{
   transition: 0.1s ease;
   color: white;
-  font-weight: bold;
 }
 
 .title{
@@ -284,7 +300,6 @@ nav{
   width: 100%;
   position: relative;
   z-index: 1;
-  opacity: 0.6;
 }
 
 main{
@@ -348,10 +363,15 @@ aside{
   padding-right: 90px;
   margin-left: 10px;
   width: 100%;
+  background-color: #2a255fbf;
 }
 
 .createPost input[type="text"]:focus ~ .launchSp .submitLabel i{
   animation: preLaunch 1.2s ease-in-out infinite;
+}
+
+.createPost input[type="text"]:focus {
+  opacity: 1;
 }
 
 .createPost input[type="file"]{
@@ -389,6 +409,7 @@ aside{
 
 .createPost input::placeholder{
   color: white;
+  opacity: 0.6;
 }
 
 .profileContainer{

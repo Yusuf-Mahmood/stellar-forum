@@ -94,17 +94,17 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		username, password, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			renderLoginPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
+			renderRegisterPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
 			return
 		}
 		if username == "" || password == "" || email == "" {
-			renderLoginPage(w, "All fields are required!")
+			renderRegisterPage(w, "All fields are required!")
 			return
 		}
 
 		valid, msg := ValidateInput(username, email)
 		if !valid {
-			renderLoginPage(w, msg)
+			renderRegisterPage(w, msg)
 			return
 		}
 
@@ -115,7 +115,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if exists {
-			renderLoginPage(w, "Username already taken")
+			renderRegisterPage(w, "Username already taken")
 			return
 		}
 
@@ -126,7 +126,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existsEmail {
-			renderLoginPage(w, "Email already taken")
+			renderRegisterPage(w, "Email already taken")
 			return
 		}
 
@@ -234,6 +234,20 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 // renderLoginPage renders the login page with an optional error message
 func renderLoginPage(w http.ResponseWriter, errorMessage string) {
+	data := struct {
+		ErrorMessage string
+	}{
+		ErrorMessage: errorMessage,
+	}
+
+	err := templates.ExecuteTemplate(w, "auth.html", data)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
+// renderLoginPage renders the login page with an optional error message
+func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
 	data := struct {
 		ErrorMessage string
 	}{
