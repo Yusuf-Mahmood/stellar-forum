@@ -168,8 +168,14 @@ func FetchMediaByPostID(postID int) ([]Media, error) {
 	}
 	return mediaFiles, nil
 }
-// DeleteSession removes a session token from the database
+// DeleteSession removes the session token (cookie) from the users table
 func DeleteSession(sessionToken string) error {
-	_, err := db.Exec("UPDATE users SET cookies = NULL WHERE cookies = ? ", sessionToken)
-	return err
+    // Parameterized query to safely remove the session token
+    query := "UPDATE users SET cookies = NULL WHERE cookies = ?"
+
+    // Execute the query with the provided session token
+    _, err := db.Exec(query, sessionToken)
+
+    // Return any error encountered
+    return err
 }

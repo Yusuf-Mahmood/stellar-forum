@@ -29,6 +29,8 @@ func ServerRunner() {
 	http.HandleFunc("/500", InternalServerError)
 	fs := http.FileServer(http.Dir("./frontend/css"))
 	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
+	fs2 := http.FileServer(http.Dir("./images"))
+	http.Handle("/images/", http.StripPrefix("/images/", fs2))
 
 	fmt.Print("The server is running on HTTPS port :8080\n")
 	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
@@ -204,32 +206,32 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 // Logout handles user logout
 func Logout(w http.ResponseWriter, r *http.Request) {
-	// Check if the user has a session cookie
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		// Redirect to login if no session is found
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
-		return
-	}
+    // Check if the user has a session cookie
+    cookie, err := r.Cookie("session_token")
+    if err != nil {
+        // Redirect to login if no session is found
+        http.Redirect(w, r, "/auth", http.StatusSeeOther)
+        return
+    }
 
-	// Remove the session from the database
-	err = database.DeleteSession(cookie.Value)
-	if err != nil {
-		http.Error(w, "Error logging out", http.StatusInternalServerError)
-		return
-	}
+    // Remove the session from the database
+    err = database.DeleteSession(cookie.Value)
+    if err != nil {
+        http.Error(w, "Error logging out", http.StatusInternalServerError)
+        return
+    }
 
-	// Clear the session cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    "",
-		Expires:  time.Unix(0, 0), // Expire immediately
-		Path:     "/",
-		HttpOnly: true,
-	})
+    // Clear the session cookie
+    http.SetCookie(w, &http.Cookie{
+        Name:     "session_token",
+        Value:    "",
+        Expires:  time.Unix(0, 0), // Expire immediately
+        Path:     "/",
+        HttpOnly: true,
+    })
 
-	// Redirect to the login page after logout
-	http.Redirect(w, r, "/auth", http.StatusSeeOther)
+    // Redirect to the login page after logout
+    http.Redirect(w, r, "/auth", http.StatusSeeOther)
 }
 
 // renderLoginPage renders the login page with an optional error message

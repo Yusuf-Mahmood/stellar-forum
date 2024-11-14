@@ -10,6 +10,7 @@ body{
   background-color: var(--darker-color);
   font-family: var(--main-font);
   color: white;
+  overflow: hidden;
 }
 
 *{
@@ -255,21 +256,18 @@ nav{
   will-change: transform;
 }
 
-.mainheader:hover p .bxs-planet{
-  animation: rotate 2s 0.4s forwards;
+.mainheader p .bxs-planet{
+  animation: rotate 5s 0.4s infinite;
 }
 
 @keyframes rotate{
   0% {
-    scale: 0;
     transform: translateY(7%) rotate(0deg);
   }
   50% {
-    scale: 1;
     transform: translateY(10%) rotate(180deg);
   }
   100% {
-    scale: 1;
     transform: translateY(7%) rotate(360deg);
   }
 }
@@ -305,8 +303,8 @@ nav{
 main{
   position: relative;
   box-shadow: 0 0 10px var(--dark-color);
-  height: 420px;
-  width: 100%;
+  height: 600px;
+  max-width: 900px;
   padding-top: 30px;
   padding-bottom: 30px;
   gap: 10%;
@@ -325,7 +323,6 @@ aside{
 
 .post{
   width: 90%;
-  height: 60px;
   box-shadow: 0 0 10px var(--dark-color);
   border-radius: 10px;
 }
@@ -456,3 +453,109 @@ aside{
 .categoryInput i:hover{
   color: var(--light-color);
 }
+
+.userDisplay{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.ppContent{
+  box-shadow: 0 0 10px var(--dark-color);
+  background-color: var(--dark-color);
+  width: 3.5rem;
+  object-fit: contain;
+  height: 3.5rem;
+  border-radius: 50%;
+}
+
+.nameContent{
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+.postContent{
+  border-radius: 25px;
+  border: 7px solid var(--darker-color);
+}
+
+.textContent{
+  border-radius: 5px;
+  word-break: break-all;
+  padding: 15px;
+  background-color: #2a255f4e;
+  overflow: none;
+  width: 767px;
+}
+
+.dateContent{
+  font-size: 12px;
+  text-align: right;
+  flex-shrink: 0;
+  padding: 3px;
+}
+
+.postHeader{
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 750px;
+}
+
+.imageContent, .image{
+  background-color: #2a255f4e;
+  height: 350px;
+  object-fit: cover;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.imageContent{
+  border: 7px solid var(--darker-color);
+}
+
+.updateInfo{
+  display: flex;
+  border-radius: 10px;
+  margin-top: 7px;
+  gap: 0.4%;
+  padding: 8px;
+  background-color: #2a255f4e;
+  border: 7px solid var(--darker-color);
+}
+
+.likes, .dislikes, .comments{
+  margin-top: 3px;
+  font-size: 1.5rem;
+}
+
+.likes:hover{
+  color: rgb(24, 227, 24);
+}
+.dislikes:hover{
+  color: red;
+}
+.comments:hover{
+  cursor: pointer;
+  color: var(--light-color);
+}
+
+#likeCheckbox:checked + .likes {
+  color: rgb(24, 227, 24); 
+}
+
+#likeCheckbox {
+  display: none;
+}
+
+#likeCheckbox:checked + .likes {
+  color: rgb(24, 227, 24);
+}
+
+.updateInfo p{
+  font-size: 0.8rem;
+  margin-right: 10px;
+  margin-top: 8px; 
+}
+
