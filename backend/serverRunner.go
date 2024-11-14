@@ -30,6 +30,9 @@ func ServerRunner() {
 	fs := http.FileServer(http.Dir("./frontend/css"))
 	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
 
+	fs2 := http.FileServer(http.Dir("./images"))
+	http.Handle("/images/", http.StripPrefix("/images/", fs2))
+
 	fmt.Print("The server is running on HTTPS port :8080\n")
 	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
 	if err != nil {
