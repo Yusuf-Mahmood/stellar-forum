@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -82,15 +81,6 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (post_id) REFERENCES posts (id)
         );`,
-
-		`CREATE TABLE IF NOT EXISTS sessions (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			user_id INTEGER NOT NULL,
-			token TEXT NOT NULL UNIQUE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			expires_at DATETIME,
-			FOREIGN KEY (user_id) REFERENCES users (id)
-		);`,
 	}
 
 	for _, query := range createTableQueries {
@@ -125,34 +115,15 @@ func FetchUserByUsername(username string) (string, error) {
 	return passwordHash, nil
 }
 
-// StoreSessionToken saves the session token in the database (sessions table)
 func StoreSessionToken(username string, token string) error {
-	expiryTime := time.Now().Add(1 * time.Hour).Format("2006-01-02 15:04:05") // 1 hour expiry
-	stmt, err := db.Prepare("INSERT INTO sessions (username, token, expires_at) VALUES (?, ?, ?)")
+	// Prepare the SQL query to update the user's session token in the users table
+	stmt, err := db.Prepare("UPDATE users SET cookies = ? WHERE username = ?")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(username, token, expiryTime)
+	// Execute the prepared statement with the session token and username
+	_, err = stmt.Exec(token, username)
 	return err
-}
-
-// IsValidSession checks if the provided session token is valid
-func IsValidSession(token string) bool {
-	var userID int
-	var expiresAt string
-	err := db.QueryRow("SELECT username, expires_at FROM sessions WHERE token = ?", token).Scan(&userID, &expiresAt)
-	if err != nil || userID == 0 {
-		return false
-	}
-
-	// Parse the expiration time
-	expiryTime, err := time.Parse("2006-01-02 15:04:05", expiresAt)
-	if err != nil || time.Now().After(expiryTime) {
-		// Session expired
-		return false
-	}
-
-	return true
 }
 
 // CheckUsernameExists checks if a user already exists with the given username
@@ -202,16 +173,15 @@ func FetchMediaByPostID(postID int) ([]Media, error) {
 	}
 	return mediaFiles, nil
 }
-// DeleteSession removes the session token (cookie) from the users table
 
 // DeleteSession removes a session token from the sessions table
 func DeleteSession(sessionToken string) error {
-    // Parameterized query to safely remove the session token
-    query := "UPDATE users SET cookies = NULL WHERE cookies = ?"
+	// Parameterized query to safely remove the session token
+	query := "UPDATE users SET cookies = NULL WHERE cookies = ?"
 
-    // Execute the query with the provided session token
-    _, err := db.Exec(query, sessionToken)
+	// Execute the query with the provided session token
+	_, err := db.Exec(query, sessionToken)
 
-    // Return any error encountered
-    return err
+	// Return any error encountered
+	return err
 }
