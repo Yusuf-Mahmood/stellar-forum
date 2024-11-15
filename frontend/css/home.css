@@ -13,13 +13,39 @@ body{
   overflow: hidden;
 }
 
+.spacing{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 *{
   font-family: var(--main-font);
 }
 
-*::-webkit-scrollbar{
-display: none;
+*::-webkit-scrollbar {
+  width: 10px;
 }
+
+*::-webkit-scrollbar-track {
+  background-color: var(--darker-color);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--dark-color);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--light-color);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--dark-color) var(--darker-color);
+}
+
 
 .blur {
   position: absolute;
@@ -294,20 +320,27 @@ nav{
 
 .mainContainer{
   display: flex;
-  justify-content: space-around;
-  width: 100%;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--dark-color);
+  flex-direction: row;
+  width: 90%;
   position: relative;
   z-index: 1;
 }
 
+.combinedside{
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--dark-color);
+}
+
 main{
   position: relative;
-  box-shadow: 0 0 10px var(--dark-color);
-  height: 600px;
-  max-width: 900px;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  gap: 10%;
+  height: 520px;
+  max-width: 1100px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  gap: 0.5%;
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -317,19 +350,27 @@ main{
 
 aside{
   border-radius: 10px;
-  box-shadow: 0 0 10px var(--dark-color);
-  width: 20rem;
+  border-top: 1px solid var(--dark-color);
 }
 
-.post{
-  width: 90%;
-  box-shadow: 0 0 10px var(--dark-color);
-  border-radius: 10px;
+section{
+  width: 75%;
+  display: flex;
+  border: 1px solid var(--dark-color);
+  background-color: #2a255f4e;
+  box-shadow: 0 0 5px var(--dark-color);
+  border-radius: 5px;
+  transition: 0.1s ease;
+}
+
+section:hover{ 
+  background-color: #413c8b4e;
 }
 
 .spaceNews{
-  width: 10rem;
+  width: 25rem;
   text-align: center;
+  width: 100%;
 }
 
 .spaceNews p{
@@ -337,13 +378,12 @@ aside{
 }
 
 .createPost{
-  width: 50rem;
-  box-shadow: 0 0 10px var(--dark-color);
+  width: 20rem;
   display: flex;
+  flex-direction: column;
   border-radius: 5px;
-  align-items: center;
-  justify-content: center;
   position: relative;
+  justify-content: center;
   padding: 5px;
 }
 
@@ -356,10 +396,9 @@ aside{
 }
 
 .createPost input[type="text"]{
+  margin-top: 5px;
   padding: 15px;
-  padding-right: 90px;
-  margin-left: 10px;
-  width: 100%;
+  width: 18rem;
   background-color: #2a255fbf;
 }
 
@@ -378,8 +417,7 @@ aside{
 .uploadLabel{
   position: absolute;
   cursor: pointer;
-  bottom: 22%;
-  right: 9.5%;
+  left: 11%;
   scale: 0.85;
   font-size: 1.9rem;
 }
@@ -397,11 +435,11 @@ aside{
 }
 
 .launchSp{
-  padding-top: 10px;
-  padding-bottom: 10px;
-  width: 10%;
+  padding: 10px;
+  padding-left: 0;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .createPost input::placeholder{
@@ -439,8 +477,7 @@ aside{
 .categoryInput{
   position: absolute;
   cursor: pointer;
-  bottom: 26%;
-  right: 15%;
+  left: 1%;
   scale: 0.8;
 }
 
@@ -464,79 +501,71 @@ aside{
 .ppContent{
   box-shadow: 0 0 10px var(--dark-color);
   background-color: var(--dark-color);
-  width: 3.5rem;
+  width: 10rem;
+  margin-left: 10px;
+  margin-top: 10px;
   object-fit: contain;
-  height: 3.5rem;
+  height: 3rem;
   border-radius: 50%;
 }
 
 .nameContent{
-  margin-top: 2px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: bold;
 }
 
 .postContent{
-  border-radius: 25px;
-  border: 7px solid var(--darker-color);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  height: auto;
+  border: 7px solid transparent;
 }
 
 .textContent{
   border-radius: 5px;
-  word-break: break-all;
   padding: 15px;
-  background-color: #2a255f4e;
+  padding-top: 0;
   overflow: none;
-  width: 767px;
-}
-
-.dateContent{
-  font-size: 12px;
-  text-align: right;
-  flex-shrink: 0;
-  padding: 3px;
+  width: 96.5%;
+  font-size: 1rem;
 }
 
 .postHeader{
   margin: 10px;
   display: flex;
   justify-content: space-between;
-  width: 750px;
+  width: 95%;
 }
 
-.imageContent, .image{
-  background-color: #2a255f4e;
+.image{
   height: 350px;
-  object-fit: cover;
+  object-fit: contain;
   box-sizing: border-box;
-  width: 100%;
-}
-
-.imageContent{
-  border: 7px solid var(--darker-color);
+  align-self: center;
+  border-radius: 15px;
+  margin-bottom: 7px;
 }
 
 .updateInfo{
   display: flex;
-  border-radius: 10px;
-  margin-top: 7px;
-  gap: 0.4%;
-  padding: 8px;
-  background-color: #2a255f4e;
-  border: 7px solid var(--darker-color);
+  justify-content: center;
+  gap: 20%;
+  margin-bottom: 7px;
 }
 
 .likes, .dislikes, .comments{
   margin-top: 3px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
-.likes:hover{
-  color: rgb(24, 227, 24);
+.likesCon, .dislikesCon, .commentsCon{
+  width: 40px;
+  display: flex;
+  gap: 10%;
 }
-.dislikes:hover{
-  color: red;
-}
-.comments:hover{
+
+.commentsCon:hover, .likesCon:hover, .dislikesCon:hover{
   cursor: pointer;
   color: var(--light-color);
 }
@@ -554,8 +583,7 @@ aside{
 }
 
 .updateInfo p{
-  font-size: 0.8rem;
-  margin-right: 10px;
-  margin-top: 8px; 
+  font-size: 0.9rem;
+  margin-top: 6px; 
 }
 
