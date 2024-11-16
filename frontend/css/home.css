@@ -25,10 +25,12 @@ body{
 
 *::-webkit-scrollbar {
   width: 10px;
+  border-radius: 10px;
 }
 
 *::-webkit-scrollbar-track {
   background-color: var(--darker-color);
+  border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -45,7 +47,6 @@ body{
   scrollbar-width: thin;
   scrollbar-color: var(--dark-color) var(--darker-color);
 }
-
 
 .blur {
   position: absolute;
@@ -195,7 +196,7 @@ nav{
 
 .spaceNav i{
   color: var(--lighter-color);
-  transition: 0.5s ease;
+  transition: 0.3s ease;
   margin-bottom: 2px;
 }
 
@@ -321,9 +322,11 @@ nav{
 .mainContainer{
   display: flex;
   justify-content: center;
-  box-shadow: 0 0 10px var(--dark-color);
+  box-shadow: 0 0 5px var(--dark-color);
+  border-radius: 10px;
   flex-direction: row;
-  width: 90%;
+  width: 90rem;
+  height: 550px;
   position: relative;
   z-index: 1;
 }
@@ -331,12 +334,12 @@ nav{
 .combinedside{
   display: flex;
   flex-direction: column;
+  padding-right: 3px;
   border-right: 1px solid var(--dark-color);
 }
 
 main{
   position: relative;
-  height: 520px;
   max-width: 1100px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -350,10 +353,11 @@ main{
 
 aside{
   border-radius: 10px;
+  overflow-y: hidden;
   border-top: 1px solid var(--dark-color);
 }
 
-section{
+.post{
   width: 75%;
   display: flex;
   border: 1px solid var(--dark-color);
@@ -363,7 +367,7 @@ section{
   transition: 0.1s ease;
 }
 
-section:hover{ 
+.post:hover{ 
   background-color: #413c8b4e;
 }
 
@@ -371,10 +375,83 @@ section:hover{
   width: 25rem;
   text-align: center;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .spaceNews p{
   margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.newsTitle{
+  z-index: 1111;
+  background-color: var(--darker-color);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.newsT{
+  font-size: 1rem;
+  background-color: #2a255fbf;
+  border-radius: 10px;
+  padding: 5px;
+  width: 75%;
+  position: relative;
+}
+
+.spaceNews img{
+  width: 150px;
+  object-fit: contain;
+  border-radius: 25%;
+}
+
+.newsContainer{
+  animation: scrollNews 20s linear infinite;
+}
+
+.newsContainer:hover{
+  animation-play-state: paused;
+}
+
+@keyframes scrollNews {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(-50%);
+  }
+}
+
+.newsItem{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 10px;
+  position: relative;
+}
+
+.newsItem p{
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 0.9rem;
+  width: 250px;
+}
+
+.newsItem::after{
+  content: '';
+  position: absolute;
+  bottom: 0; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  width: 65%; 
+  border-bottom: 2px solid var(--dark-color);
+}
+
+.newsItem:hover p{
+  color: var(--light-color);
 }
 
 .createPost{
@@ -435,6 +512,7 @@ section:hover{
 }
 
 .launchSp{
+  position: relative;
   padding: 10px;
   padding-left: 0;
   width: 100%;
@@ -587,3 +665,95 @@ section:hover{
   margin-top: 6px; 
 }
 
+.profileContainer{
+  position: absolute;
+  display: flex;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.catExpansionContainer {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  background-color: var(--darker-color);
+  flex-direction: column;
+  text-align: center;
+  width: 99%;
+  height: 437px;
+  border-radius: 10px;
+  transition: 0.5s ease-in-out;
+  transform: translate(0.4%, 10.65%);
+}
+
+.catExpansionContainer .catTitle{
+  padding: 10px;
+  background-color: var(--darker-color);
+  display: flex;
+  justify-content: center;
+  width: 95%;
+  border-radius: 10px;
+} 
+
+.catExpansionContainer .catT{
+  font-size: 1rem;
+  background-color: #2a255fbf;
+  border-radius: 10px;
+  padding: 5px;
+  width: 80%;
+}
+
+#toggleCatExpansion:checked ~ .catExpansionContainer {
+  display: block;
+  animation: opacityAnimation 0.3s ease;
+}
+
+@keyframes opacityAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.toggleCatExpansion {
+  display: none;
+}
+
+.checkboxItem input[type="checkbox"] {
+  display: none;
+}
+.checkboxItem label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  margin-left: 5px;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  border-radius: 15px;
+  color: var(--light-color);
+  scale: 0.9;
+}
+
+.checkboxItem label i {
+  margin-right: 8px;
+}
+
+.checkboxItem input[type="checkbox"]:checked + label {
+  color: white;
+  scale: 1;
+}
+
+.checkboxItem input[type="checkbox"]:checked + label i {
+  color: white;
+  scale: 1;
+}
+.checkboxItem input[type="checkbox"]:hover + label {
+  background-color: #2a255fbf;
+  color: white;
+  scale: 1;
+}

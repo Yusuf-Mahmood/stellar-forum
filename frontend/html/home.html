@@ -88,10 +88,43 @@
                 <form action="createpost" method="post">
                     <div class="createPost">
                         <input type="text" name="postText" placeholder="Launch a new post..." autocomplete="off"
-                            maxlength="300">
+                            maxlength="300" required>
                         <div class="launchSp">
-                            <!-- Make category as a checkbox that when checked displays in Space News all >:) -->
-                            <div class="categoryInput"><i class='bx bx-category'></i></div>
+                            <input type="checkbox" id="toggleCatExpansion" class="toggleCatExpansion"/>
+                            <label for="toggleCatExpansion" class="categoryInput">
+                                <i class='bx bx-category'></i>
+                            </label>
+                            <div class="catExpansionContainer">
+                                <div class="catTitle">
+                                    <div class="catT">Choose Categories</div>
+                                </div>
+                                <div class="catMain">
+                                    <div class="checkboxItem">
+                                        <input type="checkbox" id="memesCheck" name="catInputs" value="Memes">
+                                        <label for="memesCheck"><i class='bx bx-laugh'></i>Memes</label>
+                                      </div>
+                                      <div class="checkboxItem">
+                                        <input type="checkbox" id="gamingCheck" name="catInputs" value="Gaming">
+                                        <label for="gamingCheck"><i class='bx bx-joystick'></i>Gaming</label>
+                                      </div>
+                                      <div class="checkboxItem">
+                                        <input type="checkbox" id="educationCheck" name="catInputs" value="Education">
+                                        <label for="educationCheck"><i class='bx bx-book-alt'></i>Education</label>
+                                      </div>
+                                      <div class="checkboxItem">
+                                        <input type="checkbox" id="techCheck" name="catInputs" value="Technology">
+                                        <label for="techCheck"><i class='bx bx-microchip'></i>Technology</label>
+                                      </div>
+                                      <div class="checkboxItem">
+                                        <input type="checkbox" id="sciCheck" name="catInputs" value="Science">
+                                        <label for="sciCheck"><i class='bx bxs-flask'></i>Science</label>
+                                      </div>
+                                      <div class="checkboxItem">
+                                        <input type="checkbox" id="sportCheck" name="catInputs" value="Sports">
+                                        <label for="sportCheck"><i class='bx bx-basketball'></i>Sports</label>
+                                      </div>
+                                </div>
+                            </div>                            
                             <label for="imageUpload" class="uploadLabel" title="Upload Image">
                                 <i class='bx bx-image-add icon'></i>
                             </label>
@@ -104,13 +137,80 @@
                     </div>
                 </form>
                 <aside class="spaceNews">
-                    <p>Space News</p>
+                    <div class="newsTitle"><p class="newsT">Space News</p></div>
+                    <div class="newsContainer">
+                    <div class="newsContent">
+                        <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/" target="_blank">
+                            <div class="newsItem">
+                                <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
+                                <img src="../../images/news1.webp" alt="Apollo 12">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/" target="_blank">
+                            <div class="newsItem">
+                                <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.</p>
+                                <img src="../../images/news2.webp" alt="Debate">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/" target="_blank">
+                            <div class="newsItem">
+                                <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
+                                <img src="../../images/news3.jpg" alt="Andromeda Star">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/" target="_blank">
+                            <div class="newsItem">
+                                <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life Exist?</p>
+                                <img src="../../images/news4.webp" alt="Mars Discovery">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/" target="_blank">
+                            <div class="newsItem">
+                                <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be Real!</p>
+                                <img src="../../images/news5.webp" alt="Mirror Universe">
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Duplicate content for seamless scrolling -->
+                    <div class="newsContent">
+                        <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/" target="_blank">
+                            <div class="newsItem">
+                                <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
+                                <img src="../../images/news1.webp" alt="Apollo 12">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/" target="_blank">
+                            <div class="newsItem">
+                                <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.</p>
+                                <img src="../../images/news2.webp" alt="Debate">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/" target="_blank">
+                            <div class="newsItem">
+                                <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
+                                <img src="../../images/news3.jpg" alt="Andromeda Star">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/" target="_blank">
+                            <div class="newsItem">
+                                <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life Exist?</p>
+                                <img src="../../images/news4.webp" alt="Mars Discovery">
+                            </div>
+                        </a>
+                        <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/" target="_blank">
+                            <div class="newsItem">
+                                <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be Real!</p>
+                                <img src="../../images/news5.webp" alt="Mirror Universe">
+                            </div>
+                        </a>
+                    </div>
+                    </div>
                 </aside>
             </div>
 
             <!-- Main content with posts -->
             <main>
-                <section>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -147,8 +247,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section>
+                </div>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -184,8 +284,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section>
+                </div>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -221,8 +321,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section>
+                </div>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -259,8 +359,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section>
+                </div>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -297,8 +397,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section>
+                </div>
+                <div class="post">
                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                     <div class="postContent">
                         <div class="userDisplay">
@@ -335,13 +435,12 @@
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
             </main>
         </div>
     </div>
     </div>
     </div>
-    <aside class="profileContainer"></aside>
+    <div class="profileContainer"></div>
 </body>
-
 </html>
