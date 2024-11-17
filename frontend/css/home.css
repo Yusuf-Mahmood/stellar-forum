@@ -436,7 +436,7 @@ input[type="checkbox"]{
   border-radius: 10px;
   flex-direction: row;
   width: 90rem;
-  height: 550px;
+  height: 34rem;
   position: relative;
   z-index: 1;
 }
