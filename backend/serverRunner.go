@@ -47,6 +47,11 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.URL.Path != "/" {
+		http.Redirect(w, r, "/404", http.StatusFound)
+		return
+	}
+
 	// Render homepage if session is valid
 	t, err := template.ParseFiles("./frontend/html/home.html")
 	if err != nil {
@@ -64,6 +69,11 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 func Auth(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if r.URL.Path != "/auth" {
+		http.Redirect(w, r, "/404", http.StatusFound)
 		return
 	}
 

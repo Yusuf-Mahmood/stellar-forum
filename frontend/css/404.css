@@ -61,10 +61,11 @@ html, body {
   h1 {
     font-size: 95px;
     margin: 0;
+    z-index: 1000;
   }
   
   button {
-    background: linear-gradient(#EC5DC1, #D61A6F);
+    background: linear-gradient(#8080d7, #2a255f);
     padding: 0 12px;
     border: none;
     border-radius: 20px;
@@ -77,14 +78,16 @@ html, body {
   }
   
   .bubble {
-    background: linear-gradient(#EC5DC1, #D61A6F);
+    background: linear-gradient(#8080d7, #2a255f);
     border-radius: 50%;
     box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
     position: absolute;
+    z-index: 100;
+    opacity: 0.6;
   }
   .bubble:before, .bubble:after {
     content: "";
-    background: linear-gradient(#EC5DC1, #D61A6F);
+    background: linear-gradient(#8080d7, #2a255f);
     border-radius: 50%;
     box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
     position: absolute;
