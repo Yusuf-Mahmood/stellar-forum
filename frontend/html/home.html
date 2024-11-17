@@ -35,7 +35,7 @@
                 <p>STELLAR &nbsp F<i class='bx bxs-planet'></i>RUM</p>
             </div>
             <label for="profileActivate" class="something"><i class='bx bx-user' title="View Profile"></i></label>
-            <input type="checkbox" id="profileActivate" checked hidden>
+            <input type="checkbox" id="profileActivate" hidden>
             <div class="profileContainer">
                 <div class="profileHeader">
                 <form action="profilePicture" method="post">
@@ -259,10 +259,16 @@
                                     </div>
                                 </a>
                             </label>
-                            <div class="commentsCon">
-                                <i class='bx bx-comment comments'></i><p>5</p>
-                            </div>
+                            <a href="#PostComments">
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i><p>5</p>
+                                </div>
+                            </a>
+                            <!-- Comments end up here in post pop up -->
                         </div>
+                    </div>
+                    <div id="PostComments">
+                        
                     </div>
                 </div>
                 <div class="post">

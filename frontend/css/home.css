@@ -11,6 +11,7 @@ body{
   font-family: var(--main-font);
   color: white;
   overflow: hidden;
+  position: relative;
 }
 
 .spacing{
@@ -103,7 +104,7 @@ input::selection {
 }
 
 .star:nth-child(2) {
-  top: 30%; left: 40%; transform: scale(0.8);
+  top: 30%; left: 26%; transform: scale(0.8);
   animation-duration: 2s;
   animation-delay: 1s;
 }
@@ -127,7 +128,7 @@ input::selection {
 }
 
 .star:nth-child(6) {
-  top: 25%; left: 20%; transform: scale(0.7);
+  top: 20%; left: 5%; transform: scale(0.7);
   animation-duration: 1.4s;
   animation-delay: 1.2s;
 }
@@ -683,7 +684,7 @@ input[type="file"]{
 
 .ppContent{
   box-shadow: 0 0 10px var(--dark-color);
-  background-color: var(--dark-color);
+  background-color: black;
   width: 10rem;
   margin-left: 10px;
   margin-top: 10px;
@@ -856,4 +857,20 @@ input[type="checkbox"] {
   background-color: #2a255fbf;
   color: white;
   scale: 1;
+}
+
+#PostComments{
+  /* display: none; */
+  position: absolute;
+  width: 600px;
+  height: 700px;
+  top: -50%;
+  right: 35%;
+  z-index: 99999999;
+  /* background-color: black; */
+}
+
+#PostComments:target{
+  display: block;
+  
 }
