@@ -312,7 +312,116 @@ nav{
   right: 1.5%;
   font-size: 26px;
   padding: 5px;
-  top: 28.5%;
+  cursor: pointer;
+  top: 25%;
+}
+
+.something:hover{
+  color: var(--light-color);
+}
+
+.profileContainer{
+  position: absolute;
+  background-color: var(--darker-color);
+  transform: translateY(55.9%);
+  box-shadow: 0 0 10px var(--dark-color);
+  border-bottom-left-radius: 10px;
+  border-top: 1px solid var(--darker-color);
+  right: -11rem;
+  width: 12.4rem;
+  opacity: 0;
+  height: 630px;
+  transition: 0.3s ease; 
+}
+
+.profileHeader{
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  padding-bottom: 15px;
+  border-radius: 15px;
+  text-align: center;
+  background-color: #2a255f9a;
+  border: 5px solid var(--darker-color);
+}
+
+.profilePic{
+  cursor: pointer;
+  /* width: 6rem; */
+  font-size: 100px;
+  border-radius: 50%;
+  /* height: 6rem; */
+  /* background-color: var(--dark-color); */
+  margin-bottom: 10px;
+}
+
+.profileFilter{
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.editPP{
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.editPP:hover{
+  color: var(--light-color);
+}
+
+.profileFilter a:hover{
+  color: white;
+  background-color: var(--dark-color);
+  scale: 1;
+}
+
+.profileFilter a{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  border-radius: 15px;
+  padding: 12px 18px;
+  background-color: var(--darker-color);
+  width: 75%;
+  scale: 0.9;
+  color: var(--light-color);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.uploadPP{
+  background-color: #8080d7;
+  border: none;
+  color: #2a255f;
+  cursor: pointer;
+  font-size: 15px;
+  width: 100px;
+  padding: 0;
+  border-radius: 10px;
+  font-family: var(--main-font);
+  text-align: center;
+}
+
+.uploadPP:hover{
+  transition: 0.3s ease;
+  background-color: white;
+  font-weight: bold;
+}
+
+input[type="checkbox"]{
+  display: none;
+}
+
+#profileActivate:checked + .profileContainer{
+  opacity: 1;
+  right: 0;
 }
 
 .logout:hover{
@@ -409,7 +518,7 @@ aside{
 }
 
 .newsContainer{
-  animation: scrollNews 20s linear infinite;
+  animation: scrollNews 30s linear infinite;
 }
 
 .newsContainer:hover{
@@ -487,7 +596,7 @@ aside{
   opacity: 1;
 }
 
-.createPost input[type="file"]{
+input[type="file"]{
   display: none;
 }
 
@@ -523,10 +632,6 @@ aside{
 .createPost input::placeholder{
   color: white;
   opacity: 0.6;
-}
-
-.profileContainer{
-  width: 10rem;
 }
 
 .submitLabel{
@@ -663,11 +768,6 @@ aside{
 .updateInfo p{
   font-size: 0.9rem;
   margin-top: 6px; 
-}
-
-.profileContainer{
-  position: absolute;
-  display: flex;
 }
 
 input[type="checkbox"] {
