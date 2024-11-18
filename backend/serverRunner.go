@@ -97,10 +97,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		username, password, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("email")
+		username, password, secondpass, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("secondpass"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
 			renderRegisterPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
+			return
+		}
+		if secondpass!=password{
+			renderRegisterPage(w, "Passwords do not match")
 			return
 		}
 		if username == "" || password == "" || email == "" {
@@ -242,8 +246,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func renderLoginPage(w http.ResponseWriter, errorMessage string) {
 	data := struct {
 		ErrorMessage string
+		RegErrorMessage string
 	}{
 		ErrorMessage: errorMessage,
+		RegErrorMessage: "",
 	}
 
 	err := templates.ExecuteTemplate(w, "auth.html", data)
@@ -256,11 +262,13 @@ func renderLoginPage(w http.ResponseWriter, errorMessage string) {
 func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
 	data := struct {
 		ErrorMessage string
+		RegErrorMessage string
 	}{
-		ErrorMessage: errorMessage,
+		RegErrorMessage: errorMessage,
+		ErrorMessage: "",
 	}
 
-	err := templates.ExecuteTemplate(w, "auth.html", data)
+	err := templates.ExecuteTemplate(w, "authreg.html", data)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}

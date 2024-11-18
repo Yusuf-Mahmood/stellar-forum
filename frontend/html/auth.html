@@ -39,8 +39,8 @@
                 <div class="labelline ll4">Re-Enter password</div>
                 <i class='bx bxs-key i4'></i>
             </div>
-            {{ if .ErrorMessage }}
-            <div class="errorSpacing">{{ .ErrorMessage }}</div>
+            {{ if .RegErrorMessage }}
+            <div class="errorSpacing">{{ .RegErrorMessage }}</div>
             {{ end }}
             <div class="butSp"><input type="submit" value="Submit" ></div>
             <p>Already have an account? <a href="#container" class="signUp logIn">Login</a></p>
