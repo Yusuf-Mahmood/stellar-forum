@@ -661,6 +661,7 @@ aside{
 .floating:hover .plus i{
   color: white;
   rotate: 405deg; 
+  scale: 1.2;
 }
 
 .floating:hover .plus p{
@@ -670,7 +671,7 @@ aside{
 }
 
 .floating:hover .plus{
-  transform: translateY(30%);
+  transform: translateY(45%);
 }
 
 .createPost{
