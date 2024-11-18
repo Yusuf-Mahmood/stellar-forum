@@ -322,10 +322,9 @@ nav{
 }
 
 .profileContainer{
-  position: absolute;
+  position: fixed;
   background-color: var(--darker-color);
-  top: 55.9%; /* Set the top position as a percentage */
-  transform: translateY(-50%);
+  transform: translateY(56.2%);
   box-shadow: 0 0 10px var(--dark-color);
   border-bottom-left-radius: 10px;
   border-top: 1px solid var(--darker-color);
@@ -564,6 +563,12 @@ aside{
 
 .newsItem:hover p{
   color: var(--light-color);
+}
+
+.plus:target{
+  position: absolute;
+  background-color: var(--dark-color);
+  transform: translateY(-50%);
 }
 
 .createPost{
