@@ -47,6 +47,13 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err := r.Cookie("session_token")
+	if err != nil {
+		// Redirect to login if no session is found
+		http.Redirect(w, r, "/auth", http.StatusSeeOther)
+		return
+	}
+
 	if r.URL.Path != "/" {
 		http.Redirect(w, r, "/404", http.StatusFound)
 		return
