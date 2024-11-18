@@ -139,8 +139,8 @@ func setGoogleUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,                    // Set Secure flag for HTTPS
-		SameSite: http.SameSiteStrictMode, // Prevents cross-site requests
 	})
+
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
