@@ -423,7 +423,7 @@ input[type="checkbox"]{
 #profileActivate:checked + .profileContainer{
   opacity: 1;
   right: 0;
-}
+} 
 
 .logout:hover{
   color: var(--light-color);
@@ -565,24 +565,124 @@ aside{
   color: var(--light-color);
 }
 
+.floating{
+  position: fixed;
+  width: 20rem;
+  height: 7rem;
+  z-index: 9999999;
+  border-radius: 2rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: rgba(21, 3, 59, 0.8);
+  border: 0.1rem solid var(--dark-color);
+  border-bottom: none;
+  bottom: 0;
+  transform: translate(340%, 20%);
+  transition: transform 0.3s ease, border-radius 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.floating:hover{
+  transform: translate(340%, 0%);
+  border-color: white;
+}
 .plus:target{
   position: absolute;
   background-color: var(--dark-color);
   transform: translateY(-50%);
 }
 
+.plus{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  transform: translateY(15%);
+  transition: 0.3s ease; 
+}
+
+#toggleplus:checked ~ .floating .createPost{ 
+  display: flex;
+  margin-top: 1.25rem;
+}
+
+#toggleplus:checked ~ .floating{ 
+  border-radius: 0.8rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  transition: transform 0s;
+  transform: translate(340%, 0%);
+}
+#toggleplus:checked ~ .floating .plus i{ 
+  rotate: 0deg;
+}
+#toggleplus:checked ~ .floating .plus { 
+  z-index: 99999999;
+  border-radius: 50%;
+  position: absolute;
+  transition: transform 0.5s ease-in-out, rotate 1s ease;
+  scale: 0.6;
+  transform: translate(-40%, -45%);
+}
+
+#toggleplus:checked ~ .floating:hover .createPost .uploadLabel i,
+#toggleplus:checked ~ .floating:hover .createPost .categoryInput i,
+#toggleplus:checked ~ .floating:hover .createPost .submitLabel i{
+  color: white;
+}
+
+#toggleplus:checked ~ .floating:hover .createPost input[type="text"]{
+  border-bottom: 1px solid white;
+}
+
+#toggleplus:checked ~ .floating .plus p{
+  display: none;
+}
+
+.plus p{
+  font-size: 0.8rem;
+  color: var(--light-color);
+  opacity: 1;
+  transform: translateY(-20%);
+  transition: opacity 0.3s ease 0.5s;
+} 
+
+.plus i{
+  cursor: pointer;
+  font-size: 40px;
+  rotate: 45deg;
+  padding: 5px;
+  color: var(--light-color);
+  border-radius: 50%;
+  transform: scale(0.9); 
+  transition: transform 0.3s ease 0.6s, color 0.3s ease, rotate 0.6s ease; 
+}
+
+.floating:hover .plus i{
+  color: white;
+  rotate: 405deg; 
+}
+
+.floating:hover .plus p{
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.floating:hover .plus{
+  transform: translateY(30%);
+}
+
 .createPost{
   width: 20rem;
-  display: flex;
+  display: none;
   flex-direction: column;
   border-radius: 5px;
-  position: relative;
-  justify-content: center;
-  padding: 5px;
+  align-items: center;
+  height: 6rem;
 }
 
 .createPost input{
-  background-color: var(--dark-color);
   border: none;
   color: white;
   outline: none;
@@ -592,11 +692,11 @@ aside{
 .createPost input[type="text"]{
   margin-top: 5px;
   padding: 15px;
-  width: 18rem;
-  background-color: #2a255fbf;
+  width: 17rem;
+  background-color: #2a255f9e;
 }
 
-.createPost input[type="text"]:focus ~ .launchSp .submitLabel i{
+.floating:hover .createPost .launchSp .submitLabel i{
   animation: preLaunch 1.2s ease-in-out infinite;
 }
 
@@ -617,6 +717,7 @@ input[type="file"]{
 }
 
 .uploadLabel i{
+  color: var(--light-color);
   transition: 0.3s ease;
 }
 
@@ -630,7 +731,8 @@ input[type="file"]{
 
 .launchSp{
   position: relative;
-  padding: 10px;
+  margin-bottom: 1rem;
+  padding: 5px;
   padding-left: 0;
   width: 100%;
   display: flex;
@@ -645,6 +747,7 @@ input[type="file"]{
 .submitLabel{
   transition: 0.3s ease;
   scale: 0.8;
+  color: var(--light-color);
 }
 
 .submitLabel:hover{
@@ -676,9 +779,6 @@ input[type="file"]{
   cursor: pointer;
   font-size: 1.9rem;
   transition: 0.3s ease;
-}
-
-.categoryInput i:hover{
   color: var(--light-color);
 }
 
@@ -784,38 +884,26 @@ input[type="checkbox"] {
 
 .catExpansionContainer {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   background-color: var(--darker-color);
-  flex-direction: column;
-  text-align: center;
-  width: 99%;
-  height: 50rem;
+  width: 12rem;
+  height: 2rem;
   border-radius: 10px;
+  margin-left: 0.1rem;
+  padding-left: 1rem;
+  align-items: center;
   transition: 0.5s ease-in-out;
-  transform: translate(0.4%, 6.01%);
-}
-
-.catExpansionContainer .catTitle{
-  padding: 10px;
-  background-color: var(--darker-color);
-  display: flex;
-  justify-content: center;
-  width: 95%;
-  border-radius: 10px;
-} 
-
-.catExpansionContainer .catT{
-  font-size: 1rem;
-  background-color: #2a255fbf;
-  border-radius: 10px;
-  padding: 5px;
-  width: 80%;
+  transform: translateX(-30%);
 }
 
 #toggleCatExpansion:checked ~ .catExpansionContainer {
-  display: block;
+  display: flex;
   animation: opacityAnimation 0.3s ease;
+}
+
+#toggleCatExpansion:checked ~ .categoryInput i{
+  color: white;
 }
 
 @keyframes opacityAnimation {
@@ -837,37 +925,59 @@ input[type="checkbox"] {
 .checkboxItem label {
   cursor: pointer;
   display: flex;
-  align-items: center;
-  padding: 12px 18px;
-  margin-left: 5px;
   transition: all 0.3s ease;
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   border-radius: 15px;
   color: var(--light-color);
-  scale: 0.9;
+  scale: 0.6;
 }
 
 .checkboxItem label i {
-  margin-right: 8px;
+  margin-right: 5px;
 }
 
 .checkboxItem input[type="checkbox"]:checked + label {
   color: white;
-  scale: 1;
+  scale: 0.8;
 }
 
-.checkboxItem input[type="checkbox"]:checked + label i {
-  color: white;
-  scale: 1;
-}
 .checkboxItem input[type="checkbox"]:hover + label {
-  background-color: #2a255fbf;
   color: white;
-  scale: 1;
+  scale: 0.8;
+}
+
+.checkboxItem label {
+  position: relative;
+}
+
+.checkboxItem label .tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark-color);
+  color: var(--light-color);
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  display: none;
+  opacity: 0; 
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out; 
+}
+
+.checkboxItem label:hover .tooltip{
+  color: white;
+}
+
+#toggleCatExpansion:checked ~ .catExpansionContainer .checkboxItem:hover .tooltip {
+  display: block;
+  opacity: 1;
 }
 
 #PostComments{
-  /* display: none; */
+  display: none;
   position: absolute;
   width: 600px;
   height: 700px;

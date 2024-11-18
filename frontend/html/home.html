@@ -32,26 +32,40 @@
                 <div class="logout" title="Logout"><i class='bx bx-log-out'></i></div>
             </a>
             <div class="title">
-                <p>STELLAR &nbsp F<i class='bx bxs-planet'></i>RUM</p>
+                <a href="/">
+                    <p>STELLAR &nbsp F<i class='bx bxs-planet'></i>RUM</p>
+                </a>
             </div>
             <label for="profileActivate" class="something"><i class='bx bx-user' title="View Profile"></i></label>
             <input type="checkbox" id="profileActivate" hidden>
             <div class="profileContainer">
                 <div class="profileHeader">
-                <form action="profilePicture" method="post">
-                    <label for="chooseProfilePicture">
-                        <!-- <img class="profilePic" src="../../images/moataz.jpg" alt="User Picture"> -->
-                         <i class='bx bxs-user-circle profilePic'></i>
-                        <p class="editPP">Edit Picture</p>
-                    </label>
-                    <input type="file" name="profilePicture" id="chooseProfilePicture" accept="image/*" required>
-                    <input type="submit" value="Upload" class="uploadPP">
-                </form>
+                    <form action="profilePicture" method="post">
+                        <label for="chooseProfilePicture">
+                            <!-- <img class="profilePic" src="../../images/moataz.jpg" alt="User Picture"> -->
+                            <i class='bx bxs-user-circle profilePic'></i>
+                            <p class="editPP">Edit Picture</p>
+                        </label>
+                        <input type="file" name="profilePicture" id="chooseProfilePicture" accept="image/*" required>
+                        <input type="submit" value="Upload" class="uploadPP">
+                    </form>
                 </div>
                 <div class="profileFilter">
-                    <a href=""><div class="filter"><p>Created Posts</p></div></a>
-                    <a href=""><div class="filter"><p>Liked Posts</p></div></a>
-                    <a href=""><div class="filter"><p>Disliked Posts</p></div></a>
+                    <a href="">
+                        <div class="filter">
+                            <p>Created Posts</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div class="filter">
+                            <p>Liked Posts</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div class="filter">
+                            <p>Disliked Posts</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -100,370 +114,441 @@
         </nav>
 
         <div class="spacing">
-        <div class="mainContainer">
-            <div class="combinedside">
-                <div class="plus"><i class='bx bx-plus'></i></div>
-                <form action="createpost" method="post">
-                    <div class="createPost">
-                        <input type="text" name="postText" placeholder="Launch a new post..." autocomplete="off"
-                            maxlength="300" required>
-                        <div class="launchSp">
-                            <input type="checkbox" id="toggleCatExpansion" class="toggleCatExpansion"/>
-                            <label for="toggleCatExpansion" class="categoryInput">
-                                <i class='bx bx-category'></i>
+            <div class="mainContainer">
+                <div class="combinedside">
+                    <input type="checkbox" id="toggleplus" hidden />
+                    <div class="floating">
+                        <div class="plus">
+                            <label for="toggleplus" class="pluslabel">
+                                <i class='bx bxs-x-circle'></i>
+                                <p>Create Post</p>
                             </label>
-                            <div class="catExpansionContainer">
-                                <div class="catTitle">
-                                    <div class="catT">Choose Categories</div>
+                        </div>
+                        <div class="createPost">
+                            <form action="createpost" method="post">
+                                <input type="text" name="postText" placeholder="Launch a new post..." autocomplete="off"
+                                    maxlength="300" required>
+                                <div class="launchSp">
+                                    <input type="checkbox" id="toggleCatExpansion" class="toggleCatExpansion" />
+                                    <label for="toggleCatExpansion" class="categoryInput" title="Choose Categories">
+                                        <i class='bx bx-category'></i>
+                                    </label>
+                                    <div class="catExpansionContainer">
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="memesCheck" name="catInputs" value="Memes">
+                                            <label for="memesCheck"><i class='bx bx-laugh'></i><span
+                                                    class="tooltip">Memes</span></label>
+                                        </div>
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="gamingCheck" name="catInputs" value="Gaming">
+                                            <label for="gamingCheck"><i class='bx bx-joystick'></i><span
+                                                    class="tooltip">Gaming</span></label>
+                                        </div>
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="educationCheck" name="catInputs"
+                                                value="Education">
+                                            <label for="educationCheck"><i class='bx bx-book-alt'></i><span
+                                                    class="tooltip">Education</span></label>
+                                        </div>
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="techCheck" name="catInputs" value="Technology">
+                                            <label for="techCheck"><i class='bx bx-microchip'></i><span
+                                                    class="tooltip">Technology</span></label>
+                                        </div>
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="sciCheck" name="catInputs" value="Science">
+                                            <label for="sciCheck"><i class='bx bxs-flask'></i><span
+                                                    class="tooltip">Science</span></label>
+                                        </div>
+                                        <div class="checkboxItem">
+                                            <input type="checkbox" id="sportCheck" name="catInputs" value="Sports">
+                                            <label for="sportCheck"><i class='bx bx-basketball'></i><span
+                                                    class="tooltip">Sports</span></label>
+                                        </div>
+                                    </div>
+                                    <label for="imageUpload" class="uploadLabel" title="Upload Image">
+                                        <i class='bx bx-image-add icon'></i>
+                                    </label>
+                                    <input type="file" id="imageUpload" class="imageUpload" name="postImage">
+                                    <label for="submitBtn" class="submitLabel">
+                                        <i class='bx bx-rocket' title="Launch"></i>
+                                    </label>
+                                    <input type="submit" id="submitBtn" hidden>
                                 </div>
-                                <div class="catMain">
-                                    <div class="checkboxItem">
-                                        <input type="checkbox" id="memesCheck" name="catInputs" value="Memes">
-                                        <label for="memesCheck"><i class='bx bx-laugh'></i>Memes</label>
-                                      </div>
-                                      <div class="checkboxItem">
-                                        <input type="checkbox" id="gamingCheck" name="catInputs" value="Gaming">
-                                        <label for="gamingCheck"><i class='bx bx-joystick'></i>Gaming</label>
-                                      </div>
-                                      <div class="checkboxItem">
-                                        <input type="checkbox" id="educationCheck" name="catInputs" value="Education">
-                                        <label for="educationCheck"><i class='bx bx-book-alt'></i>Education</label>
-                                      </div>
-                                      <div class="checkboxItem">
-                                        <input type="checkbox" id="techCheck" name="catInputs" value="Technology">
-                                        <label for="techCheck"><i class='bx bx-microchip'></i>Technology</label>
-                                      </div>
-                                      <div class="checkboxItem">
-                                        <input type="checkbox" id="sciCheck" name="catInputs" value="Science">
-                                        <label for="sciCheck"><i class='bx bxs-flask'></i>Science</label>
-                                      </div>
-                                      <div class="checkboxItem">
-                                        <input type="checkbox" id="sportCheck" name="catInputs" value="Sports">
-                                        <label for="sportCheck"><i class='bx bx-basketball'></i>Sports</label>
-                                      </div>
-                                </div>
-                            </div>                            
-                            <label for="imageUpload" class="uploadLabel" title="Upload Image">
-                                <i class='bx bx-image-add icon'></i>
-                            </label>
-                            <input type="file" id="imageUpload" class="imageUpload" name="postImage">
-                            <label for="submitBtn" class="submitLabel">
-                                <i class='bx bx-rocket' title="Launch"></i>
-                            </label>
-                            <input type="submit" id="submitBtn" hidden>
+                            </form>
                         </div>
                     </div>
-                </form>
-                <aside class="spaceNews">
-                    <div class="newsTitle"><p class="newsT">Space News</p></div>
-                    <div class="newsContainer">
-                    <div class="newsContent">
-                        <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/" target="_blank">
-                            <div class="newsItem">
-                                <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
-                                <img src="../../images/news1.webp" alt="Apollo 12">
+                    <aside class="spaceNews">
+                        <div class="newsTitle">
+                            <p class="newsT">Space News</p>
+                        </div>
+                        <div class="newsContainer">
+                            <div class="newsContent">
+                                <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
+                                        <img src="../../images/news1.webp" alt="Apollo 12">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.
+                                        </p>
+                                        <img src="../../images/news2.webp" alt="Debate">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
+                                        <img src="../../images/news3.jpg" alt="Andromeda Star">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life
+                                            Exist?</p>
+                                        <img src="../../images/news4.webp" alt="Mars Discovery">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be
+                                            Real!</p>
+                                        <img src="../../images/news5.webp" alt="Mirror Universe">
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/" target="_blank">
-                            <div class="newsItem">
-                                <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.</p>
-                                <img src="../../images/news2.webp" alt="Debate">
+                            <!-- Duplicate content for seamless scrolling -->
+                            <div class="newsContent">
+                                <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
+                                        <img src="../../images/news1.webp" alt="Apollo 12">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.
+                                        </p>
+                                        <img src="../../images/news2.webp" alt="Debate">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
+                                        <img src="../../images/news3.jpg" alt="Andromeda Star">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life
+                                            Exist?</p>
+                                        <img src="../../images/news4.webp" alt="Mars Discovery">
+                                    </div>
+                                </a>
+                                <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/"
+                                    target="_blank">
+                                    <div class="newsItem">
+                                        <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be
+                                            Real!</p>
+                                        <img src="../../images/news5.webp" alt="Mirror Universe">
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/" target="_blank">
-                            <div class="newsItem">
-                                <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
-                                <img src="../../images/news3.jpg" alt="Andromeda Star">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/" target="_blank">
-                            <div class="newsItem">
-                                <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life Exist?</p>
-                                <img src="../../images/news4.webp" alt="Mars Discovery">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/" target="_blank">
-                            <div class="newsItem">
-                                <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be Real!</p>
-                                <img src="../../images/news5.webp" alt="Mirror Universe">
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Duplicate content for seamless scrolling -->
-                    <div class="newsContent">
-                        <a href="https://nasaspacenews.com/2024/11/are-black-holes-secretly-powering-the-expansion-of-the-universe/" target="_blank">
-                            <div class="newsItem">
-                                <p>Are Black Holes Secretly Powering the Expansion of the Universe?</p>
-                                <img src="../../images/news1.webp" alt="Apollo 12">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/could-life-thrive-better-in-a-different-universe-new-findings-spark-debate/" target="_blank">
-                            <div class="newsItem">
-                                <p>Could Life Thrive Better in a Different Universe? New Findings Spark Debate.</p>
-                                <img src="../../images/news2.webp" alt="Debate">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/incredible-space-event-andromeda-star-goes-dark-becoming-a-black-hole/" target="_blank">
-                            <div class="newsItem">
-                                <p>Incredible Space Event! Andromeda Star Goes Dark, Becoming a Black Hole.</p>
-                                <img src="../../images/news3.jpg" alt="Andromeda Star">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/new-discoveries-suggest-mars-was-habitable-for-millions-of-years-did-life-exist/" target="_blank">
-                            <div class="newsItem">
-                                <p>New Discoveries Suggest Mars Was Habitable for Millions of Years—Did Life Exist?</p>
-                                <img src="../../images/news4.webp" alt="Mars Discovery">
-                            </div>
-                        </a>
-                        <a href="https://nasaspacenews.com/2024/11/a-mirror-universe-that-moves-backward-in-time-scientists-say-it-could-be-real/" target="_blank">
-                            <div class="newsItem">
-                                <p>A Mirror Universe That Moves Backward in Time? Scientists Say It Could Be Real!</p>
-                                <img src="../../images/news5.webp" alt="Mirror Universe">
-                            </div>
-                        </a>
-                    </div>
-                    </div>
-                </aside>
-            </div>
+                        </div>
+                    </aside>
+                </div>
 
-            <!-- Main content with posts -->
-            <main>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp 11 Sep 2024</span></p>
-                            </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <img src="../../images/cat.jpg" class="image" alt="Content">
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <a href="#PostComments">
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i><p>5</p>
+                <!-- Main content with posts -->
+                <main>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp 11 Sep
+                                            2024</span></p>
                                 </div>
-                            </a>
-                            <!-- Comments end up here in post pop up -->
+                            </div>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <img src="../../images/cat.jpg" class="image" alt="Content">
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <a href="#PostComments">
+                                    <div class="commentsCon">
+                                        <i class='bx bx-comment comments'></i>
+                                        <p>5</p>
+                                    </div>
+                                </a>
+                                <!-- Comments end up here in post pop up -->
+                            </div>
+                        </div>
+                        <div id="PostComments">
+
                         </div>
                     </div>
-                    <div id="PostComments">
-                        
-                    </div>
-                </div>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
+                                            2024</span></p>
+                                </div>
                             </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <div class="commentsCon">
-                                <i class='bx bx-comment comments'></i><p>5</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
-                            </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i><p>5</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
-                            </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <img src="../../images/pp.jpg" class="image" alt="Content">
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i><p>5</p>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i>
+                                    <p>5</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
+                                            2024</span></p>
+                                </div>
                             </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <img src="../../images/cat.jpg" class="image" alt="Content">
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i><p>5</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="post">
-                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                    <div class="postContent">
-                        <div class="userDisplay">
-                            <div class="postHeader">
-                                <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
-                            </div>
-                        </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility. Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets. Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy to
-                            homes worldwide.</p>
-                        <img src="../../images/cat.jpg" class="image" alt="Content">
-                        <div class="updateInfo">
-                            <label for="likeCheckbox">
-                                <input type="checkbox" id="likeCheckbox" hidden>
-                                <a href="like" id="likeLink">
-                                    <div class="likesCon">
-                                        <i class='bx bx-like likes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <label for="dislikeCheckbox">
-                                <input type="checkbox" id="dislikeCheckbox" hidden>
-                                <a href="dislike" id="dislikeLink">
-                                    <div class="dislikesCon">
-                                        <i class='bx bx-dislike dislikes'></i><p>1</p>
-                                    </div>
-                                </a>
-                            </label>
-                            <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i><p>5</p>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i>
+                                    <p>5</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
+                                            2024</span></p>
+                                </div>
+                            </div>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <img src="../../images/pp.jpg" class="image" alt="Content">
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i>
+                                    <p>5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
+                                            2024</span></p>
+                                </div>
+                            </div>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <img src="../../images/cat.jpg" class="image" alt="Content">
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i>
+                                    <p>5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post">
+                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
+                                            2024</span></p>
+                                </div>
+                            </div>
+                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                                Domesticated
+                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                                Cats’
+                                sharp
+                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                                to
+                                homes worldwide.</p>
+                            <img src="../../images/cat.jpg" class="image" alt="Content">
+                            <div class="updateInfo">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <div class="commentsCon">
+                                    <i class='bx bx-comment comments'></i>
+                                    <p>5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
         </div>
     </div>
     </div>
-    </div>
 </body>
+
 </html>
