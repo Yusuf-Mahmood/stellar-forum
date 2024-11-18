@@ -26,7 +26,6 @@ body{
 
 *::-webkit-scrollbar {
   width: 10px;
-  border-radius: 10px;
 }
 
 *::-webkit-scrollbar-track {
@@ -36,7 +35,7 @@ body{
 
 *::-webkit-scrollbar-thumb {
   background-color: var(--dark-color);
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
@@ -450,7 +449,6 @@ input[type="checkbox"]{
 
 main{
   position: relative;
-  max-width: 1100px;
   padding-top: 10px;
   padding-bottom: 10px;
   gap: 0.5%;
@@ -464,7 +462,6 @@ main{
 aside{
   border-radius: 10px;
   overflow-y: hidden;
-  border-top: 1px solid var(--dark-color);
 }
 
 .post{
@@ -577,13 +574,13 @@ aside{
   border: 0.1rem solid var(--dark-color);
   border-bottom: none;
   bottom: 0;
-  transform: translate(340%, 20%);
+  transform: translate(345%, 20%);
   transition: transform 0.3s ease, border-radius 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .floating:hover{
-  transform: translate(340%, 0%);
+  transform: translate(345%, 0%);
   border-color: white;
 }
 .plus:target{
@@ -611,7 +608,7 @@ aside{
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   transition: transform 0s;
-  transform: translate(340%, 0%);
+  transform: translate(345%, 0%);
 }
 #toggleplus:checked ~ .floating .plus i{ 
   rotate: 0deg;
@@ -622,7 +619,7 @@ aside{
   position: absolute;
   transition: transform 0.5s ease-in-out, rotate 1s ease;
   scale: 0.6;
-  transform: translate(-40%, -45%);
+  transform: translate(-40%, -40%);
 }
 
 #toggleplus:checked ~ .floating:hover .createPost .uploadLabel i,
@@ -774,6 +771,7 @@ input[type="file"]{
   cursor: pointer;
   left: 1%;
   scale: 0.8;
+  z-index: 999999;
 }
 
 .categoryInput i{
@@ -951,7 +949,9 @@ input[type="checkbox"] {
   position: relative;
 }
 
-.checkboxItem label .tooltip {
+.checkboxItem label .tooltip,
+.categoryInput .tooltip,
+.uploadLabel .tooltip {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -968,11 +968,15 @@ input[type="checkbox"] {
   transition: opacity 0.2s ease-in-out; 
 }
 
-.checkboxItem label:hover .tooltip{
+.checkboxItem label:hover .tooltip,
+.categoryInput:hover .tooltip,
+.uploadLabel:hover .tooltip{
   color: white;
 }
 
-#toggleCatExpansion:checked ~ .catExpansionContainer .checkboxItem:hover .tooltip {
+#toggleCatExpansion:checked ~ .catExpansionContainer .checkboxItem:hover .tooltip,
+.categoryInput:hover .tooltip,
+.uploadLabel:hover .tooltip{
   display: block;
   opacity: 1;
 }
