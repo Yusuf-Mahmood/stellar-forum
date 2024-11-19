@@ -33,7 +33,6 @@ func InitDB() {
 		`CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
-            title TEXT NOT NULL,
             content TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id)
@@ -184,4 +183,62 @@ func DeleteSession(sessionToken string) error {
 
 	// Return any error encountered
 	return err
+}
+
+// CreatePostWithMedia inserts a new post along with its associated media files into the database.
+func CreatePostWithMedia(userID int, content string, mediaFiles []Media) (int, error) {
+	// Start a database transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return 0, err
+	}
+
+	// Ensure transaction is either committed or rolled back
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p) // Re-throw the panic after rollback
+		} else if err != nil {
+			tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	// Insert the post into the `posts` table
+	postStmt, err := tx.Prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)")
+	if err != nil {
+		return 0, err
+	}
+	defer postStmt.Close()
+
+	// Execute the post insertion
+	result, err := postStmt.Exec(userID, content)
+	if err != nil {
+		return 0, err
+	}
+
+	// Retrieve the newly created post ID
+	postID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	// Insert associated media files, if any
+	if len(mediaFiles) > 0 {
+		mediaStmt, err := tx.Prepare("INSERT INTO media (post_id, file_path, file_type) VALUES (?, ?, ?)")
+		if err != nil {
+			return 0, err
+		}
+		defer mediaStmt.Close()
+
+		for _, media := range mediaFiles {
+			_, err = mediaStmt.Exec(postID, media.FilePath, media.FileType)
+			if err != nil {
+				return 0, err
+			}
+		}
+	}
+
+	return int(postID), nil
 }
