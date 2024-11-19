@@ -242,3 +242,89 @@ func CreatePostWithMedia(userID int, content string, mediaFiles []Media) (int, e
 
 	return int(postID), nil
 }
+
+// AddOrUpdateLike adds a like or updates an existing one for a post or comment.
+func AddOrUpdateLike(userID, postID int, commentID *int, isLike bool) error {
+	// Check if the like already exists
+	var existingID int
+	query := "SELECT id FROM likes WHERE user_id = ? AND post_id = ? AND (comment_id = ? OR (comment_id IS NULL AND ? IS NULL))"
+	err := db.QueryRow(query, userID, postID, commentID, commentID).Scan(&existingID)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Insert a new like if none exists
+			stmt, err := db.Prepare("INSERT INTO likes (user_id, post_id, comment_id, is_like) VALUES (?, ?, ?, ?)")
+			if err != nil {
+				return err
+			}
+			defer stmt.Close()
+
+			_, err = stmt.Exec(userID, postID, commentID, isLike)
+			return err
+		}
+		return err
+	}
+
+	// Update the existing like
+	stmt, err := db.Prepare("UPDATE likes SET is_like = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(isLike, existingID)
+	return err
+}
+
+// CountLikes fetches the total likes and dislikes for a specific post or comment.
+func CountLikes(postID int, commentID *int) (likes int, dislikes int, err error) {
+	query := `
+        SELECT 
+            SUM(CASE WHEN is_like = 1 THEN 1 ELSE 0 END) AS likes,
+            SUM(CASE WHEN is_like = 0 THEN 1 ELSE 0 END) AS dislikes
+        FROM likes
+        WHERE post_id = ? AND (comment_id = ? OR (comment_id IS NULL AND ? IS NULL))
+    `
+
+	err = db.QueryRow(query, postID, commentID, commentID).Scan(&likes, &dislikes)
+	return
+}
+
+// FetchUserLikes retrieves all likes made by a user.
+func FetchUserLikes(userID int) ([]map[string]interface{}, error) {
+	rows, err := db.Query(`
+        SELECT 
+            l.id AS like_id, l.post_id, l.comment_id, l.is_like, p.content AS post_content, c.content AS comment_content
+        FROM likes l
+        LEFT JOIN posts p ON l.post_id = p.id
+        LEFT JOIN comments c ON l.comment_id = c.id
+        WHERE l.user_id = ?
+    `, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var likes []map[string]interface{}
+	for rows.Next() {
+		var likeID, postID, commentID sql.NullInt64
+		var isLike bool
+		var postContent, commentContent sql.NullString
+
+		err = rows.Scan(&likeID, &postID, &commentID, &isLike, &postContent, &commentContent)
+		if err != nil {
+			return nil, err
+		}
+
+		like := map[string]interface{}{
+			"like_id":         likeID.Int64,
+			"post_id":         postID.Int64,
+			"comment_id":      commentID.Int64,
+			"is_like":         isLike,
+			"post_content":    postContent.String,
+			"comment_content": commentContent.String,
+		}
+		likes = append(likes, like)
+	}
+	return likes, nil
+}
