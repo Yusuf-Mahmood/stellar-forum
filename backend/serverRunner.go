@@ -47,21 +47,20 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := r.Cookie("session_token")
-	if err != nil {
-		// Redirect to login if no session is found
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
-		return
-	}
-
 	if r.URL.Path != "/" {
 		http.Redirect(w, r, "/404", http.StatusFound)
 		return
 	}
 
 	// Render homepage if session is valid
-	t, err := template.ParseFiles("./frontend/html/home.html")
+	t, terr := template.ParseFiles("./frontend/html/home.html")
+
+	_, err := r.Cookie("session_token")
 	if err != nil {
+		// Redirect to Guest homepage if no session is found
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+	}
+	if terr != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
@@ -110,7 +109,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			renderRegisterPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
 			return
 		}
-		if secondpass!=password{
+		if secondpass != password {
 			renderRegisterPage(w, "Passwords do not match")
 			return
 		}
@@ -252,10 +251,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 // renderLoginPage renders the login page with an optional error message
 func renderLoginPage(w http.ResponseWriter, errorMessage string) {
 	data := struct {
-		ErrorMessage string
+		ErrorMessage    string
 		RegErrorMessage string
 	}{
-		ErrorMessage: errorMessage,
+		ErrorMessage:    errorMessage,
 		RegErrorMessage: "",
 	}
 
@@ -268,11 +267,11 @@ func renderLoginPage(w http.ResponseWriter, errorMessage string) {
 // renderLoginPage renders the login page with an optional error message
 func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
 	data := struct {
-		ErrorMessage string
+		ErrorMessage    string
 		RegErrorMessage string
 	}{
 		RegErrorMessage: errorMessage,
-		ErrorMessage: "",
+		ErrorMessage:    "",
 	}
 
 	err := templates.ExecuteTemplate(w, "authreg.html", data)
