@@ -996,3 +996,68 @@ input[type="checkbox"] {
 #PostComments:target{
   display: block;
 }
+
+@media screen and (max-width: 1440px) {
+  .mainContainer {
+    width: 80rem;
+    height: 75vh;
+  }
+
+  .spaceNews {
+    width: 20rem;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .mainContainer {
+    flex-direction: column;
+    width: 100%;
+
+  }
+
+  .combinedside {
+    padding-right: 0;
+    border-right: none;
+    width: 100%;
+  }
+
+  .spaceNews {
+    width: 100%;
+    height: auto;
+    display:none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .profileContainer {
+    width: 10rem;
+  }
+
+}
+
+
+body {
+  font-size: 1rem; /* Desktop default */
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 0.9rem; /* Slightly smaller text for tablets */
+  }
+}
+
+
+
+.mainContainer {
+  width: 90%;
+  max-width: 1200px;
+}
+
+.spaceNav {
+  width: 80%;
+}
+
+.post {
+  width: 100%;
+  max-width: 600px;
+}
