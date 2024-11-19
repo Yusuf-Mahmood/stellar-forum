@@ -78,12 +78,12 @@ html, body {
   }
   
   .bubble {
+    position: fixed;
     background: linear-gradient(#8080d7, #2a255f);
     border-radius: 50%;
     box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
-    position: absolute;
     z-index: 100;
-    opacity: 0.6;
+    opacity: 0.9;
   }
   .bubble:before, .bubble:after {
     content: "";

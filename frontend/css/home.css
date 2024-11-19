@@ -575,13 +575,12 @@ aside{
   border-bottom: none;
   bottom: 0;
   transform: translate(345%, 20%);
-  transition: transform 0.3s ease, border-radius 0.3s ease;
+  transition: transform 0.3s ease-in-out, border-radius 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .floating:hover{
   transform: translate(345%, 0%);
-  border-color: white;
 }
 .plus:target{
   position: absolute;
@@ -599,6 +598,7 @@ aside{
 }
 
 #toggleplus:checked ~ .floating .createPost{ 
+  transition: 0.5s ease;
   display: flex;
   margin-top: 1.25rem;
 }
@@ -607,29 +607,30 @@ aside{
   border-radius: 0.8rem;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  transition: transform 0s;
   transform: translate(345%, 0%);
+  transition: 1s ease;
 }
 #toggleplus:checked ~ .floating .plus i{ 
   rotate: 0deg;
+  color: var(--light-color);
+  transition: color 1s ease, transform 1s ease, rotate 0.5s ease;
+}
+#toggleplus:checked ~ .floating .plus i:hover{ 
+  color: white;
 }
 #toggleplus:checked ~ .floating .plus { 
   z-index: 99999999;
   border-radius: 50%;
   position: absolute;
-  transition: transform 0.5s ease-in-out, rotate 1s ease;
-  scale: 0.6;
   transform: translate(-40%, -40%);
+  transition: transform 1s ease, rotate 1s ease, scale 0.5s ease;
+  scale: 0.6;
 }
 
-#toggleplus:checked ~ .floating:hover .createPost .uploadLabel i,
-#toggleplus:checked ~ .floating:hover .createPost .categoryInput i,
-#toggleplus:checked ~ .floating:hover .createPost .submitLabel i{
+#toggleplus:checked ~ .floating .createPost .uploadLabel i:hover,
+#toggleplus:checked ~ .floating .createPost .categoryInput i:hover,
+#toggleplus:checked ~ .floating .createPost .submitLabel i:hover{
   color: white;
-}
-
-#toggleplus:checked ~ .floating:hover .createPost input[type="text"]{
-  border-bottom: 1px solid white;
 }
 
 #toggleplus:checked ~ .floating .plus p{
@@ -658,7 +659,7 @@ aside{
 .floating:hover .plus i{
   color: white;
   rotate: 405deg; 
-  scale: 1.2;
+  /* scale: 1.2; */
 }
 
 .floating:hover .plus p{
@@ -892,8 +893,8 @@ input[type="checkbox"] {
   margin-left: 0.1rem;
   padding-left: 1rem;
   align-items: center;
-  transition: 0.5s ease-in-out;
   transform: translateX(-30%);
+  transition: 0.5s ease;
 }
 
 #toggleCatExpansion:checked ~ .catExpansionContainer {
@@ -965,7 +966,7 @@ input[type="checkbox"] {
   display: none;
   opacity: 0; 
   pointer-events: none;
-  transition: opacity 0.2s ease-in-out; 
+  transition: opacity 0.2s ease-in-out, transform 0.3s ease; 
 }
 
 .checkboxItem label:hover .tooltip,
