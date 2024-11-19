@@ -2,6 +2,7 @@ package root
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 
@@ -185,19 +186,33 @@ func DeleteSession(sessionToken string) error {
 	return err
 }
 
-// CreatePostWithMedia inserts a new post along with its associated media files into the database.
-func CreatePostWithMedia(userID int, content string, mediaFiles []Media) (int, error) {
-	// Start a database transaction
+// CreatePostWithValidation ensures the post has valid content and at least one category,
+// and then creates the post with associated categories and media files.
+func CreatePostWithValidation(userID int, content string, categoryIDs []int, mediaFiles []Media) (int, error) {
+	// Validate the content
+	if len(content) == 0 {
+		return 0, errors.New("content cannot be empty")
+	}
+	if len(content) > 300 {
+		return 0, errors.New("content must be less than or equal to 300 characters")
+	}
+
+	// Validate categories
+	if len(categoryIDs) == 0 {
+		return 0, errors.New("at least one category must be selected")
+	}
+
+	// Start a transaction
 	tx, err := db.Begin()
 	if err != nil {
 		return 0, err
 	}
 
-	// Ensure transaction is either committed or rolled back
+	// Rollback on failure
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
-			panic(p) // Re-throw the panic after rollback
+			panic(p)
 		} else if err != nil {
 			tx.Rollback()
 		} else {
@@ -212,19 +227,32 @@ func CreatePostWithMedia(userID int, content string, mediaFiles []Media) (int, e
 	}
 	defer postStmt.Close()
 
-	// Execute the post insertion
 	result, err := postStmt.Exec(userID, content)
 	if err != nil {
 		return 0, err
 	}
 
-	// Retrieve the newly created post ID
+	// Get the ID of the newly inserted post
 	postID, err := result.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
 
-	// Insert associated media files, if any
+	// Link the post to categories
+	categoryStmt, err := tx.Prepare("INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)")
+	if err != nil {
+		return 0, err
+	}
+	defer categoryStmt.Close()
+
+	for _, categoryID := range categoryIDs {
+		_, err = categoryStmt.Exec(postID, categoryID)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	// Insert associated media files
 	if len(mediaFiles) > 0 {
 		mediaStmt, err := tx.Prepare("INSERT INTO media (post_id, file_path, file_type) VALUES (?, ?, ?)")
 		if err != nil {
