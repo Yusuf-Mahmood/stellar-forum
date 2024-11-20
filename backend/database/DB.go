@@ -2,7 +2,6 @@ package root
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 
@@ -54,13 +53,13 @@ func InitDB() {
             name TEXT NOT NULL UNIQUE
         );`,
 
-		`CREATE TABLE IF NOT EXISTS post_categories (
-            post_id INTEGER NOT NULL,
-            category_id INTEGER NOT NULL,
-            PRIMARY KEY (post_id, category_id),
-            FOREIGN KEY (post_id) REFERENCES posts (id),
-            FOREIGN KEY (category_id) REFERENCES categories (id)
-        );`,
+		`CREATE TABLE post_categories (
+    	post_id INT NOT NULL,
+    	category_id INT NOT NULL,
+    	PRIMARY KEY (post_id, category_id),
+    	FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    	FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+		);`,
 
 		`CREATE TABLE IF NOT EXISTS likes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,6 +80,7 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (post_id) REFERENCES posts (id)
         );`,
+		`INSERT INTO categories (name) VALUES ('Gnrl'), ('Memes'), ('Gaming'), ('Education'), ('Technology'), ('Science'), ('Sports');`,
 	}
 
 	for _, query := range createTableQueries {
@@ -186,124 +186,6 @@ func DeleteSession(sessionToken string) error {
 	return err
 }
 
-// CreatePostWithValidation ensures the post has valid content and at least one category,
-// and then creates the post with associated categories and media files.
-func CreatePostWithValidation(userID int, content string, categoryIDs []int, mediaFiles []Media) (int, error) {
-	// Validate the content
-	if len(content) == 0 {
-		return 0, errors.New("content cannot be empty")
-	}
-	if len(content) > 300 {
-		return 0, errors.New("content must be less than or equal to 300 characters")
-	}
-
-	// Validate categories
-	if len(categoryIDs) == 0 {
-		return 0, errors.New("at least one category must be selected")
-	}
-
-	// Start a transaction
-	tx, err := db.Begin()
-	if err != nil {
-		return 0, err
-	}
-
-	// Rollback on failure
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p)
-		} else if err != nil {
-			tx.Rollback()
-		} else {
-			err = tx.Commit()
-		}
-	}()
-
-	// Insert the post into the `posts` table
-	postStmt, err := tx.Prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)")
-	if err != nil {
-		return 0, err
-	}
-	defer postStmt.Close()
-
-	result, err := postStmt.Exec(userID, content)
-	if err != nil {
-		return 0, err
-	}
-
-	// Get the ID of the newly inserted post
-	postID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	// Link the post to categories
-	categoryStmt, err := tx.Prepare("INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)")
-	if err != nil {
-		return 0, err
-	}
-	defer categoryStmt.Close()
-
-	for _, categoryID := range categoryIDs {
-		_, err = categoryStmt.Exec(postID, categoryID)
-		if err != nil {
-			return 0, err
-		}
-	}
-
-	// Insert associated media files
-	if len(mediaFiles) > 0 {
-		mediaStmt, err := tx.Prepare("INSERT INTO media (post_id, file_path, file_type) VALUES (?, ?, ?)")
-		if err != nil {
-			return 0, err
-		}
-		defer mediaStmt.Close()
-
-		for _, media := range mediaFiles {
-			_, err = mediaStmt.Exec(postID, media.FilePath, media.FileType)
-			if err != nil {
-				return 0, err
-			}
-		}
-	}
-
-	return int(postID), nil
-}
-
-// AddOrUpdateLike adds a like or updates an existing one for a post or comment.
-func AddOrUpdateLike(userID, postID int, commentID *int, isLike bool) error {
-	// Check if the like already exists
-	var existingID int
-	query := "SELECT id FROM likes WHERE user_id = ? AND post_id = ? AND (comment_id = ? OR (comment_id IS NULL AND ? IS NULL))"
-	err := db.QueryRow(query, userID, postID, commentID, commentID).Scan(&existingID)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// Insert a new like if none exists
-			stmt, err := db.Prepare("INSERT INTO likes (user_id, post_id, comment_id, is_like) VALUES (?, ?, ?, ?)")
-			if err != nil {
-				return err
-			}
-			defer stmt.Close()
-
-			_, err = stmt.Exec(userID, postID, commentID, isLike)
-			return err
-		}
-		return err
-	}
-
-	// Update the existing like
-	stmt, err := db.Prepare("UPDATE likes SET is_like = ? WHERE id = ?")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(isLike, existingID)
-	return err
-}
-
 // CountLikes fetches the total likes and dislikes for a specific post or comment.
 func CountLikes(postID int, commentID *int) (likes int, dislikes int, err error) {
 	query := `
@@ -355,4 +237,48 @@ func FetchUserLikes(userID int) ([]map[string]interface{}, error) {
 		likes = append(likes, like)
 	}
 	return likes, nil
+}
+
+// InsertPost inserts a new post into the database
+func InsertPost(userID int, content string) (int64, error) {
+	stmt, err := db.Prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)")
+	if err != nil {
+		return 0, err
+	}
+	res, err := stmt.Exec(userID, content)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
+// FetchUserIDBySessionToken retrieves the user ID for a given session token
+func FetchUserIDBySessionToken(sessionToken string) (int, error) {
+	var userID int
+	err := db.QueryRow("SELECT id FROM users WHERE cookies = ?", sessionToken).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+// GetOrCreateCategory returns the category ID for a given name, creating it if necessary.
+func GetOrCreateCategory(name string) (int, error) {
+	var categoryID int
+	err := db.QueryRow("SELECT id FROM categories WHERE name = ?", name).Scan(&categoryID)
+	if err == sql.ErrNoRows {
+		gnrl := "Gnrl"
+		err := db.QueryRow("SELECT id FROM categories WHERE name = ?", gnrl).Scan(&categoryID)
+		if err != nil {
+			return 0, err
+		}
+		return categoryID, err
+	}
+	return categoryID, err
+}
+
+// AssociatePostWithCategory creates an association between a post and a category.
+func AssociatePostWithCategory(postID int64, categoryID int) error {
+	_, err := db.Exec("INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)", postID, categoryID)
+	return err
 }

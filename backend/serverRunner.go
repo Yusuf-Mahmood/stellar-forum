@@ -16,11 +16,12 @@ import (
 )
 
 func ServerRunner() {
-	http.HandleFunc("/", RootHandler)                  // Home page
-	http.HandleFunc("/auth", Auth)                     // Authentication page
-	http.HandleFunc("/register", Register)             // Registration form
-	http.HandleFunc("/login", Login)                   // Login form
-	http.HandleFunc("/logout", Logout)                 // Logout
+	http.HandleFunc("/", RootHandler)      // Home page
+	http.HandleFunc("/auth", Auth)         // Authentication page
+	http.HandleFunc("/register", Register) // Registration form
+	http.HandleFunc("/login", Login)       // Login form
+	http.HandleFunc("/logout", Logout)     // Logout
+	http.HandleFunc("/createpost", CreatePost)
 	http.HandleFunc("/auth/google", handleGoogleLogin) // Google login
 	http.HandleFunc("/auth/callback", handleGoogleCallback)
 	http.HandleFunc("/auth/github", handleGitHubLogin) // GitHub login
@@ -371,3 +372,58 @@ func UploadMedia(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "File uploaded successfully")
 }
+
+func CreatePost(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    err := r.ParseMultipartForm(10 << 20) // Max 10 MB
+    if err != nil {
+        http.Error(w, "Invalid form data", http.StatusBadRequest)
+        return
+    }
+
+    content := strings.TrimSpace(r.FormValue("content"))
+    if content == "" {
+        http.Error(w, "Post content cannot be empty", http.StatusBadRequest)
+        return
+    }
+
+    categories := r.Form["categories"] // Extract selected categories
+
+    cookie, err := r.Cookie("session_token")
+    if err != nil || cookie.Value == "" {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+	    userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+    if err != nil {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+    postID, err := database.InsertPost(userID, content)
+    if err != nil {
+        http.Error(w, "Failed to create post", http.StatusInternalServerError)
+        return
+    }
+
+    for _, category := range categories {
+        categoryID, err := database.GetOrCreateCategory(category)
+        if err != nil {
+            http.Error(w, "Failed to process category: "+category, http.StatusInternalServerError)
+            return
+        }
+        err = database.AssociatePostWithCategory(postID, categoryID)
+        if err != nil {
+            http.Error(w, "Failed to associate category: "+category, http.StatusInternalServerError)
+            return
+        }
+    }
+
+    http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
