@@ -823,7 +823,7 @@ input[type="file"]{
 .ppContent{
   box-shadow: 0 0 10px var(--dark-color);
   background-color: black;
-  width: 15rem;
+  width: 3rem;
   margin-left: 10px;
   margin-top: 10px;
   object-fit: contain;
