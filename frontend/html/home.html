@@ -114,6 +114,76 @@
         </nav>
 
         <div class="spacing">
+            <div id="CommentSection">
+                <div id="home"></div>
+                <div class="postCommentHeader">
+                    <a href="#home"><i class='bx bx-x'></i></a>
+                </div>
+                <div class="post2">
+                    <div class="postContent">
+                        <div class="userDisplay">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <div class="postHeader">
+                                <p class="nameCommentContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp 11 Sep 2024</span></p>
+                            </div>
+                        </div>
+                        <p class="textContent">Cats are beloved for their charm, independence, and agility.
+                            Domesticated
+                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
+                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
+                            Cats’
+                            sharp
+                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
+                            to
+                            homes worldwide.
+                        </p>
+                        <img src="../../images/cat.jpg" class="image" alt="Content">
+                        <div class="updateInfo">
+                            <div class="combinedlikeDis">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="like" id="likeLink">
+                                        <div class="likesCon">
+                                            <i class='bx bx-like likes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="dislike" id="dislikeLink">
+                                        <div class="dislikesCon">
+                                            <i class='bx bx-dislike dislikes'></i>
+                                            <p>1</p>
+                                        </div>
+                                    </a>
+                                </label>
+                            </div>
+                            <a href="#home">
+                                <div class="commentsCon">
+                                    <i class='bx bxs-comment comments'></i>
+                                    <p>5</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <form action="comment" method="post">
+                        <div class="inputComment">
+                            <input type="text" name="commentInput" placeholder="Launch a new comment..." title="" maxlength="366" required>
+                            <label for="submitBtn" class="submitCommentLabel">
+                                <i class='bx bx-rocket'></i>
+                            </label>
+                            <input type="submit" id="submitBtn" hidden>
+                        </div>
+                    </form>
+                </div>
+                <div class="otherComments">
+                    <div class="comment">Cute ahh cat fr</div>
+                    <div class="comment">I want this cat please I need it.</div>
+                    <div class="comment">The comment above me is delusional and I am schizophrenic talking to myself rn.</div>
+                </div>
+            </div>
+            <a href="#home" class="pcAnchor"></a>   
             <div class="mainContainer">
                 <div class="combinedside">
                     <input type="checkbox" id="toggleplus" hidden />
@@ -127,7 +197,7 @@
                         <div class="createPost">
                             <form action="createpost" method="post">
                                 <input type="text" name="postText" placeholder="Launch a new post..." autocomplete="off"
-                                    maxlength="300" required>
+                                    maxlength="300" title="" required>
                                 <div class="launchSp">
                                     <input type="checkbox" id="toggleCatExpansion" class="toggleCatExpansion" />
                                     <label for="toggleCatExpansion" class="categoryInput">
@@ -173,7 +243,7 @@
                                     </label>
                                     <input type="file" id="imageUpload" class="imageUpload" name="postImage">
                                     <label for="submitBtn" class="submitLabel">
-                                        <i class='bx bx-rocket' title="Launch"></i>
+                                        <i class='bx bx-rocket'></i>
                                     </label>
                                     <input type="submit" id="submitBtn" hidden>
                                 </div>
@@ -292,35 +362,33 @@
                                 homes worldwide.</p>
                             <img src="../../images/cat.jpg" class="image" alt="Content">
                             <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <a href="#PostComments">
+                                <div class="combinedlikeDis">
+                                    <label for="likeCheckbox">
+                                        <input type="checkbox" id="likeCheckbox" hidden>
+                                        <a href="like" id="likeLink">
+                                            <div class="likesCon">
+                                                <i class='bx bx-like likes'></i>
+                                                <p>1</p>
+                                            </div>
+                                        </a>
+                                    </label>
+                                    <label for="dislikeCheckbox">
+                                        <input type="checkbox" id="dislikeCheckbox" hidden>
+                                        <a href="dislike" id="dislikeLink">
+                                            <div class="dislikesCon">
+                                                <i class='bx bx-dislike dislikes'></i>
+                                                <p>1</p>
+                                            </div>
+                                        </a>
+                                    </label>
+                                </div>
+                                <a href="#CommentSection">
                                     <div class="commentsCon">
                                         <i class='bx bx-comment comments'></i>
                                         <p>5</p>
                                     </div>
                                 </a>
-                                <!-- Comments end up here in post pop up -->
                             </div>
-                        </div>
-                        <div id="PostComments">
-
                         </div>
                     </div>
                     <div class="post">
@@ -328,8 +396,7 @@
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
                                 </div>
                             </div>
                             <p class="textContent">Cats are beloved for their charm, independence, and agility.
@@ -372,8 +439,7 @@
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
+                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep 2024</span></p>
                                 </div>
                             </div>
                             <p class="textContent">Cats are beloved for their charm, independence, and agility.
