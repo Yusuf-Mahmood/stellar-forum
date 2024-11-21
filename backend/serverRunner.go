@@ -65,7 +65,14 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	err2 := t.Execute(w, nil)
+	
+	posts, err := database.FetchPosts()
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+
+	err2 := t.Execute(w, posts)
 	if err2 != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
@@ -311,119 +318,102 @@ func InternalServerError(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UploadMedia(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Parse the form data with a max upload size of 10 MB
-	err := r.ParseMultipartForm(10 << 20)
-	if err != nil {
-		http.Error(w, "File too large", http.StatusBadRequest)
-		return
-	}
-
-	// Retrieve the file from form data
-	file, handler, err := r.FormFile("media")
-	if err != nil {
-		http.Error(w, "Unable to retrieve file", http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
-	// Create the uploads directory if it doesn't exist
-	uploadDir := "./uploads"
-	os.MkdirAll(uploadDir, os.ModePerm)
-
-	// Create a unique file name and save the file
-	fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), handler.Filename)
-	filePath := filepath.Join(uploadDir, fileName)
-
-	dst, err := os.Create(filePath)
-	if err != nil {
-		http.Error(w, "Failed to save file", http.StatusInternalServerError)
-		return
-	}
-	defer dst.Close()
-
-	_, err = io.Copy(dst, file)
-	if err != nil {
-		http.Error(w, "Failed to save file", http.StatusInternalServerError)
-		return
-	}
-
-	// Determine file type (image or video) based on file extension
-	fileType := "image"
-	ext := filepath.Ext(handler.Filename)
-	if ext == ".mp4" || ext == ".mov" || ext == ".avi" {
-		fileType = "video"
-	}
-
-	// Save media file details in the database
-	postID := r.FormValue("post_id") // Ensure post_id is provided in the form data
-	err = database.InsertMedia(postID, filePath, fileType)
-	if err != nil {
-		http.Error(w, "Error saving media details", http.StatusInternalServerError)
-		return
-	}
-
-	// Respond with success
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "File uploaded successfully")
-}
-
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-    err := r.ParseMultipartForm(10 << 20) // Max 10 MB
-    if err != nil {
-        http.Error(w, "Invalid form data", http.StatusBadRequest)
-        return
-    }
+	// err := r.ParseMultipartForm(10 << 20) // Max 10 MB
+	// if err != nil {
+	//     http.Error(w, "Invalid form data", http.StatusBadRequest)
+	//     return
+	// }
 
-    content := strings.TrimSpace(r.FormValue("content"))
-    if content == "" {
-        http.Error(w, "Post content cannot be empty", http.StatusBadRequest)
-        return
-    }
+	content := strings.TrimSpace(r.FormValue("postText"))
+	if content == "" || len(content) > 300 {
+		http.Error(w, "Post content cannot be empty or exceeded limits", http.StatusBadRequest)
+		return
+	}
 
-    categories := r.Form["categories"] // Extract selected categories
+	categories := r.Form["catInputs"] // Extract selected categories
 
-    cookie, err := r.Cookie("session_token")
-    if err != nil || cookie.Value == "" {
-        http.Error(w, "Unauthorized", http.StatusUnauthorized)
-        return
-    }
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-	    userID, err := database.FetchUserIDBySessionToken(cookie.Value)
-    if err != nil {
-        http.Error(w, "Unauthorized", http.StatusUnauthorized)
-        return
-    }
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-    postID, err := database.InsertPost(userID, content)
-    if err != nil {
-        http.Error(w, "Failed to create post", http.StatusInternalServerError)
-        return
-    }
+	postID, err := database.InsertPost(userID, content)
+	if err != nil {
+		http.Error(w, "Failed to create post", http.StatusInternalServerError)
+		return
+	}
+	if len(categories) > 0 {
+		for _, category := range categories {
+			categoryID, err := database.GetOrCreateCategory(category)
+			if err != nil {
+				http.Error(w, "Failed to process category: "+category, http.StatusInternalServerError)
+				return
+			}
+			err = database.AssociatePostWithCategory(postID, categoryID)
+			if err != nil {
+				http.Error(w, "Failed to associate category: "+category, http.StatusInternalServerError)
+				return
+			}
+		}
+	} else {
+		err = database.AssociatePostWithCategory(postID, 1)
+		if err != nil {
+			http.Error(w, "Failed to associate category: General", http.StatusInternalServerError)
+			return
+		}
+	}
+	// Handle media upload if present in the form
+	mediaFile, _, err := r.FormFile("postImage")
+	if err == nil {
+		// Create the uploads directory if it doesn't exist
+		uploadDir := "./uploads"
+		os.MkdirAll(uploadDir, os.ModePerm)
 
-    for _, category := range categories {
-        categoryID, err := database.GetOrCreateCategory(category)
-        if err != nil {
-            http.Error(w, "Failed to process category: "+category, http.StatusInternalServerError)
-            return
-        }
-        err = database.AssociatePostWithCategory(postID, categoryID)
-        if err != nil {
-            http.Error(w, "Failed to associate category: "+category, http.StatusInternalServerError)
-            return
-        }
-    }
+		// Create a unique file name and save the file
+		fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), r.FormValue("postImage"))
+		filePath := filepath.Join(uploadDir, fileName)
 
-    http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Save the uploaded file
+		dst, err := os.Create(filePath)
+		if err != nil {
+			http.Error(w, "Failed to save media file", http.StatusInternalServerError)
+			return
+		}
+		defer dst.Close()
+
+		_, err = io.Copy(dst, mediaFile)
+		if err != nil {
+			http.Error(w, "Failed to save media file", http.StatusInternalServerError)
+			return
+		}
+
+		// Determine file type (image or video) based on the file extension
+		fileType := "image"
+		ext := filepath.Ext(r.FormValue("postImage"))
+		if ext == ".mp4" || ext == ".mov" || ext == ".avi" {
+			fileType = "video"
+		}
+
+		// Save media details in the database
+		err = database.InsertMedia(postID, filePath, fileType)
+		if err != nil {
+			http.Error(w, "Error saving media details", http.StatusInternalServerError)
+			return
+		}
+	}
+	// Redirect to the homepage after successful post creation
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-

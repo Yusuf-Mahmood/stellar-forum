@@ -112,7 +112,7 @@ func setGoogleUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 	if !exists {
 		err = database.InsertUser(email, username, "")
 		if err != nil {
-			http.Error(w, "Error saving user to database", http.StatusInternalServerError)
+			http.Error(w, "Username already taken", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -258,7 +258,7 @@ func setGitHubUserInfo(w http.ResponseWriter, r *http.Request, accessToken strin
 	if !exists {
 		err = database.InsertUser(email, username, "")
 		if err != nil {
-			http.Error(w, "Error saving user to database", http.StatusInternalServerError)
+			http.Error(w, "Username already taken", http.StatusInternalServerError)
 			return
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -24,7 +25,7 @@ func InitDB() {
 		`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL,
+            username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             cookies TEXT
@@ -53,7 +54,7 @@ func InitDB() {
             name TEXT NOT NULL UNIQUE
         );`,
 
-		`CREATE TABLE post_categories (
+		`CREATE TABLE IF NOT EXISTS post_categories  (
     	post_id INT NOT NULL,
     	category_id INT NOT NULL,
     	PRIMARY KEY (post_id, category_id),
@@ -80,7 +81,7 @@ func InitDB() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (post_id) REFERENCES posts (id)
         );`,
-		`INSERT INTO categories (name) VALUES ('Gnrl'), ('Memes'), ('Gaming'), ('Education'), ('Technology'), ('Science'), ('Sports');`,
+		`INSERT OR IGNORE INTO categories (name) VALUES ('Gnrl'), ('Memes'), ('Gaming'), ('Education'), ('Technology'), ('Science'), ('Sports');`,
 	}
 
 	for _, query := range createTableQueries {
@@ -140,7 +141,7 @@ func CheckEmailExists(email string) (bool, error) {
 	return exists, err
 }
 
-func InsertMedia(postID, filePath, fileType string) error {
+func InsertMedia(postID int64, filePath, fileType string) error {
 	stmt, err := db.Prepare("INSERT INTO media (post_id, file_path, file_type) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
@@ -281,4 +282,48 @@ func GetOrCreateCategory(name string) (int, error) {
 func AssociatePostWithCategory(postID int64, categoryID int) error {
 	_, err := db.Exec("INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)", postID, categoryID)
 	return err
+}
+
+// Post represents a post with user and content information
+type Post struct {
+	ID        int
+	UserID    int
+	Username  string
+	Content   string
+	CreatedAt time.Time
+	Media     []Media
+}
+
+// FetchPosts retrieves all posts from the database
+func FetchPosts() ([]Post, error) {
+	rows, err := db.Query(`
+        SELECT 
+            p.id, p.user_id, u.username, p.content, p.created_at
+        FROM posts p
+        JOIN users u ON p.user_id = u.id
+        ORDER BY p.created_at DESC
+    `)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		// Optionally, fetch media for each post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		post.Media = media
+
+		posts = append(posts, post)
+	}
+	return posts, nil
 }
