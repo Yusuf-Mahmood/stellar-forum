@@ -1057,6 +1057,10 @@ input[type="checkbox"] {
 .otherComments{
   margin-top: 1rem;
   min-height: 6rem; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .pcAnchor{
@@ -1166,4 +1170,52 @@ body {
 .post2 {
   width: 100%;
   max-width: 600px;
+}
+
+.comment{
+  background-color: #8080d7;
+  border-radius: 0.6rem;
+  width: 23rem;
+  min-height: 6rem;
+  margin:0.5rem;
+  font-size: small;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+
+}
+
+.ppComment{
+  box-shadow: 0 0 10px var(--dark-color);
+  background-color: black;
+  width: 2.5rem;
+  margin-left: 10px;
+  margin-top: 10px;
+  object-fit: contain;
+  height: 2rem;
+  border-radius: 50%;
+}
+
+.commentHeader{
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+}
+
+.userDisplayc{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  margin: 5px;
+  width: 100%;
+}
+
+.commenttext{
+  display: flex;
+  text-align: left;
+  align-items: center;
+  margin: 15px;
+  width: 100%;
 }
