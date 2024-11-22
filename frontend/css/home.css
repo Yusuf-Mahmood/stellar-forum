@@ -320,8 +320,19 @@ nav{
   color: var(--light-color);
 }
 
+.profileAnchor{
+  display: none;
+  position: absolute;
+  width: 100vw;
+  height: 95vh;
+  bottom: -95vh;
+  z-index: 40;
+  cursor: default;
+}
+
 .profileContainer{
   position: fixed;
+  z-index: 60;
   background-color: var(--darker-color);
   transform: translateY(56.2%);
   box-shadow: 0 0 10px var(--dark-color);
@@ -424,6 +435,10 @@ input[type="checkbox"]{
   right: 0;
 } 
 
+#profileActivate:checked ~ .profileAnchor{ 
+  display: flex;
+}
+
 .logout:hover{
   color: var(--light-color);
 }
@@ -435,7 +450,6 @@ input[type="checkbox"]{
   border-radius: 10px;
   flex-direction: row;
   width: 90rem;
-  overflow-y: auto;
   height: calc(82vh - 2rem);
   position: relative;
   padding-right: 8px;
@@ -456,7 +470,6 @@ main{
   gap: 0.5%;
   display: flex;
   width: 100%;
-  height: 35rem;
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
@@ -824,11 +837,15 @@ input[type="file"]{
   box-shadow: 0 0 10px var(--dark-color);
   background-color: black;
   width: 3rem;
-  margin-left: 10px;
-  margin-top: 10px;
+  margin-left: 0.6rem;
+  margin-top: 1.1rem;
   object-fit: contain;
   height: 3rem;
   border-radius: 50%;
+}
+
+.sidePP{
+  width: 3.5rem;
 }
 
 .nameContent{
@@ -845,8 +862,8 @@ input[type="file"]{
   display: flex;
   flex-direction: column;
   font-size: 0.8rem;
-  height: auto;
   border: 7px solid transparent;
+  border-left: none;
 }
 
 .textContent{
@@ -854,7 +871,8 @@ input[type="file"]{
   padding: 15px;
   padding-top: 0;
   overflow: none;
-  width: 96.5%;
+  word-break: break-word;
+  width: 95%;
   font-size: 1rem;
 }
 
@@ -866,7 +884,8 @@ input[type="file"]{
 }
 
 .image{
-  height: 350px;
+  max-width: 95%;
+  max-height: 400px;
   object-fit: contain;
   box-sizing: border-box;
   align-self: flex-start;
@@ -875,10 +894,14 @@ input[type="file"]{
   margin-left: 0.85rem;
 }
 
+.imageSpace{
+  width: 100%;
+}
+
 .updateInfo{
   display: flex;
   justify-content: flex-start;
-  gap: 54%;
+  gap: 4rem;
   margin-bottom: 7px;
   margin-left: 0.85rem;
 }

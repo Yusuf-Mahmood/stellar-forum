@@ -68,6 +68,7 @@
                     </a>
                 </div>
             </div>
+            <label for="profileActivate" class="profileAnchor"></label>
         </div>
         <nav>
             <div class="spaceNav">
@@ -119,24 +120,16 @@
                 <div class="postCommentHeader">
                     <a href="#home"><i class='bx bx-x'></i></a>
                 </div>
+                {{range .}}
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                             <div class="postHeader">
-                                <p class="nameCommentContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp 11 Sep 2024</span></p>
+                                <p class="nameCommentContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp {{.CreatedAt}}</span></p>
                             </div>
                         </div>
-                        <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                            Domesticated
-                            about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                            self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                            Cats’
-                            sharp
-                            instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                            to
-                            homes worldwide.
-                        </p>
+                        <p class="textContent">{{.Content}}</p>
                         <img src="../../images/cat.jpg" class="image" alt="Content">
                         <div class="updateInfo">
                             <div class="combinedlikeDis">
@@ -177,6 +170,7 @@
                         </div>
                     </form>
                 </div>
+                {{end}}
                 <div class="otherComments">
                     <div class="comment">
                         <img class="ppComment" src="../../images/moataz.jpg" alt="Profile">
@@ -352,7 +346,9 @@
                 <main>
                     {{range .}}
                     <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        <div class="sidePP">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        </div>
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
@@ -360,11 +356,13 @@
                                 </div>
                             </div>
                             <p class="textContent">{{.Content}}</p>
-                            <!-- {{if .Media}} -->
-                                <!-- {{range .Media}} -->
-                                <img src="../../images/pp.jpg" class="image" alt="Content">
-                                <!-- {{end}} -->
-                            <!-- {{end}} -->
+                            {{if .Media}}
+                                {{range .Media}}
+                                    <div class="imageSpace">
+                                        <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                                    </div>
+                                {{end}}
+                            {{end}}
                             <div class="updateInfo">
                                 <div class="combinedlikeDis">
                                     <label for="likeCheckbox">

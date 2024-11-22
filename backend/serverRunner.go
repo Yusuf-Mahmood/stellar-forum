@@ -34,6 +34,9 @@ func ServerRunner() {
 	fs2 := http.FileServer(http.Dir("./images"))
 	http.Handle("/images/", http.StripPrefix("/images/", fs2))
 
+	fs3 := http.FileServer(http.Dir("./uploads"))
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", fs3))
+
 	fmt.Print("The server is running on HTTPS port :8080\n")
 	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
 	if err != nil {
@@ -376,15 +379,21 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Handle media upload if present in the form
-	mediaFile, _, err := r.FormFile("postImage")
+	mediaFile, fileHeader, err := r.FormFile("postImage")
 	if err == nil {
 		// Create the uploads directory if it doesn't exist
 		uploadDir := "./uploads"
 		os.MkdirAll(uploadDir, os.ModePerm)
 
+		fileExtension := filepath.Ext(fileHeader.Filename)
+		if fileExtension == "" {
+			http.Error(w, "Invalid file type", http.StatusBadRequest)
+			return
+		}
 		// Create a unique file name and save the file
-		fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), r.FormValue("postImage"))
+		fileName := fmt.Sprintf("%d-%s%s", time.Now().Unix(), "postImage", fileExtension)
 		filePath := filepath.Join(uploadDir, fileName)
+		filePath = filepath.ToSlash(filePath)
 
 		// Save the uploaded file
 		dst, err := os.Create(filePath)
