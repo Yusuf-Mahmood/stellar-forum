@@ -115,22 +115,28 @@
         </nav>
 
         <div class="spacing">
-            <div id="CommentSection">
+            {{range .}}
+            <div id="CommentSection-{{.ID}}" class="CommentSection">
                 <div id="home"></div>
                 <div class="postCommentHeader">
                     <a href="#home"><i class='bx bx-x'></i></a>
                 </div>
-                {{range .}}
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                             <div class="postHeader">
-                                <p class="nameCommentContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp {{.CreatedAt}}</span></p>
+                                <p class="nameCommentContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
                             </div>
                         </div>
                         <p class="textContent">{{.Content}}</p>
-                        <img src="../../images/cat.jpg" class="image" alt="Content">
+                        {{if .Media}}
+                            {{range .Media}}
+                                <div class="imageSpace">
+                                    <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                                </div>
+                            {{end}}
+                        {{end}} 
                         <div class="updateInfo">
                             <div class="combinedlikeDis">
                                 <label for="likeCheckbox">
@@ -170,7 +176,6 @@
                         </div>
                     </form>
                 </div>
-                {{end}}
                 <div class="otherComments">
                     <div class="comment">
                         <img class="ppComment" src="../../images/moataz.jpg" alt="Profile">
@@ -185,6 +190,7 @@
                     <div class="comment">The comment above me is delusional and I am schizophrenic talking to myself rn.</div>
                 </div>
             </div>
+            {{end}}
             <a href="#home" class="pcAnchor"></a>   
             <div class="mainContainer">
                 <div class="combinedside">
@@ -344,7 +350,7 @@
 
                 <!-- Main content with posts -->
                 <main>
-                    {{range .}}
+                {{range .}}
                     <div class="post">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
@@ -352,7 +358,7 @@
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
-                                    <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp {{.CreatedAt}}</span></p>
+                                    <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
                                 </div>
                             </div>
                             <p class="textContent">{{.Content}}</p>
@@ -384,7 +390,7 @@
                                         </a>
                                     </label>
                                 </div>
-                                <a href="#CommentSection">
+                                <a href="#CommentSection-{{.ID}}">
                                     <div class="commentsCon">
                                         <i class='bx bx-comment comments'></i>
                                         <p>5</p>
@@ -393,12 +399,11 @@
                             </div>
                         </div>
                     </div>
-                    {{end}}
+                {{end}}
                 </main>
             </div>
         </div>
     </div>
     </div>
 </body>
-
 </html>

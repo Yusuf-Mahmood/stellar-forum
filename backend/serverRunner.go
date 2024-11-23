@@ -334,7 +334,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	content := strings.TrimSpace(r.FormValue("postText"))
-	if content == "" || len(content) > 300 {
+	if content == "" || len(content) > 366 {
 		http.Error(w, "Post content cannot be empty or exceeded limits", http.StatusBadRequest)
 		return
 	}

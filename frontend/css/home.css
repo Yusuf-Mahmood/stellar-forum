@@ -492,19 +492,19 @@ aside{
 }
 
 .post2{
-  width: 75%;
+  width: 75vw;
   border-radius: 5px;
   transition: 0.1s ease; 
 }
 
-.post2 .image{
-  margin-left: auto;
-  margin-right: auto;
+.post2 .imageSpace{
+  display: flex;
+  justify-content: center;
 }
 
 .post2 .updateInfo{
   width: 100%;
-  justify-content: center;
+  justify-content: space-around;
 }
 
 .post2 .ppContent{
@@ -725,7 +725,7 @@ aside{
   height: 6rem;
 }
 
-.createPost input, #CommentSection input{
+.createPost input, .CommentSection input{
   border: none;
   color: white;
   outline: none;
@@ -782,7 +782,7 @@ input[type="file"]{
   justify-content: flex-end;
 }
 
-.createPost input::placeholder, #CommentSection input::placeholder{
+.createPost input::placeholder, .CommentSection input::placeholder{
   color: white;
   opacity: 0.6;
 }
@@ -912,8 +912,8 @@ input[type="file"]{
 }
 
 .likesCon, .dislikesCon, .commentsCon{
-  width: 40px;
   display: flex;
+  margin-right: 1rem;
   gap: 10%;
 }
 
@@ -1043,7 +1043,7 @@ input[type="checkbox"] {
   opacity: 1;
 }
 
-#CommentSection{
+.CommentSection{
   display: none;
   z-index: 30;
   position: fixed;
@@ -1052,6 +1052,7 @@ input[type="checkbox"] {
   overflow-x: hidden;
   height: calc(82vh - 2rem);
   background-color: #413c8b4e;
+  width: 38rem;
 }
 
 .inputComment{
@@ -1100,18 +1101,18 @@ input[type="checkbox"] {
   cursor: default;
 }
 
-#home:target ~ #CommentSection{
+#home:target ~ .CommentSection{
   display: none;
 }
 
-#CommentSection:target ~ .mainContainer main{
+.CommentSection:target ~ .mainContainer main{
   transition: scale 5s ease-in-out 1s linear, transform 4s ease;
   transform: rotate(360deg);
   scale: 0;
   visibility: hidden;
 }
 
-#CommentSection:target, #CommentSection:target + a{
+.CommentSection:target, .CommentSection:target ~ a{
   display: block;
 }
 

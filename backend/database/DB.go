@@ -291,6 +291,7 @@ type Post struct {
 	Username  string
 	Content   string
 	CreatedAt time.Time
+	FormatDate string
 	Media     []Media
 }
 
@@ -316,6 +317,8 @@ func FetchPosts() ([]Post, error) {
 			return nil, err
 		}
 
+		post.FormatDate = FormatDate(post.CreatedAt)
+
 		// Optionally, fetch media for each post
 		media, err := FetchMediaByPostID(post.ID)
 		if err != nil {
@@ -326,4 +329,8 @@ func FetchPosts() ([]Post, error) {
 		posts = append(posts, post)
 	}
 	return posts, nil
+}
+
+func FormatDate(date time.Time) string {
+	return date.Format("02 Jan 2006")
 }
