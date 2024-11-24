@@ -293,15 +293,21 @@ type Post struct {
 	CreatedAt time.Time
 	FormatDate string
 	Media     []Media
+	Likes     int
+	Dislikes  int
 }
 
-// FetchPosts retrieves all posts from the database
+// FetchPosts retrieves all posts from the database and includes like and dislike counts.
 func FetchPosts() ([]Post, error) {
 	rows, err := db.Query(`
         SELECT 
-            p.id, p.user_id, u.username, p.content, p.created_at
+            p.id, p.user_id, u.username, p.content, p.created_at,
+            COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+            COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
         FROM posts p
         JOIN users u ON p.user_id = u.id
+        LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+        GROUP BY p.id
         ORDER BY p.created_at DESC
     `)
 	if err != nil {
@@ -312,7 +318,7 @@ func FetchPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt)
+		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
 			return nil, err
 		}
