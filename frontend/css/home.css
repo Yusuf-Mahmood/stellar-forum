@@ -470,9 +470,10 @@ main{
   gap: 0.5%;
   display: flex;
   width: 100%;
-  justify-content: center;
-  flex-direction: row;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
   overflow-y: auto;
 }
 
@@ -483,12 +484,14 @@ aside{
 
 .post{
   width: 75vw;
+  height: fit-content;
   display: flex;
   border: 1px solid var(--dark-color);
   background-color: #2a255f4e;
   box-shadow: 0 0 5px var(--dark-color);
   border-radius: 5px;
   transition: 0.1s ease;
+
 }
 
 .post2{
