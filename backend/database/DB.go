@@ -1,3 +1,4 @@
+
 package root
 
 import (
@@ -200,6 +201,27 @@ func CountLikes(postID int, commentID *int) (likes int, dislikes int, err error)
 	err = db.QueryRow(query, postID, commentID, commentID).Scan(&likes, &dislikes)
 	return
 }
+
+// LikePost adds a like for the given post and user
+func LikePost(userID int, postID string) error {
+	// Your logic to insert the like into the database
+	_, err := db.Exec("UPDATE posts SET likes = likes + 1 WHERE id = ?", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DislikePost adds a dislike for the given post and user
+func DislikePost(userID int, postID string) error {
+	// Your logic to insert the dislike into the database
+	_, err := db.Exec("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 
 // FetchUserLikes retrieves all likes made by a user.
 func FetchUserLikes(userID int) ([]map[string]interface{}, error) {

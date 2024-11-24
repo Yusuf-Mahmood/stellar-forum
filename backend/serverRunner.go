@@ -28,6 +28,10 @@ func ServerRunner() {
 	http.HandleFunc("/auth/github/callback", handleGitHubCallback)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
+
+	// Add the like/dislike handler
+	http.HandleFunc("/like", LikeDislikePost)
+
 	fs := http.FileServer(http.Dir("./frontend/css"))
 	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
 
@@ -68,13 +72,14 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	
+
 	posts, err := database.FetchPosts()
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
+	// Pass posts data with like/dislike functionality to the template
 	err2 := t.Execute(w, posts)
 	if err2 != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -425,4 +430,50 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	// Redirect to the homepage after successful post creation
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// LikeDislikePost handles both like and dislike actions
+func LikeDislikePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get post ID and action (like/dislike)
+	postID := r.URL.Query().Get("post_id")
+	action := r.URL.Query().Get("action")
+	if postID == "" || (action != "like" && action != "dislike") {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Get the user session
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user has already liked or disliked the post
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Like or Dislike the post
+	var err2 error
+	if action == "like" {
+		err2 = database.LikePost(userID, postID) // Add like to the post
+	} else if action == "dislike" {
+		err2 = database.DislikePost(userID, postID) // Add dislike to the post
+	}
+
+	if err2 != nil {
+		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect back to the post page (or wherever you want)
+	http.Redirect(w, r, "/post/"+postID, http.StatusSeeOther)
 }
