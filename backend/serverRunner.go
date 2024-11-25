@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	database "root/backend/database"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,22 +17,25 @@ import (
 )
 
 func ServerRunner() {
-	http.HandleFunc("/", RootHandler)      // Home page
-	http.HandleFunc("/auth", Auth)         // Authentication page
-	http.HandleFunc("/register", Register) // Registration form
-	http.HandleFunc("/login", Login)       // Login form
-	http.HandleFunc("/logout", Logout)     // Logout
-	http.HandleFunc("/createpost", CreatePost)
+	http.HandleFunc("/", RootHandler)                  // Home page
+	http.HandleFunc("/auth", Auth)                     // Authentication page
+	http.HandleFunc("/register", Register)             // Registration form
+	http.HandleFunc("/login", Login)                   // Login form
+	http.HandleFunc("/logout", Logout)                 // Logout
+	http.HandleFunc("/createpost", CreatePost)         // Post Handler
+	http.HandleFunc("/createcomment", CreateComment)   // Comment Handler
 	http.HandleFunc("/auth/google", handleGoogleLogin) // Google login
 	http.HandleFunc("/auth/callback", handleGoogleCallback)
 	http.HandleFunc("/auth/github", handleGitHubLogin) // GitHub login
 	http.HandleFunc("/auth/github/callback", handleGitHubCallback)
+	http.HandleFunc("/like", LikePost)       // Like Handler
+	http.HandleFunc("/dislike", DislikePost) // Dislike Handler
+	// http.HandleFunc("/Commentlike", LikeComment)       // Comment Like Handler
+	// http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
+	http.HandleFunc("/inPostlike", inLikePost)
+	http.HandleFunc("/inPostdislike", inDislikePost)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
-
-	// Add the like/dislike handler
-	http.HandleFunc("/like", LikeDislikePost)
-
 	fs := http.FileServer(http.Dir("./frontend/css"))
 	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
 
@@ -41,7 +45,7 @@ func ServerRunner() {
 	fs3 := http.FileServer(http.Dir("./uploads"))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", fs3))
 
-	fmt.Print("The server is running on HTTPS port :8080\n")
+	fmt.Print("The server is running on https://localhost:8080/\n")
 	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
 	if err != nil {
 		fmt.Println("Server error:", err)
@@ -62,6 +66,10 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Render homepage if session is valid
 	t, terr := template.ParseFiles("./frontend/html/home.html")
+	if terr != nil{
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 	_, err := r.Cookie("session_token")
 	if err != nil {
@@ -332,12 +340,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// err := r.ParseMultipartForm(10 << 20) // Max 10 MB
-	// if err != nil {
-	//     http.Error(w, "Invalid form data", http.StatusBadRequest)
-	//     return
-	// }
-
 	content := strings.TrimSpace(r.FormValue("postText"))
 	if content == "" || len(content) > 366 {
 		http.Error(w, "Post content cannot be empty or exceeded limits", http.StatusBadRequest)
@@ -432,22 +434,60 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-// LikeDislikePost handles both like and dislike actions
-func LikeDislikePost(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+func CreateComment(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Get post ID and action (like/dislike)
-	postID := r.URL.Query().Get("post_id")
-	action := r.URL.Query().Get("action")
-	if postID == "" || (action != "like" && action != "dislike") {
+	content := strings.TrimSpace(r.FormValue("commentInput"))
+	postID := strings.TrimSpace(r.FormValue("hiddenID"))
+	intPostID, err := strconv.Atoi(postID)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	if content == "" || len(content) > 366 {
+		http.Error(w, "Comment content cannot be empty or exceeded limits", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	_, err = database.InsertComment(userID, intPostID, content)
+	if err != nil {
+		http.Error(w, "Failed to create comment", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect to the homepage after successful post creation
+	http.Redirect(w, r, fmt.Sprintf("/#CommentSection=%s", postID), http.StatusSeeOther)
+}
+
+// LikePost handles like action
+func LikePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postID := r.FormValue("post_id")
+	if postID == "" {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	// Get the user session
 	cookie, err := r.Cookie("session_token")
 	if err != nil || cookie.Value == "" {
 		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
@@ -461,19 +501,182 @@ func LikeDislikePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Like or Dislike the post
-	var err2 error
-	if action == "like" {
-		err2 = database.LikePost(userID, postID) // Add like to the post
-	} else if action == "dislike" {
-		err2 = database.DislikePost(userID, postID) // Add dislike to the post
-	}
-
+	err2 := database.LikePost(userID, postID)
 	if err2 != nil {
 		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
 		return
 	}
 
-	// Redirect back to the post page (or wherever you want)
-	http.Redirect(w, r, "/post/"+postID, http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
 }
+
+// DislikePost handles dislike action
+func DislikePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postID := r.FormValue("post_id")
+	if postID == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user has already liked or disliked the post
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err2 := database.DislikePost(userID, postID)
+	if err2 != nil {
+		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
+}
+
+func inLikePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postID := r.FormValue("post_id")
+	if postID == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user has already liked or disliked the post
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err2 := database.LikePost(userID, postID)
+	if err2 != nil {
+		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/#CommentSection=%s", postID), http.StatusSeeOther)
+}
+
+func inDislikePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postID := r.FormValue("post_id")
+	if postID == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user has already liked or disliked the post
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err2 := database.DislikePost(userID, postID)
+	if err2 != nil {
+		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/#CommentSection=%s", postID), http.StatusSeeOther)
+}
+
+// func LikeComment(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodPost {
+// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	CommentID := r.FormValue("comment_id")
+// 	if CommentID == "" {
+// 		http.Error(w, "Invalid request", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	cookie, err := r.Cookie("session_token")
+// 	if err != nil || cookie.Value == "" {
+// 		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	// Check if user has already liked or disliked the post
+// 	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+// 	if err != nil {
+// 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	err2 := database.LikeComment(userID, CommentID)
+// 	if err2 != nil {
+// 		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	http.Redirect(w, r, fmt.Sprintf("#comment=%s", CommentID), http.StatusSeeOther)
+// }
+
+// func DislikeComment(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodPost {
+// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	postID := r.FormValue("post_id")
+// 	if postID == "" {
+// 		http.Error(w, "Invalid request", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	cookie, err := r.Cookie("session_token")
+// 	if err != nil || cookie.Value == "" {
+// 		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	// Check if user has already liked or disliked the post
+// 	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+// 	if err != nil {
+// 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	err2 := database.DislikePost(userID, postID)
+// 	if err2 != nil {
+// 		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
+// }

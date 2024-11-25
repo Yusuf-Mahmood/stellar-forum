@@ -1,4 +1,3 @@
-
 package root
 
 import (
@@ -204,24 +203,75 @@ func CountLikes(postID int, commentID *int) (likes int, dislikes int, err error)
 
 // LikePost adds a like for the given post and user
 func LikePost(userID int, postID string) error {
-	// Your logic to insert the like into the database
-	_, err := db.Exec("UPDATE posts SET likes = likes + 1 WHERE id = ?", postID)
+	// First, check if the user has already liked or disliked this post
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
 	if err != nil {
 		return err
 	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+	if err != nil {
+		return err
+	}
+
+	// If the user already liked this post, do nothing
+	if existingLikeCount > 0 {
+		return nil
+	}
+
+	// If the user disliked the post, remove the dislike and add a like
+	if existingDislikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Insert a new like into the likes table
+	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 1)", userID, postID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // DislikePost adds a dislike for the given post and user
 func DislikePost(userID int, postID string) error {
-	// Your logic to insert the dislike into the database
-	_, err := db.Exec("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?", postID)
+	// First, check if the user has already liked or disliked this post
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
 	if err != nil {
 		return err
 	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+	if err != nil {
+		return err
+	}
+
+	// If the user already disliked this post, do nothing
+	if existingDislikeCount > 0 {
+		return nil
+	}
+
+	// If the user liked the post, remove the like and add a dislike
+	if existingLikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Insert a new dislike into the likes table
+	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 0)", userID, postID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
-
 
 // FetchUserLikes retrieves all likes made by a user.
 func FetchUserLikes(userID int) ([]map[string]interface{}, error) {
@@ -275,6 +325,19 @@ func InsertPost(userID int, content string) (int64, error) {
 	return res.LastInsertId()
 }
 
+// InsertComment inserts a new post into the database
+func InsertComment(userID int, postID int, content string) (int64, error) {
+	stmt, err := db.Prepare("INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)")
+	if err != nil {
+		return 0, err
+	}
+	res, err := stmt.Exec(userID, postID, content)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
 // FetchUserIDBySessionToken retrieves the user ID for a given session token
 func FetchUserIDBySessionToken(sessionToken string) (int, error) {
 	var userID int
@@ -283,6 +346,16 @@ func FetchUserIDBySessionToken(sessionToken string) (int, error) {
 		return 0, err
 	}
 	return userID, nil
+}
+
+// FetchUserIDBySessionToken retrieves the user ID for a given session token
+func FetchUsernameByUserID(id int) (string, error) {
+	var username string
+	err := db.QueryRow("SELECT username FROM users WHERE id = ?", id).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
 }
 
 // GetOrCreateCategory returns the category ID for a given name, creating it if necessary.
@@ -308,15 +381,16 @@ func AssociatePostWithCategory(postID int64, categoryID int) error {
 
 // Post represents a post with user and content information
 type Post struct {
-	ID        int
-	UserID    int
-	Username  string
-	Content   string
-	CreatedAt time.Time
+	ID         int
+	UserID     int
+	Username   string
+	Content    string
+	CreatedAt  time.Time
 	FormatDate string
-	Media     []Media
-	Likes     int
-	Dislikes  int
+	Media      []Media
+	Likes      int
+	Dislikes   int
+	Comment    []Comment
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
@@ -354,6 +428,13 @@ func FetchPosts() ([]Post, error) {
 		}
 		post.Media = media
 
+		// posts = append(posts, post)
+
+		comments, err := FetchCommentsByPostID(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		post.Comment = comments
 		posts = append(posts, post)
 	}
 	return posts, nil
@@ -362,3 +443,133 @@ func FetchPosts() ([]Post, error) {
 func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
 }
+
+type Comment struct {
+	ID        int
+	ComUsername  string
+	ComContent   string
+	ComCreatedAt time.Time
+	ComFormatDate string
+	ComLikes     int
+	ComDislikes  int
+}
+
+func FetchCommentsByPostID(postID int) ([]Comment, error) {
+	rows, err := db.Query(`
+		SELECT 
+			c.id, 
+			c.user_id, 
+			c.content, 
+			c.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM 
+			comments c
+		LEFT JOIN 
+			likes l ON c.id = l.comment_id
+		WHERE 
+			c.post_id = ?
+		GROUP BY 
+			c.id, c.user_id, c.content, c.created_at
+		ORDER BY 
+			c.created_at DESC;
+	`, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var comments []Comment
+	for rows.Next() {
+		var comment Comment
+		var userID int
+		err := rows.Scan(&comment.ID, &userID, &comment.ComContent, &comment.ComCreatedAt, &comment.ComLikes, &comment.ComDislikes)
+		if err != nil {
+			return nil, err
+		}
+
+		comment.ComFormatDate = FormatDate(comment.ComCreatedAt)
+
+		// Fetch username using FetchUsernameByUserID
+		username, err := FetchUsernameByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+		comment.ComUsername = username
+
+		comments = append(comments, comment)
+	}
+
+	return comments, nil
+}
+
+// func LikeComment(userID int, postID string) error {
+// 	// First, check if the user has already liked or disliked this post
+// 	var existingLikeCount int
+// 	var existingDislikeCount int
+// 	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// If the user already liked this post, do nothing
+// 	if existingLikeCount > 0 {
+// 		return nil
+// 	}
+
+// 	// If the user disliked the post, remove the dislike and add a like
+// 	if existingDislikeCount > 0 {
+// 		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
+
+// 	// Insert a new like into the likes table
+// 	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 1)", userID, postID)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return nil
+// }
+
+// func DislikeComment(userID int, postID string) error {
+// 	// First, check if the user has already liked or disliked this post
+// 	var existingLikeCount int
+// 	var existingDislikeCount int
+// 	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// If the user already disliked this post, do nothing
+// 	if existingDislikeCount > 0 {
+// 		return nil
+// 	}
+
+// 	// If the user liked the post, remove the like and add a dislike
+// 	if existingLikeCount > 0 {
+// 		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
+
+// 	// Insert a new dislike into the likes table
+// 	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 0)", userID, postID)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return nil
+// }
+

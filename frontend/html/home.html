@@ -116,7 +116,7 @@
 
         <div class="spacing">
             {{range .}}
-            <div id="CommentSection-{{.ID}}" class="CommentSection">
+            <div id="CommentSection={{.ID}}" class="CommentSection">
                 <div id="home"></div>
                 <div class="postCommentHeader">
                     <a href="#home"><i class='bx bx-x'></i></a>
@@ -142,21 +142,21 @@
                             <div class="combinedlikeDis">
                                 <label for="likeCheckbox">
                                     <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like/{{.ID}}?action=like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
+                                    <form action="/inPostlike?post_id={{.ID}}" method="post">
+                                        <button type="submit" class="likeButton">
+                                            <i class='bx bx-like'></i>
+                                            <p>{{.Likes}}</p>
+                                        </button>
+                                    </form>
                                 </label>
                                 <label for="dislikeCheckbox">
                                     <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
+                                    <form action="/inPostdislike?post_id={{.ID}}" method="post">
+                                        <button type="submit" class="dislikeButton">
+                                            <i class='bx bx-dislike'></i>
+                                            <p>{{.Dislikes}}</p>
+                                        </button>
+                                    </form>
                                 </label>
                             </div>
                             <a href="#home">
@@ -167,210 +167,57 @@
                             </a>
                         </div>
                     </div>
-                    <form action="comment" method="post">
+                    <form action="createcomment" method="post">
+                        <input type="hidden" name="hiddenID" value="{{.ID}}">
                         <div class="inputComment">
                             <input type="text" name="commentInput" placeholder="Launch a new comment..." title=""
-                                maxlength="366" required>
-                            <label for="submitBtn2" class="submitCommentLabel">
+                                maxlength="366" required autocomplete="off">
+                            <button type="submit" class="submitCommentLabel">
                                 <i class='bx bx-rocket'></i>
-                            </label>
-                            <input type="submit" id="submitBtn2" hidden>
+                            </button>
                         </div>
                     </form>
                 </div>
                 <div class="otherComments">
-                    <div class="comment">
+                    {{range .Comment}}
+                    <div class="comment" id="comment={{.ID}}">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp
-                                            11 Sep 2024</span></p>
+                                    <p class="nameContent">@{{.ComUsername}} &nbsp<span style="font-weight: normal;">•&nbsp {{.ComFormatDate}}</span></p>
                                 </div>
                             </div>
                             <p class="textContent">
-                                nice background bro
+                                {{.ComContent}}
                             </p>
                             <div class="updateInfo">
                                 <div class="combinedlikeDis">
                                     <label for="likeCheckbox">
                                         <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="commentlike/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
+                                        <form action="/Commentlike?comment_id={{.ID}}" method="post">
+                                            <button type="submit" class="likeButton">
+                                                <i class='bx bx-like'></i>
+                                                <p>{{.ComLikes}}</p>
+                                            </button>
+                                        </form>
                                     </label>
                                     <label for="dislikeCheckbox">
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="commentdislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
+                                        <form action="/Commentdislike?comment_id={{.ID}}" method="post">
+                                            <button type="submit" class="dislikeButton">
+                                                <i class='bx bx-dislike'></i>
+                                                <p>{{.ComDislikes}}</p>
+                                            </button>
+                                        </form>
                                     </label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="comment">
-                        <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        </div>
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp
-                                            11 Sep 2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">
-                                damnnnnnnnnnn
-                            </p>
-                            <div class="updateInfo">
-                                <div class="combinedlikeDis">
-                                    <label for="likeCheckbox">
-                                        <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="commentlike/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                    <label for="dislikeCheckbox">
-                                        <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="commentdislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comment">
-                        <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        </div>
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp
-                                            11 Sep 2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">
-                                🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿🗿
-                            </p>
-                            <div class="updateInfo">
-                                <div class="combinedlikeDis">
-                                    <label for="likeCheckbox">
-                                        <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="commentlike/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                    <label for="dislikeCheckbox">
-                                        <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="commentdislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comment">
-                        <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        </div>
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp
-                                            11 Sep 2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">
-                                Cute ahh cat fr yeah bro sure gana get it gana go bro hello there motherbrother how are
-                                you today.
-                            </p>
-                            <div class="updateInfo">
-                                <div class="combinedlikeDis">
-                                    <label for="likeCheckbox">
-                                        <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="commentlike/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                    <label for="dislikeCheckbox">
-                                        <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="commentdislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comment">
-                        <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        </div>
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp
-                                            11 Sep 2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">
-                                Cute ahh cat fr yeah bro sure gana get it gana go bro hello there motherbrother how are
-                                you today.
-                            </p>
-                            <div class="updateInfo">
-                                <div class="combinedlikeDis">
-                                    <label for="likeCheckbox">
-                                        <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="commentlike/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                    <label for="dislikeCheckbox">
-                                        <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="commentdislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{end}}
                 </div>
             </div>
             {{end}}
@@ -535,7 +382,7 @@
                 <!-- Main content with posts -->
                 <main>
                     {{range .}}
-                    <div class="post">
+                    <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                         </div>
@@ -558,24 +405,24 @@
                                 <div class="combinedlikeDis">
                                     <label for="likeCheckbox">
                                         <input type="checkbox" id="likeCheckbox" hidden>
-                                        <a href="like/{{.ID}}?action=like" id="likeLink">
-                                            <div class="likesCon">
-                                                <i class='bx bx-like likes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
+                                        <form action="/like?post_id={{.ID}}" method="post">
+                                            <button type="submit" class="likeButton">
+                                                <i class='bx bx-like'></i>
+                                                <p>{{.Likes}}</p>
+                                            </button>
+                                        </form>
                                     </label>
                                     <label for="dislikeCheckbox">
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <a href="dislike/{{.ID}}?action=dislike" id="dislikeLink">
-                                            <div class="dislikesCon">
-                                                <i class='bx bx-dislike dislikes'></i>
-                                                <p>1</p>
-                                            </div>
-                                        </a>
+                                        <form action="/dislike?post_id={{.ID}}" method="post">
+                                            <button type="submit" class="dislikeButton">
+                                                <i class='bx bx-dislike'></i>
+                                                <p>{{.Dislikes}}</p>
+                                            </button>
+                                        </form>
                                     </label>
                                 </div>
-                                <a href="#CommentSection-{{.ID}}">
+                                <a href="#CommentSection={{.ID}}">
                                     <div class="commentsCon">
                                         <i class='bx bx-comment comments'></i>
                                         <p>5</p>
@@ -591,5 +438,4 @@
     </div>
     </div>
 </body>
-
 </html>
