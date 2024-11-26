@@ -34,6 +34,9 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
+	http.HandleFunc("/uploads", NotFound)
+	http.HandleFunc("/images", NotFound)
+	http.HandleFunc("/frontend/css", InternalServerError)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
 	fs := http.FileServer(http.Dir("./frontend/css"))
