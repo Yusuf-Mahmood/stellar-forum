@@ -187,6 +187,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		// Redirect to login after successful registration
 		http.Redirect(w, r, "/auth", http.StatusSeeOther)
 		return
+	} else {
+		http.Redirect(w, r, "/auth#container2", http.StatusSeeOther)
 	}
 }
 
