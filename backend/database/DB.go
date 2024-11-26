@@ -390,6 +390,7 @@ type Post struct {
 	Media      []Media
 	Likes      int
 	Dislikes   int
+	ComCount   int
 	Comment    []Comment
 }
 
@@ -435,6 +436,11 @@ func FetchPosts() ([]Post, error) {
 			return nil, err
 		}
 		post.Comment = comments
+		commentcount, err := CountComments(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		post.ComCount = commentcount
 		posts = append(posts, post)
 	}
 	return posts, nil
@@ -445,13 +451,14 @@ func FormatDate(date time.Time) string {
 }
 
 type Comment struct {
-	ID        int
-	ComUsername  string
-	ComContent   string
-	ComCreatedAt time.Time
+	ComID         int
+	PostID        int
+	ComUsername   string
+	ComContent    string
+	ComCreatedAt  time.Time
 	ComFormatDate string
-	ComLikes     int
-	ComDislikes  int
+	ComLikes      int
+	ComDislikes   int
 }
 
 func FetchCommentsByPostID(postID int) ([]Comment, error) {
@@ -483,7 +490,7 @@ func FetchCommentsByPostID(postID int) ([]Comment, error) {
 	for rows.Next() {
 		var comment Comment
 		var userID int
-		err := rows.Scan(&comment.ID, &userID, &comment.ComContent, &comment.ComCreatedAt, &comment.ComLikes, &comment.ComDislikes)
+		err := rows.Scan(&comment.ComID, &userID, &comment.ComContent, &comment.ComCreatedAt, &comment.ComLikes, &comment.ComDislikes)
 		if err != nil {
 			return nil, err
 		}
@@ -496,6 +503,7 @@ func FetchCommentsByPostID(postID int) ([]Comment, error) {
 			return nil, err
 		}
 		comment.ComUsername = username
+		comment.PostID = postID
 
 		comments = append(comments, comment)
 	}
@@ -503,73 +511,135 @@ func FetchCommentsByPostID(postID int) ([]Comment, error) {
 	return comments, nil
 }
 
-// func LikeComment(userID int, postID string) error {
-// 	// First, check if the user has already liked or disliked this post
-// 	var existingLikeCount int
-// 	var existingDislikeCount int
-// 	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
-// 	if err != nil {
-// 		return err
-// 	}
+func LikeComment(userID int, postID string, commentID string) error {
+	// First, check if the user has already liked or disliked this post
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 1", userID, postID, commentID).Scan(&existingLikeCount)
+	if err != nil {
+		return err
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 0", userID, postID, commentID).Scan(&existingDislikeCount)
+	if err != nil {
+		return err
+	}
 
-// 	// If the user already liked this post, do nothing
-// 	if existingLikeCount > 0 {
-// 		return nil
-// 	}
+	// If the user already liked this post, do nothing
+	if existingLikeCount > 0 {
+		return nil
+	}
 
-// 	// If the user disliked the post, remove the dislike and add a like
-// 	if existingDislikeCount > 0 {
-// 		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
+	// If the user disliked the post, remove the dislike and add a like
+	if existingDislikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 0", userID, postID, commentID)
+		if err != nil {
+			return err
+		}
+	}
 
-// 	// Insert a new like into the likes table
-// 	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 1)", userID, postID)
-// 	if err != nil {
-// 		return err
-// 	}
+	// Insert a new like into the likes table
+	_, err = db.Exec("INSERT INTO likes (user_id, post_id, comment_id, is_like) VALUES (?, ?, ?, 1)", userID, postID, commentID)
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
-// func DislikeComment(userID int, postID string) error {
-// 	// First, check if the user has already liked or disliked this post
-// 	var existingLikeCount int
-// 	var existingDislikeCount int
-// 	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
-// 	if err != nil {
-// 		return err
-// 	}
+func DislikeComment(userID int, postID string, commentID string) error {
+	// First, check if the user has already liked or disliked this post
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 1", userID, postID, commentID).Scan(&existingLikeCount)
+	if err != nil {
+		return err
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 0", userID, postID, commentID).Scan(&existingDislikeCount)
+	if err != nil {
+		return err
+	}
 
-// 	// If the user already disliked this post, do nothing
-// 	if existingDislikeCount > 0 {
-// 		return nil
-// 	}
+	// If the user already liked this post, do nothing
+	if existingDislikeCount > 0 {
+		return nil
+	}
 
-// 	// If the user liked the post, remove the like and add a dislike
-// 	if existingLikeCount > 0 {
-// 		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
+	// If the user disliked the post, remove the dislike and add a like
+	if existingLikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 1", userID, postID, commentID)
+		if err != nil {
+			return err
+		}
+	}
 
-// 	// Insert a new dislike into the likes table
-// 	_, err = db.Exec("INSERT INTO likes (user_id, post_id, is_like) VALUES (?, ?, 0)", userID, postID)
-// 	if err != nil {
-// 		return err
-// 	}
+	// Insert a new like into the likes table
+	_, err = db.Exec("INSERT INTO likes (user_id, post_id, comment_id, is_like) VALUES (?, ?, ?, 0)", userID, postID, commentID)
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
+// CountComments fetches the total number of comments for a specific post.
+func CountComments(postID int) (ComCount int, err error) {
+	query := `
+        SELECT 
+            COUNT(*) AS ComCount
+        FROM comments
+        WHERE post_id = ?
+    `
+
+	err = db.QueryRow(query, postID).Scan(&ComCount)
+	return
+}
+
+// FetchLikedPosts retrieves all posts liked by a user
+func FetchLikedPosts(userID int) ([]Post, error) {
+	query := `
+        SELECT 
+            p.id, p.user_id, u.username, p.content, p.created_at,
+            COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+            COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+        FROM likes l
+        JOIN posts p ON l.post_id = p.id
+        JOIN users u ON p.user_id = u.id
+        WHERE l.user_id = ? AND l.is_like = 1
+        GROUP BY p.id
+        ORDER BY p.created_at DESC`
+
+	rows, err := db.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var likedPosts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, err
+		}
+
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// etch media for each post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		post.Media = media
+
+		// Fetch comments for each post
+		comments, err := FetchCommentsByPostID(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		post.Comment = comments
+
+		likedPosts = append(likedPosts, post)
+	}
+
+	return likedPosts, nil
+}

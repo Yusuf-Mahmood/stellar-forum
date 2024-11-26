@@ -162,7 +162,7 @@
                             <a href="#home">
                                 <div class="commentsCon">
                                     <i class='bx bxs-comment comments'></i>
-                                    <p>5</p>
+                                    <p>{{.ComCount}}</p>
                                 </div>
                             </a>
                         </div>
@@ -180,7 +180,7 @@
                 </div>
                 <div class="otherComments">
                     {{range .Comment}}
-                    <div class="comment" id="comment={{.ID}}">
+                    <div class="comment" id="comment={{.ComID}}">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                         </div>
@@ -197,7 +197,8 @@
                                 <div class="combinedlikeDis">
                                     <label for="likeCheckbox">
                                         <input type="checkbox" id="likeCheckbox" hidden>
-                                        <form action="/Commentlike?comment_id={{.ID}}" method="post">
+                                        <form action="/Commentlike?comment_id={{.ComID}}" method="post">
+                                            <input type="hidden" name="post_id" value="{{.PostID}}">
                                             <button type="submit" class="likeButton">
                                                 <i class='bx bx-like'></i>
                                                 <p>{{.ComLikes}}</p>
@@ -206,7 +207,8 @@
                                     </label>
                                     <label for="dislikeCheckbox">
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
-                                        <form action="/Commentdislike?comment_id={{.ID}}" method="post">
+                                        <form action="/Commentdislike?comment_id={{.ComID}}" method="post">
+                                            <input type="hidden" name="post_id" value="{{.PostID}}">
                                             <button type="submit" class="dislikeButton">
                                                 <i class='bx bx-dislike'></i>
                                                 <p>{{.ComDislikes}}</p>
@@ -425,7 +427,7 @@
                                 <a href="#CommentSection={{.ID}}">
                                     <div class="commentsCon">
                                         <i class='bx bx-comment comments'></i>
-                                        <p>5</p>
+                                        <p>{{.ComCount}}</p>
                                     </div>
                                 </a>
                             </div>
