@@ -392,6 +392,7 @@ type Post struct {
 	Dislikes   int
 	ComCount   int
 	Comment    []Comment
+	UserProfile
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
@@ -594,8 +595,17 @@ func CountComments(postID int) (ComCount int, err error) {
 	return
 }
 
-// FetchLikedPosts retrieves all posts liked by a user
-func FetchLikedPosts(userID int) ([]Post, error) {
+// UserProfile struct to hold user profile data, including posts liked, created, and disliked
+type UserProfile struct {
+	UserID        int
+	Username      string
+	LikedPosts    []Post
+	CreatedPosts  []Post
+	DislikedPosts []Post
+}
+
+// FetchLikedPosts retrieves all posts liked by a user and returns them in a UserProfile.
+func FetchLikedPosts(userID int) (UserProfile, error) {
 	query := `
         SELECT 
             p.id, p.user_id, u.username, p.content, p.created_at,
@@ -610,36 +620,152 @@ func FetchLikedPosts(userID int) ([]Post, error) {
 
 	rows, err := db.Query(query, userID)
 	if err != nil {
-		return nil, err
+		return UserProfile{}, err
 	}
 	defer rows.Close()
 
 	var likedPosts []Post
+	var username string
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			return nil, err
+			return UserProfile{}, err
 		}
 
 		post.FormatDate = FormatDate(post.CreatedAt)
 
-		// etch media for each post
+		// Fetch media for each post
 		media, err := FetchMediaByPostID(post.ID)
 		if err != nil {
-			return nil, err
+			return UserProfile{}, err
 		}
 		post.Media = media
 
 		// Fetch comments for each post
 		comments, err := FetchCommentsByPostID(post.ID)
 		if err != nil {
-			return nil, err
+			return UserProfile{}, err
 		}
 		post.Comment = comments
 
 		likedPosts = append(likedPosts, post)
 	}
 
-	return likedPosts, nil
+	// Return the UserProfile with LikedPosts populated
+	return UserProfile{
+		UserID:     userID,
+		Username:   username,
+		LikedPosts: likedPosts,
+	}, nil
+}
+
+// FetchDislikedPosts retrieves all posts disliked by a specific user and returns them in a UserProfile.
+func FetchDislikedPosts(userID int) (UserProfile, error) {
+	rows, err := db.Query(`
+		SELECT 
+			p.id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM likes l
+		JOIN posts p ON l.post_id = p.id
+		JOIN users u ON p.user_id = u.id
+		WHERE l.user_id = ? AND l.is_like = 0
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, userID)
+	if err != nil {
+		return UserProfile{}, err
+	}
+	defer rows.Close()
+
+	var dislikedPosts []Post
+	var username string
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return UserProfile{}, err
+		}
+
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for each post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return UserProfile{}, err
+		}
+		post.Media = media
+
+		// Fetch comments for each post
+		comments, err := FetchCommentsByPostID(post.ID)
+		if err != nil {
+			return UserProfile{}, err
+		}
+		post.Comment = comments
+
+		dislikedPosts = append(dislikedPosts, post)
+	}
+
+	// Return the UserProfile with DislikedPosts populated
+	return UserProfile{
+		UserID:        userID,
+		Username:      username,
+		DislikedPosts: dislikedPosts,
+	}, nil
+}
+
+// FetchCreatedPosts retrieves all posts created by a specific user and returns them in a UserProfile.
+func FetchCreatedPosts(userID int) (UserProfile, error) {
+	rows, err := db.Query(`
+		SELECT 
+			p.id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		WHERE p.user_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, userID)
+	if err != nil {
+		return UserProfile{}, err
+	}
+	defer rows.Close()
+
+	var createdPosts []Post
+	var username string
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return UserProfile{}, err
+		}
+
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for each post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return UserProfile{}, err
+		}
+		post.Media = media
+
+		// Fetch comments for each post
+		comments, err := FetchCommentsByPostID(post.ID)
+		if err != nil {
+			return UserProfile{}, err
+		}
+		post.Comment = comments
+
+		createdPosts = append(createdPosts, post)
+	}
+
+	// Return the UserProfile with CreatedPosts populated
+	return UserProfile{
+		UserID:       userID,
+		Username:     username,
+		CreatedPosts: createdPosts,
+	}, nil
 }

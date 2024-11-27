@@ -89,7 +89,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-
 	// Pass posts data with like/dislike functionality to the template
 	err2 := t.Execute(w, posts)
 	if err2 != nil {
