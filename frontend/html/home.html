@@ -38,6 +38,7 @@
             </div>
             <label for="profileActivate" class="something"><i class='bx bx-user' title="View Profile"></i></label>
             <input type="checkbox" id="profileActivate" hidden>
+            {{range .}}
             <div class="profileContainer">
                 <div class="profileHeader">
                     <form action="profilePicture" method="post">
@@ -45,29 +46,39 @@
                             <!-- <img class="profilePic" src="../../images/moataz.jpg" alt="User Picture"> -->
                             <i class='bx bxs-user-circle profilePic'></i>
                             <p class="editPP">Edit Picture</p>
+                            {{range .UserProfile}}
+                            <p>{{.Username}}</p>
+                            {{end}}
                         </label>
                         <input type="file" name="profilePicture" id="chooseProfilePicture" accept="image/*" required>
                         <input type="submit" value="Upload" class="uploadPP">
                     </form>
                 </div>
                 <div class="profileFilter">
-                    <a href="">
+                    <!-- <form action="/createdposts" method="post"> -->
+                    <a href="#createdposts">
                         <div class="filter">
                             <p>Created Posts</p>
                         </div>
                     </a>
+                    <!-- </form> -->
+                    <!-- <form action="/likedposts" method="post"> -->
                     <a href="">
                         <div class="filter">
                             <p>Liked Posts</p>
                         </div>
                     </a>
+                    <!-- </form> -->
+                    <!-- <form action="/createdposts" method="post"> -->
                     <a href="">
                         <div class="filter">
                             <p>Disliked Posts</p>
                         </div>
                     </a>
+                   <!-- </form> -->
                 </div>
             </div>
+            {{end}}
             <label for="profileActivate" class="profileAnchor"></label>
         </div>
         <nav>
@@ -180,7 +191,7 @@
                 </div>
                 <div class="otherComments">
                     {{range .Comment}}
-                    <div class="comment" id="comment={{.ComID}}">
+                    <div class="comment">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                         </div>
@@ -282,7 +293,7 @@
                                         <span class="tooltip">Upload Image</span>
                                     </label>
                                     <input type="file" id="imageUpload" class="imageUpload" name="postImage"
-                                        accept="image/*,video/*">
+                                        accept="image/*, video/*">
                                     <label for="submitBtn" class="submitLabel">
                                         <i class='bx bx-rocket'></i>
                                     </label>
