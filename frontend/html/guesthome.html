@@ -48,7 +48,6 @@
                 <div class="profileHeader">
                     <form action="/auth">
                         <label for="chooseProfilePicture">
-                            <!-- <img class="profilePic" src="../../images/moataz.jpg" alt="User Picture"> -->
                             <i class='bx bxs-user-circle profilePic'></i>
                             <p class="editPP">Guest</p>
                         </label>
@@ -102,6 +101,113 @@
         </nav>
 
         <div class="spacing">
+            {{range .}}
+            <div id="CommentSection={{.ID}}" class="CommentSection">
+                <div id="home"></div>
+                <div class="postCommentHeader">
+                    <a href="#home"><i class='bx bx-x'></i></a>
+                </div>
+                <div class="post2">
+                    <div class="postContent">
+                        <div class="userDisplay">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <div class="postHeader">
+                                <p class="nameCommentContent">@{{.Username}} &nbsp<span
+                                        style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
+                            </div>
+                        </div>
+                        <p class="textContent">{{.Content}}</p>
+                        {{if .Media}}
+                        {{range .Media}}
+                        <div class="imageSpace">
+                            <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                        </div>
+                        {{end}}
+                        {{end}}
+                        <div class="updateInfo">
+                            <div class="combinedlikeDis">
+                                <label for="likeCheckbox">
+                                    <input type="checkbox" id="likeCheckbox" hidden>
+                                    <a href="#popover-content">
+                                        <button type="submit" class="likeButton">
+                                            <i class='bx bx-like'></i>
+                                            <p>{{.Likes}}</p>
+                                        </button>
+                                    </a>
+                                </label>
+                                <label for="dislikeCheckbox">
+                                    <input type="checkbox" id="dislikeCheckbox" hidden>
+                                    <a href="#popover-content">
+                                        <button type="submit" class="dislikeButton">
+                                            <i class='bx bx-dislike'></i>
+                                            <p>{{.Dislikes}}</p>
+                                        </button>
+                                    </a>
+                                </label>
+                            </div>
+                            <a href="#home">
+                                <div class="commentsCon">
+                                    <i class='bx bxs-comment comments'></i>
+                                    <p>{{.ComCount}}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <form action="createcomment" method="post">
+                        <input type="hidden" name="hiddenID" value="{{.ID}}">
+                        <div class="inputComment">
+                            <input type="text" name="commentInput" placeholder="Launch a new comment..." title=""
+                                maxlength="366" required autocomplete="off">
+                            <button type="submit" class="submitCommentLabel">
+                                <i class='bx bx-rocket'></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="otherComments">
+                    {{range .Comment}}
+                    <div class="comment" id="comment={{.ComID}}">
+                        <div class="sidePP">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        </div>
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@{{.ComUsername}} &nbsp<span style="font-weight: normal;">•&nbsp {{.ComFormatDate}}</span></p>
+                                </div>
+                            </div>
+                            <p class="textContent">
+                                {{.ComContent}}
+                            </p>
+                            <div class="updateInfo">
+                                <div class="combinedlikeDis">
+                                    <label for="likeCheckbox">
+                                        <input type="checkbox" id="likeCheckbox" hidden>
+                                        <a href="#popover-content">
+                                            <button type="submit" class="likeButton">
+                                                <i class='bx bx-like'></i>
+                                                <p>{{.ComLikes}}</p>
+                                            </button>
+                                        </a>
+                                    </label>
+                                    <label for="dislikeCheckbox">
+                                        <input type="checkbox" id="dislikeCheckbox" hidden>
+                                        <a href="#popover-content">
+                                            <button type="submit" class="dislikeButton">
+                                                <i class='bx bx-dislike'></i>
+                                                <p>{{.ComDislikes}}</p>
+                                            </button>
+                                        </a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+            <a href="#home" class="pcAnchor"></a>
             <div class="mainContainer">
                 <div class="combinedside">
                     <aside class="spaceNews">
@@ -196,285 +302,70 @@
 
                 <!-- Main content with posts -->
                 <main>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                    {{range .}}
+                    <div class="post" id="post={{.ID}}">
+                        <div class="sidePP">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        </div>
                         <div class="postContent">
                             <div class="userDisplay">
                                 <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">•&nbsp 11 Sep
-                                            2024</span></p>
+                                    <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                            {{.FormatDate}}</span></p>
                                 </div>
                             </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <img src="../../images/cat.jpg" class="image" alt="Content">
+                            <p class="textContent">{{.Content}}</p>
+                            {{if .Media}}
+                            {{range .Media}}
+                            <div class="imageSpace">
+                                <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                            </div>
+                            {{end}}
+                            {{end}}
                             <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <a href="#PostComments">
+                                <div class="combinedlikeDis">
+                                    <label for="likeCheckbox">
+                                        <input type="checkbox" id="likeCheckbox" hidden>
+                                        <a href="#popover-content">
+                                        <button class="likeButton">
+                                            <i class='bx bx-like'></i>
+                                            <p>{{.Likes}}</p>
+                                        </button>
+                                        </a>
+                                    </label>
+                                    <label for="dislikeCheckbox">
+                                        <input type="checkbox" id="dislikeCheckbox" hidden>
+                                        <a href="#popover-content">
+                                        <button class="dislikeButton">
+                                            <i class='bx bx-dislike'></i>
+                                            <p>{{.Dislikes}}</p>
+                                        </button>
+                                        </a>
+                                    </label>
+                                </div>
+                                <a href="#CommentSection={{.ID}}">
                                     <div class="commentsCon">
                                         <i class='bx bx-comment comments'></i>
-                                        <p>5</p>
+                                        <p>{{.ComCount}}</p>
                                     </div>
                                 </a>
-                                <!-- Comments end up here in post pop up -->
-                            </div>
-                        </div>
-                        <div id="PostComments">
-
-                        </div>
-                    </div>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i>
-                                    <p>5</p>
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i>
-                                    <p>5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <img src="../../images/pp.jpg" class="image" alt="Content">
-                            <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i>
-                                    <p>5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <img src="../../images/cat.jpg" class="image" alt="Content">
-                            <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i>
-                                    <p>5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post">
-                        <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
-                        <div class="postContent">
-                            <div class="userDisplay">
-                                <div class="postHeader">
-                                    <p class="nameContent">@Moataz &nbsp<span style="font-weight: normal;">• 11 Sep
-                                            2024</span></p>
-                                </div>
-                            </div>
-                            <p class="textContent">Cats are beloved for their charm, independence, and agility.
-                                Domesticated
-                                about 9,000 years ago, they adapted from hunting pests to being human companions. Their
-                                self-sufficiency, gentle purring, and affectionate head-butts make them ideal pets.
-                                Cats’
-                                sharp
-                                instincts, keen vision, and agile bodies showcase their wild heritage while bringing joy
-                                to
-                                homes worldwide.</p>
-                            <img src="../../images/cat.jpg" class="image" alt="Content">
-                            <div class="updateInfo">
-                                <label for="likeCheckbox">
-                                    <input type="checkbox" id="likeCheckbox" hidden>
-                                    <a href="like" id="likeLink">
-                                        <div class="likesCon">
-                                            <i class='bx bx-like likes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <label for="dislikeCheckbox">
-                                    <input type="checkbox" id="dislikeCheckbox" hidden>
-                                    <a href="dislike" id="dislikeLink">
-                                        <div class="dislikesCon">
-                                            <i class='bx bx-dislike dislikes'></i>
-                                            <p>1</p>
-                                        </div>
-                                    </a>
-                                </label>
-                                <div class="commentsCon">
-                                    <i class='bx bx-comment comments'></i>
-                                    <p>5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{end}}
                 </main>
             </div>
         </div>
     </div>
     </div>
+    <div class="popup" id="popover-content">
+        <div class="popupHeader">
+            <a href="#home"><i class='bx bx-x'></i></a>
+        </div>
+        <div class="mainPopup">
+            <p class="popupJoin"><span class="popupTitle">Start Your Journey</span></p><p><a href="auth" style="font-size: 1.1rem;">Login</a> or <a href="auth#container2" style="font-size: 1.1rem;">Register</a> to use this feature.</p>
+        </div>
+    </div>
+    <a href="#home" class="popoverAnchor"></a>
 </body>
-
 </html>
