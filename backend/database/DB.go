@@ -603,8 +603,7 @@ type UserProfile struct {
 	DislikedPosts []Post
 }
 
-// FetchLikedPosts retrieves all posts liked by a user and returns them in a UserProfile.
-func FetchLikedPosts(userID int) (UserProfile, error) {
+func FetchLikedPosts(userID int) ([]Post, error) {
 	query := `
         SELECT 
             p.id, p.user_id, u.username, p.content, p.created_at,
@@ -619,48 +618,39 @@ func FetchLikedPosts(userID int) (UserProfile, error) {
 
 	rows, err := db.Query(query, userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	var likedPosts []Post
-	var username string
 	for rows.Next() {
 		var post Post
+		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
 
+		post.Username = username
 		post.FormatDate = FormatDate(post.CreatedAt)
 
-		// Fetch media for each post
-		media, err := FetchMediaByPostID(post.ID)
+		// Fetch media and comments for the post
+		post.Media, err = FetchMediaByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Media = media
-
-		// Fetch comments for each post
-		comments, err := FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Comment = comments
 
 		likedPosts = append(likedPosts, post)
 	}
 
-	// Return the UserProfile with LikedPosts populated
-	return UserProfile{
-		UserID:     userID,
-		Username:   username,
-		LikedPosts: likedPosts,
-	}, nil
+	return likedPosts, nil
 }
 
-// FetchDislikedPosts retrieves all posts disliked by a specific user and returns them in a UserProfile.
-func FetchDislikedPosts(userID int) (UserProfile, error) {
+func FetchDislikedPosts(userID int) ([]Post, error) {
 	rows, err := db.Query(`
 		SELECT 
 			p.id, p.user_id, u.username, p.content, p.created_at,
@@ -671,51 +661,41 @@ func FetchDislikedPosts(userID int) (UserProfile, error) {
 		JOIN users u ON p.user_id = u.id
 		WHERE l.user_id = ? AND l.is_like = 0
 		GROUP BY p.id
-		ORDER BY p.created_at DESC
-	`, userID)
+		ORDER BY p.created_at DESC`, userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	var dislikedPosts []Post
-	var username string
 	for rows.Next() {
 		var post Post
+		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
 
+		post.Username = username
 		post.FormatDate = FormatDate(post.CreatedAt)
 
-		// Fetch media for each post
-		media, err := FetchMediaByPostID(post.ID)
+		// Fetch media and comments for the post
+		post.Media, err = FetchMediaByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Media = media
-
-		// Fetch comments for each post
-		comments, err := FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Comment = comments
 
 		dislikedPosts = append(dislikedPosts, post)
 	}
 
-	// Return the UserProfile with DislikedPosts populated
-	return UserProfile{
-		UserID:        userID,
-		Username:      username,
-		DislikedPosts: dislikedPosts,
-	}, nil
+	return dislikedPosts, nil
 }
 
-// FetchCreatedPosts retrieves all posts created by a specific user and returns them in a UserProfile.
-func FetchCreatedPosts(userID int) (UserProfile, error) {
+func FetchCreatedPosts(userID int) ([]Post, error) {
 	rows, err := db.Query(`
 		SELECT 
 			p.id, p.user_id, u.username, p.content, p.created_at,
@@ -726,78 +706,65 @@ func FetchCreatedPosts(userID int) (UserProfile, error) {
 		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
 		WHERE p.user_id = ?
 		GROUP BY p.id
-		ORDER BY p.created_at DESC
-	`, userID)
+		ORDER BY p.created_at DESC`, userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	var createdPosts []Post
-	var username string
 	for rows.Next() {
 		var post Post
+		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
 
+		post.Username = username
 		post.FormatDate = FormatDate(post.CreatedAt)
 
-		// Fetch media for each post
-		media, err := FetchMediaByPostID(post.ID)
+		// Fetch media and comments for the post
+		post.Media, err = FetchMediaByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Media = media
-
-		// Fetch comments for each post
-		comments, err := FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID)
 		if err != nil {
-			return UserProfile{}, err
+			return nil, err
 		}
-		post.Comment = comments
 
 		createdPosts = append(createdPosts, post)
 	}
 
-	// Return the UserProfile with CreatedPosts populated
-	return UserProfile{
-		UserID:       userID,
-		Username:     username,
-		CreatedPosts: createdPosts,
-	}, nil
+	return createdPosts, nil
 }
 
-// FetchUserProfileByUserID retrieves a user's profile data including their liked, disliked, and created posts
 func FetchUserProfileBySessionToken(userID int) (UserProfile, error) {
-	// Fetch liked posts
-	likedProfile, err := FetchLikedPosts(userID)
+	// Fetch liked, disliked, and created posts concurrently
+	likedPosts, err := FetchLikedPosts(userID)
 	if err != nil {
 		return UserProfile{}, err
 	}
 
-	// Fetch disliked posts
-	dislikedProfile, err := FetchDislikedPosts(userID)
+	dislikedPosts, err := FetchDislikedPosts(userID)
 	if err != nil {
 		return UserProfile{}, err
 	}
 
-	// Fetch created posts
-	createdProfile, err := FetchCreatedPosts(userID)
+	createdPosts, err := FetchCreatedPosts(userID)
 	if err != nil {
 		return UserProfile{}, err
 	}
 
-	// Combine all data into a UserProfile
+	// Combine the data into a UserProfile struct
 	userProfile := UserProfile{
 		UserID:        userID,
-		Username:      likedProfile.Username, // Assuming the username is the same for all profiles
-		LikedPosts:    likedProfile.LikedPosts,
-		DislikedPosts: dislikedProfile.DislikedPosts,
-		CreatedPosts:  createdProfile.CreatedPosts,
+		Username:      likedPosts[0].Username, // Assuming the username is the same across all posts
+		LikedPosts:    likedPosts,
+		DislikedPosts: dislikedPosts,
+		CreatedPosts:  createdPosts,
 	}
 
-	// Return the populated UserProfile struct
 	return userProfile, nil
 }
