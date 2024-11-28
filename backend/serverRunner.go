@@ -34,6 +34,9 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
+	// http.HandleFunc("/createdposts", UserProfileHandler)
+	// http.HandleFunc("/likedposts", UserProfileHandler)
+	// http.HandleFunc("/dislikedposts", UserProfileHandler)
 	http.HandleFunc("/uploads", NotFound)
 	http.HandleFunc("/images", NotFound)
 	http.HandleFunc("/frontend/css", InternalServerError)
@@ -70,28 +73,48 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	// Render homepage if session is valid
 	t, terr := template.ParseFiles("./frontend/html/home.html")
 	if terr != nil {
+		fmt.Println("Here4")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	_, err := r.Cookie("session_token")
+	sessionToken, err := r.Cookie("session_token")
 	if err != nil {
 		// Redirect to Guest homepage if no session is found
 		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
 	}
 	if terr != nil {
+		fmt.Println("Here3")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
 	posts, err := database.FetchPosts()
 	if err != nil {
+		fmt.Println("Here2")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
+	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
+	if err != nil {
+		fmt.Println("Here")
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	type Data struct {
+		UserProfile []database.UserProfile
+		Post       []database.Post
+	}
+	// Prepare data for the template
+	data := Data{
+		UserProfile: userProfile,
+		Post:       posts,
+	}
+
 	// Pass posts data with like/dislike functionality to the template
-	err2 := t.Execute(w, posts)
+	err2 := t.Execute(w, data)
 	if err2 != nil {
+		fmt.Println("Here5")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
@@ -686,37 +709,32 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("#CommentSection=%s", postID), http.StatusSeeOther)
 }
-func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// Fetch the session token from the cookie
-	cookie, err := r.Cookie("session_token")
-	if err != nil || cookie.Value == "" {
-		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
-		return
-	}
-	// Check if user has already liked or disliked the post
-	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-	// Fetch the user's profile and posts using the session token
-	profile, err := database.FetchUserProfileBySessionToken(userID)
-	if err != nil {
-		http.Error(w, "Could not fetch user profile", http.StatusInternalServerError)
-		return
-	}
+// func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
+// 	// Fetch the session token from the cookie
+// 	cookie, err := r.Cookie("session_token")
+// 	if err != nil || cookie.Value == "" {
+// 		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+// 		return
+// 	}
+// 	// Fetch the user's profile and posts using the session token
+// 	profile, err := database.FetchUserProfileBySessionToken(cookie.Value)
+// 	if err != nil {
+// 		http.Error(w, "Could not fetch user profile", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	// Parse the profile page template and pass the profile data
-	t, err := template.ParseFiles("./frontend/html/home.html")
-	if err != nil {
-		http.Error(w, "Error rendering profile page", http.StatusInternalServerError)
-		return
-	}
+// 	fmt.Println(profile)
+// 	// Parse the profile page template and pass the profile data
+// 	t, err := template.ParseFiles("./frontend/html/home.html")
+// 	if err != nil {
+// 		http.Error(w, "Error rendering profile page", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	// Render the profile page with user data and posts
-	err = t.Execute(w, profile)
-	if err != nil {
-		http.Error(w, "Error rendering profile page", http.StatusInternalServerError)
-		return
-	}
-}
+// 	// Render the profile page with user data and posts
+// 	err = t.Execute(w, profile)
+// 	if err != nil {
+// 		http.Error(w, "Error rendering profile page2", http.StatusInternalServerError)
+// 		return
+// 	}
+// }

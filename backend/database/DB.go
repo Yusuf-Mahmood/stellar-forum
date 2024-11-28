@@ -381,17 +381,17 @@ func AssociatePostWithCategory(postID int64, categoryID int) error {
 
 // Post represents a post with user and content information
 type Post struct {
-	ID         int
-	UserID     int
-	Username   string
-	Content    string
-	CreatedAt  time.Time
-	FormatDate string
-	Media      []Media
-	Likes      int
-	Dislikes   int
-	ComCount   int
-	Comment    []Comment
+	ID              int
+	UserID          int
+	Username        string
+	Content         string
+	CreatedAt       time.Time
+	FormatDate      string
+	Media           []Media
+	Likes           int
+	Dislikes        int
+	ComCount        int
+	Comment         []Comment
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
@@ -408,6 +408,7 @@ func FetchPosts() ([]Post, error) {
         ORDER BY p.created_at DESC
     `)
 	if err != nil {
+		fmt.Println("Here10")
 		return nil, err
 	}
 	defer rows.Close()
@@ -417,6 +418,7 @@ func FetchPosts() ([]Post, error) {
 		var post Post
 		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
+			fmt.Println("Here11")
 			return nil, err
 		}
 
@@ -425,22 +427,24 @@ func FetchPosts() ([]Post, error) {
 		// Optionally, fetch media for each post
 		media, err := FetchMediaByPostID(post.ID)
 		if err != nil {
+			fmt.Println("Here12")
 			return nil, err
 		}
 		post.Media = media
 
-		// posts = append(posts, post)
-
 		comments, err := FetchCommentsByPostID(post.ID)
 		if err != nil {
+			fmt.Println("Here13")
 			return nil, err
 		}
 		post.Comment = comments
 		commentcount, err := CountComments(post.ID)
 		if err != nil {
+			fmt.Println("Here14")
 			return nil, err
 		}
 		post.ComCount = commentcount
+
 		posts = append(posts, post)
 	}
 	return posts, nil
@@ -740,31 +744,38 @@ func FetchCreatedPosts(userID int) ([]Post, error) {
 	return createdPosts, nil
 }
 
-func FetchUserProfileBySessionToken(userID int) (UserProfile, error) {
+func FetchUserProfileBySessionToken(sessionToken string) ([]UserProfile, error) {
 	// Fetch liked, disliked, and created posts concurrently
+	userID, err := FetchUserIDBySessionToken(sessionToken)
+	if err != nil {
+		return nil, err
+	}
 	likedPosts, err := FetchLikedPosts(userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
-
 	dislikedPosts, err := FetchDislikedPosts(userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
 
 	createdPosts, err := FetchCreatedPosts(userID)
 	if err != nil {
-		return UserProfile{}, err
+		return nil, err
 	}
-
-	// Combine the data into a UserProfile struct
+	username, err := FetchUsernameByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+	// Create a UserProfile struct
 	userProfile := UserProfile{
 		UserID:        userID,
-		Username:      likedPosts[0].Username, // Assuming the username is the same across all posts
+		Username:      username,
 		LikedPosts:    likedPosts,
 		DislikedPosts: dislikedPosts,
 		CreatedPosts:  createdPosts,
 	}
 
-	return userProfile, nil
+	// Wrap the UserProfile in a slice
+	return []UserProfile{userProfile}, nil
 }

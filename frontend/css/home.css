@@ -433,7 +433,7 @@ input[type="checkbox"]{
   display: none;
 }
 
-#profileActivate:checked + .profileContainer{
+#profileActivate:checked ~ .profileContainer{
   opacity: 1;
   right: 0;
 } 
