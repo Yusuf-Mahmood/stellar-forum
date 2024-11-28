@@ -392,7 +392,6 @@ type Post struct {
 	Dislikes   int
 	ComCount   int
 	Comment    []Comment
-	UserProfile []UserProfile
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
@@ -771,7 +770,7 @@ func FetchCreatedPosts(userID int) (UserProfile, error) {
 }
 
 // FetchUserProfileByUserID retrieves a user's profile data including their liked, disliked, and created posts
-func FetchUserProfileByUserID(userID int) (UserProfile, error) {
+func FetchUserProfileBySessionToken(userID int) (UserProfile, error) {
 	// Fetch liked posts
 	likedProfile, err := FetchLikedPosts(userID)
 	if err != nil {
