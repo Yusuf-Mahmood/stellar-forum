@@ -78,23 +78,31 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken, err := r.Cookie("session_token")
-	if err != nil {
-		// Redirect to Guest homepage if no session is found
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-	}
-	if terr != nil {
-		fmt.Println("Here3")
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-
 	posts, err := database.FetchPosts()
 	if err != nil {
 		fmt.Println("Here2")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
+
+	sessionToken, err := r.Cookie("session_token")
+	if err != nil {
+		// Redirect to Guest homepage if no session is found
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+
 	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
 	if err != nil {
 		fmt.Println("Here")

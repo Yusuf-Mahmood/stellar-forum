@@ -55,6 +55,7 @@
                     </form>
                 </div>
             </div>
+            <label for="profileActivate" class="profileAnchor"></label>
         </div>
         <nav>
             <div class="spaceNav">
@@ -153,7 +154,7 @@
                             </a>
                         </div>
                     </div>
-                    <form action="createcomment" method="post">
+                    <a href="#popover-content">
                         <input type="hidden" name="hiddenID" value="{{.ID}}">
                         <div class="inputComment">
                             <input type="text" name="commentInput" placeholder="Launch a new comment..." title=""
@@ -162,7 +163,7 @@
                                 <i class='bx bx-rocket'></i>
                             </button>
                         </div>
-                    </form>
+                    </a>
                 </div>
                 <div class="otherComments">
                     {{range .Comment}}

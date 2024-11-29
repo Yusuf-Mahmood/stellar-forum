@@ -745,6 +745,10 @@ func FetchCreatedPosts(userID int) ([]Post, error) {
 }
 
 func FetchUserProfileBySessionToken(sessionToken string) ([]UserProfile, error) {
+
+	if sessionToken == "" {
+		return nil, nil
+	}
 	// Fetch liked, disliked, and created posts concurrently
 	userID, err := FetchUserIDBySessionToken(sessionToken)
 	if err != nil {
