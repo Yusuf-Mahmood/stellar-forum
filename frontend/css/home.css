@@ -161,15 +161,14 @@ a{
   color: white;
 }
 
-
-
 .mainheader{
+  overflow: hidden;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--dark-color);
-  padding: 20px;
-  position: relative;
+  height: 4.5rem;
   z-index: 40;
 }
 
@@ -312,11 +311,12 @@ nav{
 
 .something{
   position: absolute;
-  transform: translateX(47vw);
   font-size: 26px;
   padding: 5px;
   cursor: pointer;
-  top: 25%;
+  z-index: 40;
+  transform: translateY(-140%);
+  right: 1.5vw;
 }
 
 .something:hover{
@@ -326,25 +326,25 @@ nav{
 .profileAnchor{
   display: none;
   position: absolute;
-  width: 100vw;
-  height: 95vh;
-  bottom: -95vh;
-  z-index: 40;
+  width: 100%;
+  height: 90vh;
+  z-index: 37;
   cursor: default;
 }
 
 .profileContainer{
   position: fixed;
-  z-index: 60;
+  z-index: 50;
   background-color: var(--darker-color);
-  transform: translateY(56.2%);
+  /* transform: translateY(75%); */
   box-shadow: 0 0 10px var(--dark-color);
   border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
   border-top: 1px solid var(--darker-color);
   right: -11rem;
   width: 12.4rem;
   opacity: 0;
-  height: 84vh;
+  height: 80vh;
   transition: 0.3s ease; 
 }
 
@@ -378,6 +378,18 @@ nav{
   justify-content: space-around;
 }
 
+.profileFilter button {
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  border: none;
+}
+
+.userProfileName{
+  padding: 0.9rem;
+  padding-top: 0;
+}
+
 .editPP{
   cursor: pointer;
   font-size: 0.8rem;
@@ -404,6 +416,7 @@ nav{
   padding: 12px 18px;
   background-color: var(--darker-color);
   width: 75%;
+  margin-bottom: 0.4rem;
   scale: 0.9;
   color: var(--light-color);
   font-size: 1.1rem;
@@ -421,6 +434,7 @@ nav{
   border-radius: 10px;
   font-family: var(--main-font);
   text-align: center;
+  padding: 0.3rem;
 }
 
 .uploadPP:hover{
@@ -494,7 +508,6 @@ aside{
   box-shadow: 0 0 5px var(--dark-color);
   border-radius: 5px;
   transition: 0.1s ease;
-
 }
 
 .post2{
@@ -533,6 +546,20 @@ aside{
   flex-direction: column;
   align-items: center;
   height: 45rem;
+}
+
+.returnhome{
+  width: 80%;
+  display: flex;
+  margin-top: 0.5rem;
+  justify-content: center;
+  transition: 0.5s ease;
+  border-top: 2px solid var(--dark-color);
+  padding-top: 1rem;
+}
+
+.returnhome i{
+  margin-right: 0.5rem;
 }
 
 .combinedlikeDis{
@@ -1355,6 +1382,33 @@ body {
   flex-direction: column;
   line-height: 3;
   align-items: center;
+}
+
+.createdposts{
+  display: none;
+  position: relative;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  gap: 0.5%;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 9.8rem;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  overflow-y: auto;
+}
+
+.gohome{
+  display: none;
+}
+
+#createdposts:target, #dislikedposts:target, #likedposts:target{
+  display: block;
+}
+
+#createdposts:target ~ main, #dislikedposts:target ~ main, #likedposts:target ~ main{
+  display: none;
 }
 
 .popup a{
