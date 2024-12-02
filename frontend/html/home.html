@@ -129,9 +129,12 @@
         <div class="spacing">
             {{range .Post}}
             <div id="CommentSection={{.ID}}" class="CommentSection">
-                <div id="home"></div>
                 <div class="postCommentHeader">
-                    <a href="#home"><i class='bx bx-x'></i></a>
+                    <form action="/redirect?post_id={{.ID}}" method="post">
+                        <button type="submit">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </form>
                 </div>
                 <div class="post2">
                     <div class="postContent">
@@ -234,8 +237,12 @@
                     {{end}}
                 </div>
             </div>
+            <div class="pcAnchor">
+                <form action="/redirect?post_id={{.ID}}" method="post">
+                    <button type="submit"></button>
+                </form>
+            </div>
             {{end}}
-            <a href="#home" class="pcAnchor"></a>
             <div class="mainContainer">
                 <div class="combinedside">
                     <input type="checkbox" id="toggleplus" hidden />
@@ -396,7 +403,7 @@
                 {{range .UserProfile}}
                 <div class="createdposts" id="createdposts">
                     {{range .CreatedPosts}}
-                          <div class="post" id="post={{.ID}}">
+                          <div class="post">
                                 <div class="sidePP">
                                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                                 </div>
@@ -451,7 +458,7 @@
                 {{range .UserProfile}}
                 <div class="createdposts" id="likedposts">
                     {{range .LikedPosts}}
-                          <div class="post" id="post={{.ID}}">
+                          <div class="post">
                                 <div class="sidePP">
                                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                                 </div>
@@ -506,7 +513,7 @@
                 {{range .UserProfile}}
                 <div class="createdposts" id="dislikedposts">
                     {{range .DislikedPosts}}
-                          <div class="post" id="post={{.ID}}">
+                          <div class="post">
                                 <div class="sidePP">
                                     <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                                 </div>

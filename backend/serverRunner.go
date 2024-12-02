@@ -34,9 +34,7 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
-	// http.HandleFunc("/createdposts", UserProfileHandler)
-	// http.HandleFunc("/likedposts", UserProfileHandler)
-	// http.HandleFunc("/dislikedposts", UserProfileHandler)
+	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/uploads", NotFound)
 	http.HandleFunc("/images", NotFound)
 	http.HandleFunc("/frontend/css", InternalServerError)
@@ -86,7 +84,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionToken, err := r.Cookie("session_token")
-	if err != nil {
+	if err != nil || sessionToken.Value == "" {
 		// Redirect to Guest homepage if no session is found
 		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
 		if terr != nil {
@@ -105,8 +103,18 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 
 	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
 	if err != nil {
-		fmt.Println("Here")
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
 		return
 	}
 	type Data struct {
@@ -122,7 +130,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	// Pass posts data with like/dislike functionality to the template
 	err2 := t.Execute(w, data)
 	if err2 != nil {
-		fmt.Println("Here5")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
@@ -717,32 +724,12 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("#CommentSection=%s", postID), http.StatusSeeOther)
 }
-// func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
-// 	// Fetch the session token from the cookie
-// 	cookie, err := r.Cookie("session_token")
-// 	if err != nil || cookie.Value == "" {
-// 		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
-// 		return
-// 	}
-// 	// Fetch the user's profile and posts using the session token
-// 	profile, err := database.FetchUserProfileBySessionToken(cookie.Value)
-// 	if err != nil {
-// 		http.Error(w, "Could not fetch user profile", http.StatusInternalServerError)
-// 		return
-// 	}
 
-// 	fmt.Println(profile)
-// 	// Parse the profile page template and pass the profile data
-// 	t, err := template.ParseFiles("./frontend/html/home.html")
-// 	if err != nil {
-// 		http.Error(w, "Error rendering profile page", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Render the profile page with user data and posts
-// 	err = t.Execute(w, profile)
-// 	if err != nil {
-// 		http.Error(w, "Error rendering profile page2", http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+func Redirect(w http.ResponseWriter, r *http.Request) {
+	postID := r.URL.Query().Get("post_id")
+	if postID == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
+}
