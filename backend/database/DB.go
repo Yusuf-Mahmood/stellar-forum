@@ -392,7 +392,7 @@ type Post struct {
 	Dislikes        int
 	ComCount        int
 	Comment         []Comment
-	categoriesPosts []categoriesPosts
+	CategoriesPosts []categoriesPosts
 }
 
 type CategoryPosts struct {
@@ -581,6 +581,10 @@ func FetchPostsByCategories() ([]CategoryPosts, error) {
 	return categoryPostsList, nil
 }
 
+type Category struct {
+	ID   int
+	Name string
+}
 // FetchAllCategories retrieves all categories from the database
 func FetchAllCategories() ([]Category, error) {
 	query := `SELECT id, name FROM categories`

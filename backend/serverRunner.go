@@ -731,5 +731,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
+	fmt.Println(postID)
 	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
 }
