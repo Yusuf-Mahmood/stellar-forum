@@ -392,6 +392,27 @@ type Post struct {
 	Dislikes        int
 	ComCount        int
 	Comment         []Comment
+	categoriesPosts []categoriesPosts
+}
+
+type CategoryPosts struct {
+    CategoryID int               `json:"category_id"`
+    Posts      []categoriesPosts `json:"posts"`
+}
+
+type categoriesPosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
@@ -408,7 +429,6 @@ func FetchPosts() ([]Post, error) {
         ORDER BY p.created_at DESC
     `)
 	if err != nil {
-		fmt.Println("Here10")
 		return nil, err
 	}
 	defer rows.Close()
@@ -418,7 +438,6 @@ func FetchPosts() ([]Post, error) {
 		var post Post
 		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			fmt.Println("Here11")
 			return nil, err
 		}
 
@@ -427,28 +446,163 @@ func FetchPosts() ([]Post, error) {
 		// Optionally, fetch media for each post
 		media, err := FetchMediaByPostID(post.ID)
 		if err != nil {
-			fmt.Println("Here12")
 			return nil, err
 		}
 		post.Media = media
 
 		comments, err := FetchCommentsByPostID(post.ID)
 		if err != nil {
-			fmt.Println("Here13")
 			return nil, err
 		}
 		post.Comment = comments
-		commentcount, err := CountComments(post.ID)
+		commentCount, err := CountComments(post.ID)
 		if err != nil {
-			fmt.Println("Here14")
 			return nil, err
 		}
-		post.ComCount = commentcount
+		post.ComCount = commentCount
 
 		posts = append(posts, post)
 	}
 	return posts, nil
 }
+
+// FetchPostsByCategoryID retrieves posts for a specific category by its ID
+func FetchPostsByCategoryID(categoryID int) ([]Post, error) {
+	rows, err := db.Query(`
+		SELECT p.id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
+		}
+
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.ID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.ID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.ID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.ID, err)
+		}
+		post.ComCount = commentCount
+
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
+// FetchPostsByCategories retrieves posts grouped by category and returns them as a slice of CategoryPosts
+func FetchPostsByCategories() ([]CategoryPosts, error) {
+	// Fetch all categories
+	categories, err := FetchAllCategories()
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching categories: %w", err)
+	}
+
+	// Initialize a slice to hold the CategoryPosts for each category
+	var categoryPostsList []CategoryPosts
+
+	// Fetch posts for each category
+	for _, category := range categories {
+		posts, err := FetchPostsByCategoryID(category.ID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching posts for category %d: %w", category.ID, err)
+		}
+
+		// Initialize the CategoryPosts struct for this category
+		categoryPosts := CategoryPosts{
+			CategoryID: category.ID,
+			Posts:      []categoriesPosts{}, // Initialize the slice of posts for the category
+		}
+
+		// Map each post into the categoriesPosts struct
+		for _, post := range posts {
+			catPost := categoriesPosts{
+				CategoriesID: category.ID,
+				PostID:       post.ID,
+				UserID:       post.UserID,
+				Username:     post.Username,
+				Content:      post.Content,
+				CreatedAt:    post.CreatedAt,
+				FormatDate:   post.FormatDate,
+				Likes:        post.Likes,
+				Dislikes:     post.Dislikes,
+				ComCount:     post.ComCount,
+				Comment:      post.Comment,
+			}
+
+			// Fetch media for the post
+			media, err := FetchMediaByPostID(post.ID)
+			if err != nil {
+				return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
+			}
+			catPost.Media = media
+
+			// Add the post to the category's list of posts
+			categoryPosts.Posts = append(categoryPosts.Posts, catPost)
+		}
+
+		// Append the categoryPosts to the final result
+		categoryPostsList = append(categoryPostsList, categoryPosts)
+	}
+
+	// Return the list of CategoryPosts
+	return categoryPostsList, nil
+}
+
+// FetchAllCategories retrieves all categories from the database
+func FetchAllCategories() ([]Category, error) {
+	query := `SELECT id, name FROM categories`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+		err := rows.Scan(&category.ID, &category.Name)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+
+	return categories, nil
+}
+
 
 func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
