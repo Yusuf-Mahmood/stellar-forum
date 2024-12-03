@@ -381,26 +381,95 @@ func AssociatePostWithCategory(postID int64, categoryID int) error {
 
 // Post represents a post with user and content information
 type Post struct {
-	ID              int
-	UserID          int
-	Username        string
-	Content         string
-	CreatedAt       time.Time
-	FormatDate      string
-	Media           []Media
-	Likes           int
-	Dislikes        int
-	ComCount        int
-	Comment         []Comment
-	CategoriesPosts []CategoryPosts
+	ID         int
+	UserID     int
+	Username   string
+	Content    string
+	CreatedAt  time.Time
+	FormatDate string
+	Media      []Media
+	Likes      int
+	Dislikes   int
+	ComCount   int
+	Comment    []Comment
 }
 
-type CategoryPosts struct {
-	CategoryID int
-	Posts      []CategoriesPosts
+type MemesPosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
 }
 
-type CategoriesPosts struct {
+type GamingPosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
+}
+
+type EducationPosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
+}
+
+type TechnologyPosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
+}
+
+type SciencePosts struct {
+	CategoriesID int
+	PostID       int
+	UserID       int
+	Username     string
+	Content      string
+	CreatedAt    time.Time
+	FormatDate   string
+	Media        []Media
+	Likes        int
+	Dislikes     int
+	ComCount     int
+	Comment      []Comment
+}
+
+type SportsPosts struct {
 	CategoriesID int
 	PostID       int
 	UserID       int
@@ -466,10 +535,11 @@ func FetchPosts() ([]Post, error) {
 	return posts, nil
 }
 
-// FetchPostsByCategoryID retrieves posts for a specific category by its ID
-func FetchPostsByCategoryID(categoryID int) ([]Post, error) {
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetchMemesPostsByCategoryID(categoryID int) ([]MemesPosts, error) {
+	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
-		SELECT p.id, p.user_id, u.username, p.content, p.created_at,
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
 			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
 			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
 		FROM posts p
@@ -485,92 +555,362 @@ func FetchPostsByCategoryID(categoryID int) ([]Post, error) {
 	}
 	defer rows.Close()
 
-	var posts []Post
+	// Initialize an empty slice to store the fetched posts
+	var posts []MemesPosts
 	for rows.Next() {
-		var post Post
-		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		var post MemesPosts
+
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
 			return nil, fmt.Errorf("Error scanning post data: %w", err)
 		}
 
+		// Format the created date for the post
 		post.FormatDate = FormatDate(post.CreatedAt)
 
-		// Fetch media for the post
-		media, err := FetchMediaByPostID(post.ID)
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
 		if err != nil {
-			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
 		}
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.ID)
+		comments, err := FetchCommentsByPostID(post.PostID)
 		if err != nil {
-			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.ID, err)
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
 		post.Comment = comments
 
 		// Fetch the comment count for the post
-		commentCount, err := CountComments(post.ID)
+		commentCount, err := CountComments(post.PostID)
 		if err != nil {
-			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.ID, err)
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
 		}
 		post.ComCount = commentCount
 
+		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
 
+	// Return the populated slice of MemesPosts
 	return posts, nil
 }
 
-// FetchPostsByCategories retrieves posts grouped by category and returns them as a slice of CategoryPosts
-func FetchPostsByCategories(categoriesID int) ([]CategoryPosts, error) {
-	// Initialize a slice to hold the CategoryPosts for each category
-	var categoryPostsList []CategoryPosts
-
-	// Fetch posts for each category
-	posts, err := FetchPostsByCategoryID(categoriesID)
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetchGamingPostsByCategoryID(categoryID int) ([]GamingPosts, error) {
+	// Query to retrieve posts in the Memes category
+	rows, err := db.Query(`
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
 	if err != nil {
-		return nil, fmt.Errorf("Error fetching posts for category %d: %w", categoriesID, err)
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
 	}
+	defer rows.Close()
 
-	// Initialize the CategoryPosts struct for this category
-	categoryPosts := CategoryPosts{
-		CategoryID: categoriesID,
-		Posts:      []CategoriesPosts{}, // Initialize the slice of posts for the category
-	}
+	// Initialize an empty slice to store the fetched posts
+	var posts []GamingPosts
+	for rows.Next() {
+		var post GamingPosts
 
-	// Map each post into the categoriesPosts struct
-	for _, post := range posts {
-		catPost := CategoriesPosts{
-			CategoriesID: categoriesID,
-			PostID:       post.ID,
-			UserID:       post.UserID,
-			Username:     post.Username,
-			Content:      post.Content,
-			CreatedAt:    post.CreatedAt,
-			FormatDate:   post.FormatDate,
-			Likes:        post.Likes,
-			Dislikes:     post.Dislikes,
-			ComCount:     post.ComCount,
-			Comment:      post.Comment,
-		}
-
-		// Fetch media for the post
-		media, err := FetchMediaByPostID(post.ID)
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
-			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
 		}
-		catPost.Media = media
 
-		// Add the post to the category's list of posts
-		categoryPosts.Posts = append(categoryPosts.Posts, catPost)
+		// Format the created date for the post
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
+		}
+		post.ComCount = commentCount
+
+		// Append the populated post to the posts slice
+		posts = append(posts, post)
 	}
 
-	// Append the categoryPosts to the final result
-	categoryPostsList = append(categoryPostsList, categoryPosts)
+	// Return the populated slice of MemesPosts
+	return posts, nil
+}
 
-	// Return the list of CategoryPosts
-	return categoryPostsList, nil
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetcheEducationPostsByCategoryID(categoryID int) ([]EducationPosts, error) {
+	// Query to retrieve posts in the Memes category
+	rows, err := db.Query(`
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
+	}
+	defer rows.Close()
+
+	// Initialize an empty slice to store the fetched posts
+	var posts []EducationPosts
+	for rows.Next() {
+		var post EducationPosts
+
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
+		}
+
+		// Format the created date for the post
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
+		}
+		post.ComCount = commentCount
+
+		// Append the populated post to the posts slice
+		posts = append(posts, post)
+	}
+
+	// Return the populated slice of MemesPosts
+	return posts, nil
+}
+
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetchTechnologyPostsByCategoryID(categoryID int) ([]TechnologyPosts, error) {
+	// Query to retrieve posts in the Memes category
+	rows, err := db.Query(`
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
+	}
+	defer rows.Close()
+
+	// Initialize an empty slice to store the fetched posts
+	var posts []TechnologyPosts
+	for rows.Next() {
+		var post TechnologyPosts
+		
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
+		}
+
+		// Format the created date for the post
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
+		}
+		post.ComCount = commentCount
+
+		// Append the populated post to the posts slice
+		posts = append(posts, post)
+	}
+
+	// Return the populated slice of MemesPosts
+	return posts, nil
+}
+
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetchSciencePostsByCategoryID(categoryID int) ([]SciencePosts, error) {
+	// Query to retrieve posts in the Memes category
+	rows, err := db.Query(`
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
+	}
+	defer rows.Close()
+
+	// Initialize an empty slice to store the fetched posts
+	var posts []SciencePosts
+	for rows.Next() {
+		var post SciencePosts
+		
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
+		}
+
+		// Format the created date for the post
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
+		}
+		post.ComCount = commentCount
+
+		// Append the populated post to the posts slice
+		posts = append(posts, post)
+	}
+
+	// Return the populated slice of MemesPosts
+	return posts, nil
+}
+
+// FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
+func FetchSportsPostsByCategoryID(categoryID int) ([]SportsPosts, error) {
+	// Query to retrieve posts in the Memes category
+	rows, err := db.Query(`
+		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
+			COUNT(CASE WHEN l.is_like = 1 THEN 1 END) AS likes,
+			COUNT(CASE WHEN l.is_like = 0 THEN 1 END) AS dislikes
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN likes l ON p.id = l.post_id AND l.comment_id IS NULL
+		JOIN post_categories pc ON p.id = pc.post_id
+		WHERE pc.category_id = ?
+		GROUP BY p.id
+		ORDER BY p.created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying posts for category ID %d: %w", categoryID, err)
+	}
+	defer rows.Close()
+
+	// Initialize an empty slice to store the fetched posts
+	var posts []SportsPosts
+	for rows.Next() {
+		var post SportsPosts
+		
+		// Scan the database row into the MemesPosts struct
+		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, fmt.Errorf("Error scanning post data: %w", err)
+		}
+
+		// Format the created date for the post
+		post.FormatDate = FormatDate(post.CreatedAt)
+
+		// Fetch media for the post (e.g., images, videos)
+		media, err := FetchMediaByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.PostID, err)
+		}
+		post.Media = media
+
+		// Fetch comments for the post
+		comments, err := FetchCommentsByPostID(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
+		}
+		post.Comment = comments
+
+		// Fetch the comment count for the post
+		commentCount, err := CountComments(post.PostID)
+		if err != nil {
+			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
+		}
+		post.ComCount = commentCount
+
+		// Append the populated post to the posts slice
+		posts = append(posts, post)
+	}
+
+	// Return the populated slice of MemesPosts
+	return posts, nil
 }
 
 func FormatDate(date time.Time) string {

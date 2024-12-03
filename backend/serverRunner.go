@@ -116,14 +116,34 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	memesPosts, err := database.FetchMemesPostsByCategoryID(2)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+	
 	type Data struct {
 		UserProfile []database.UserProfile
 		Post       []database.Post
+		memesPosts []database.MemesPosts
 	}
 	// Prepare data for the template
 	data := Data{
 		UserProfile: userProfile,
 		Post:       posts,
+		memesPosts: memesPosts,
 	}
 
 	// Pass posts data with like/dislike functionality to the template
