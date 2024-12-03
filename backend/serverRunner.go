@@ -81,6 +81,37 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
+	// Fetch category posts
+	memesPosts, err := database.FetchMemesPostsByCategoryID(2)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	gamingPosts, err := database.FetchGamingPostsByCategoryID(3)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	educationPosts, err := database.FetcheEducationPostsByCategoryID(4)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	sciencePosts, err := database.FetchSciencePostsByCategoryID(6)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	sportsPosts, err := database.FetchSportsPostsByCategoryID(7)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
 
 	sessionToken, err := r.Cookie("session_token")
 	if err != nil || sessionToken.Value == "" {
@@ -91,126 +122,62 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
-		err = t.Execute(w, posts)
+		guestData := struct {
+			Post            []database.Post
+			MemesPosts      []database.MemesPosts
+			GamingPosts     []database.GamingPosts
+			EducationPosts  []database.EducationPosts
+			TechnologyPosts []database.TechnologyPosts
+			SciencePosts    []database.SciencePosts
+			SportsPosts     []database.SportsPosts
+		}{
+			Post:            posts,
+			MemesPosts:      memesPosts,
+			GamingPosts:     gamingPosts,
+			EducationPosts:  educationPosts,
+			TechnologyPosts: technologyPosts,
+			SciencePosts:    sciencePosts,
+			SportsPosts:     sportsPosts,
+		}
+
+		err = t.Execute(w, guestData)
 		if err != nil {
-			fmt.Println("Here6")
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
 		}
 		return
 	}
 
+	// Fetch user profile
 	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
 	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		// Fallback to guest homepage if session is invalid
+		t, terr := template.ParseFiles("./frontend/html/guesthome.html")
 		if terr != nil {
-			fmt.Println("Here3")
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
 
-	memesPosts, err := database.FetchMemesPostsByCategoryID(2)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
+		guestData := struct {
+			Post            []database.Post
+			MemesPosts      []database.MemesPosts
+			GamingPosts     []database.GamingPosts
+			EducationPosts  []database.EducationPosts
+			TechnologyPosts []database.TechnologyPosts
+			SciencePosts    []database.SciencePosts
+			SportsPosts     []database.SportsPosts
+		}{
+			Post:            posts,
+			MemesPosts:      memesPosts,
+			GamingPosts:     gamingPosts,
+			EducationPosts:  educationPosts,
+			TechnologyPosts: technologyPosts,
+			SciencePosts:    sciencePosts,
+			SportsPosts:     sportsPosts,
 		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
 
-	gamingPosts, err := database.FetchGamingPostsByCategoryID(3)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		err = t.Execute(w, posts)
+		err = t.Execute(w, guestData)
 		if err != nil {
-			fmt.Println("Here6")
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
-	educationPosts, err := database.FetcheEducationPostsByCategoryID(4)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
-	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
-	sciencePosts, err := database.FetchSciencePostsByCategoryID(6)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		return
-	}
-	sportsPosts, err := database.FetchSportsPostsByCategoryID(7)
-	if err != nil {
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		err = t.Execute(w, posts)
-		if err != nil {
-			fmt.Println("Here6")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
 		}
 		return
 	}

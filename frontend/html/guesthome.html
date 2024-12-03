@@ -60,17 +60,17 @@
         <nav>
             <div class="spaceNav">
                 <div class="wrapOptions">
-                    <a href="">
+                    <a href="#memes">
                         <div class="option"><i class='bx bx-laugh'></i>
                             <p class="navTitles">Memes</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#gaming">
                         <div class="option"><i class='bx bx-joystick'></i>
                             <p class="navTitles">Gaming</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#education">
                         <div class="option"><i class='bx bx-book-alt'></i>
                             <p class="navTitles">Education</p>
                         </div>
@@ -80,17 +80,17 @@
                             <p class="navTitles">Home</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#technology">
                         <div class="option"><i class='bx bx-microchip'></i>
                             <p class="navTitles">Technology</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#science">
                         <div class="option"><i class='bx bxs-flask'></i>
                             <p class="navTitles">Science</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#sports">
                         <div class="option"><i class='bx bx-basketball'></i>
                             <p class="navTitles">Sports</p>
                         </div>
@@ -102,7 +102,7 @@
         </nav>
 
         <div class="spacing">
-            {{range .}}
+            {{range .Post}}
             <div id="CommentSection={{.ID}}" class="CommentSection">
                 <div id="home"></div>
                 <div class="postCommentHeader">
@@ -301,9 +301,329 @@
                     </aside>
                 </div>
 
+                <!-- Categories -->
+                 {{range .MemesPosts}}
+                 <div class="createdposts" id="memes">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+                 {{range .GamingPosts}}
+                 <div class="createdposts" id="gaming">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+                 {{range .EducationPosts}}
+                 <div class="createdposts" id="education">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+                 {{range .TechnologyPosts}}
+                 <div class="createdposts" id="technology">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+                 {{range .SciencePosts}}
+                 <div class="createdposts" id="science">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+                 {{range .SportsPosts}}
+                 <div class="createdposts" id="sports">
+                     <div class="post">
+                         <div class="sidePP">
+                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                         </div>
+                         <div class="postContent">
+                             <div class="userDisplay">
+                                 <div class="postHeader">
+                                     <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                             {{.FormatDate}}</span></p>
+                                 </div>
+                             </div>
+                             <p class="textContent">{{.Content}}</p>
+                             {{if .Media}}
+                             {{range .Media}}
+                             <div class="imageSpace">
+                                 <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                             </div>
+                             {{end}}
+                             {{end}}
+                             <div class="updateInfo">
+                                 <div class="combinedlikeDis">
+                                     <label for="likeCheckbox">
+                                         <input type="checkbox" id="likeCheckbox" hidden>
+                                         <form action="/like?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="likeButton">
+                                                 <i class='bx bx-like'></i>
+                                                 <p>{{.Likes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                     <label for="dislikeCheckbox">
+                                         <input type="checkbox" id="dislikeCheckbox" hidden>
+                                         <form action="/dislike?post_id={{.PostID}}" method="post">
+                                             <button type="submit" class="dislikeButton">
+                                                 <i class='bx bx-dislike'></i>
+                                                 <p>{{.Dislikes}}</p>
+                                             </button>
+                                         </form>
+                                     </label>
+                                 </div>
+                                 <a href="#CommentSection={{.PostID}}">
+                                     <div class="commentsCon">
+                                         <i class='bx bx-comment comments'></i>
+                                         <p>{{.ComCount}}</p>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 {{end}}
+
                 <!-- Main content with posts -->
                 <main>
-                    {{range .}}
+                    {{range .Post}}
                     <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
