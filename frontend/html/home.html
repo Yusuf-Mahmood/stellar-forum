@@ -61,16 +61,16 @@
                         <button type="submit">Created Posts</button>
                     </div>
                 </a>
-                <a href="#likedposts">
-                    <i class='bx bxs-like' style="margin-right: 0.5rem;"></i>
-                    <div class="filter">
-                        <p>Liked Posts</p>
-                    </div>
-                </a>
                 <a href="#dislikedposts">
                     <i class='bx bxs-dislike' style="margin-right: 0.5rem;"></i>
                     <div class="filter">
                         <p>Disliked Posts</p>
+                    </div>
+                </a>
+                <a href="#likedposts">
+                    <i class='bx bxs-like' style="margin-right: 0.5rem;"></i>
+                    <div class="filter">
+                        <p>Liked Posts</p>
                     </div>
                 </a>
                 <div class="returnhome">
@@ -141,8 +141,7 @@
                         <div class="userDisplay">
                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
                             <div class="postHeader">
-                                <p class="nameCommentContent">@{{.Username}} &nbsp<span
-                                        style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
+                                <p class="nameCommentContent">@{{.Username}} &nbsp<span>•&nbsp {{.FormatDate}}</span></p>
                             </div>
                         </div>
                         <p class="textContent">{{.Content}}</p>

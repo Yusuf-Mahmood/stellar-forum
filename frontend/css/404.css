@@ -1,33 +1,11 @@
 html, body {
     height: 100vh;
   }
-  html:before, html:after, body:before, body:after {
-    content: "";
-    background: linear-gradient(#203075, #233581);
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  html:before, body:before {
-    background: linear-gradient(#233581, #203075);
-  }
   
-  html {
-    background: linear-gradient(#203075, #233581);
-    overflow: hidden;
-  }
-  html:before {
-    height: 105vmax;
-    width: 105vmax;
-    z-index: -4;
-  }
-  html:after {
-    height: 80vmax;
-    width: 80vmax;
-    z-index: -3;
-  }
+html {
+  background: linear-gradient(#203075, #233581);
+  overflow: hidden;
+}
   
   body {
     display: flex;
@@ -36,18 +14,10 @@ html, body {
     color: #FFF;
     font-family: "Varela Round", Sans-serif;
     text-shadow: 0 30px 10px rgba(0, 0, 0, 0.15);
+    background: radial-gradient(circle, rgb(21, 3, 59), rgb(21, 3, 59), rgb(12, 1, 35));
+    perspective: 1000px;
   }
-  body:before {
-    height: 60vmax;
-    width: 60vmax;
-    z-index: -2;
-  }
-  body:after {
-    height: 40vmax;
-    width: 40vmax;
-    z-index: -1;
-  }
-  
+
   .main {
     text-align: center;
     z-index: 5;
@@ -83,73 +53,134 @@ html, body {
     border-radius: 50%;
     box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
     z-index: 100;
+    background-image: radial-gradient(circle at top, #8080d7, 65%, #14122f);
+    box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
+    transform-style: preserve-3d;
+    animation: pulsate 6s infinite ease-in-out, drift 10s infinite ease-in-out;
+  }
+
+ /* Planet rotation and pulsation */
+.bubble:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0) 70%);
+  animation: rotate 15s infinite linear; /* Simulated cloud layers */
+  opacity: 0.5;
+}
+
+/* Add depth to each bubble */
+.bubble:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.6), transparent 90%);
+  transform: translateZ(-10px); /* Creates a back layer shadow */
+}
+
+/* Earth-like Planet */
+.bubble:nth-child(1) {
+  top: 15vh;
+  left: 15vw;
+  height: 22vmin;
+  width: 22vmin;
+  background: radial-gradient(circle at 60% 40%, #3a91d6 30%, #346ca7 60%, #223c5e), /* Ocean colors */
+              radial-gradient(circle at 30% 60%, #5eab68 20%, #417a45 50%, transparent 70%), /* Landmasses */
+              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 10%, transparent 80%); /* Clouds */
+  background-blend-mode: overlay;
+  animation: rotate 30s infinite linear, pulsate 8s infinite ease-in-out, drift 15s infinite ease-in-out;
+}
+
+/* Gas Giant */
+.bubble:nth-child(2) {
+  top: 20vh;
+  left: 38vw;
+  height: 16vmin;
+  width: 16vmin;
+  background: linear-gradient(90deg, 
+              #c6c2d6 10%, 
+              #8a93c8 25%, 
+              #6f75b2 40%, 
+              #454b6e 65%,
+              #1c1e32 90%),
+              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2), transparent 60%);
+  background-blend-mode: overlay, screen;
+  border-radius: 50%;
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.4);
+  animation: rotate 40s infinite linear, drift 12s infinite ease-in-out;
+}
+
+
+/* Rocky Planet */
+.bubble:nth-child(3) {
+  top: 12vh;
+  right: 30vw;
+  height: 13vmin;
+  width: 13vmin;
+  background: radial-gradient(circle at 30% 30%, #9c8f7d 20%, #6e645e 40%, #4d4743 70%, #27231f),
+              radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.1) 10%, transparent 50%);
+  background-blend-mode: multiply, screen;
+  animation: rotate 50s infinite linear, pulsate 10s infinite ease-in-out;
+}
+
+/* Icy Planet */
+.bubble:nth-child(4) {
+  top: 65vh;
+  right: 70vw;
+  height: 18vmin;
+  width: 18vmin;
+  background: radial-gradient(circle at 50% 50%, #e8f8ff 15%, #c6e3f3 35%, #a0bdd8 60%, #5f7c9a 85%),
+              linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent 70%);
+  background-blend-mode: overlay;
+  animation: rotate 35s infinite linear, drift 8s infinite ease-in-out;
+}
+
+/* Lava Planet */
+.bubble:nth-child(5) {
+  top: 60vh;
+  right: 18vw;
+  height: 28vmin;
+  width: 28vmin;
+  background: radial-gradient(circle at 50% 50%, #ff4b24 25%, #e87c44 50%, #a94420 80%, #4d1f0e 100%),
+              radial-gradient(circle at 70% 30%, rgba(255, 200, 0, 0.4) 15%, transparent 60%);
+  background-blend-mode: overlay;
+  animation: rotate 25s infinite linear, pulsate 6s infinite ease-in-out;
+}
+
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulsate {
+  0%, 100% {
+    transform: scale(1);
     opacity: 0.9;
   }
-  .bubble:before, .bubble:after {
-    content: "";
-    background: linear-gradient(#8080d7, #2a255f);
-    border-radius: 50%;
-    box-shadow: 0 30px 15px rgba(0, 0, 0, 0.15);
-    position: absolute;
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
   }
-  .bubble:nth-child(1) {
-    top: 15vh;
-    left: 15vw;
-    height: 22vmin;
-    width: 22vmin;
+}
+
+@keyframes drift {
+  0%, 100% {
+    transform: translateY(0);
   }
-  .bubble:nth-child(1):before {
-    width: 13vmin;
-    height: 13vmin;
-    bottom: -25vh;
-    right: -10vmin;
+  50% {
+    transform: translateY(-10px);
   }
-  .bubble:nth-child(2) {
-    top: 20vh;
-    left: 38vw;
-    height: 10vmin;
-    width: 10vmin;
-  }
-  .bubble:nth-child(2):before {
-    width: 5vmin;
-    height: 5vmin;
-    bottom: -10vh;
-    left: -8vmin;
-  }
-  .bubble:nth-child(3) {
-    top: 12vh;
-    right: 30vw;
-    height: 13vmin;
-    width: 13vmin;
-  }
-  .bubble:nth-child(3):before {
-    width: 3vmin;
-    height: 3vmin;
-    bottom: -15vh;
-    left: -18vmin;
-    z-index: 6;
-  }
-  .bubble:nth-child(4) {
-    top: 25vh;
-    right: 18vw;
-    height: 18vmin;
-    width: 18vmin;
-  }
-  .bubble:nth-child(4):before {
-    width: 7vmin;
-    height: 7vmin;
-    bottom: -10vmin;
-    left: -15vmin;
-  }
-  .bubble:nth-child(5) {
-    top: 60vh;
-    right: 18vw;
-    height: 28vmin;
-    width: 28vmin;
-  }
-  .bubble:nth-child(5):before {
-    width: 10vmin;
-    height: 10vmin;
-    bottom: 5vmin;
-    left: -25vmin;
-  }
+}

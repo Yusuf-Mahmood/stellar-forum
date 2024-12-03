@@ -409,7 +409,7 @@ nav{
 
 .profileFilter a{
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 20px;
   border-radius: 15px;
@@ -549,7 +549,7 @@ aside{
 }
 
 .returnhome{
-  width: 80%;
+  width: 70%;
   display: flex;
   margin-top: 0.5rem;
   justify-content: center;
@@ -917,6 +917,11 @@ input[type="file"]{
   width: 95%;
 }
 
+.postHeader span{
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.903);
+}
+
 .image{
   max-width: 95%;
   max-height: 400px;
@@ -1137,6 +1142,7 @@ input[type="checkbox"] {
 
 .otherComments{
   margin-top: 1rem;
+  margin-bottom: 1rem;
   min-height: 6rem; 
   display: flex;
   flex-direction: column;
