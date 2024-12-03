@@ -85,17 +85,17 @@
         <nav>
             <div class="spaceNav">
                 <div class="wrapOptions">
-                    <a href="">
+                    <a href="#CategoryID=2">
                         <div class="option"><i class='bx bx-laugh'></i>
                             <p class="navTitles">Memes</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#CategoryID=3">
                         <div class="option"><i class='bx bx-joystick'></i>
                             <p class="navTitles">Gaming</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#CategoryID=4">
                         <div class="option"><i class='bx bx-book-alt'></i>
                             <p class="navTitles">Education</p>
                         </div>
@@ -105,17 +105,17 @@
                             <p class="navTitles">Home</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#CategoryID=5">
                         <div class="option"><i class='bx bx-microchip'></i>
                             <p class="navTitles">Technology</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#CategoryID=6">
                         <div class="option"><i class='bx bxs-flask'></i>
                             <p class="navTitles">Science</p>
                         </div>
                     </a>
-                    <a href="">
+                    <a href="#CategoryID=7">
                         <div class="option"><i class='bx bx-basketball'></i>
                             <p class="navTitles">Sports</p>
                         </div>
@@ -130,7 +130,7 @@
             {{range .Post}}
             <div id="CommentSection={{.ID}}" class="CommentSection">
                 <div class="postCommentHeader">
-                    <form action="/redirect?post_id={{.ID}}" method="post">
+                    <form action="javascript:history.back()" method="post">
                         <button type="submit">
                             <i class='bx bx-x'></i>
                         </button>
@@ -238,7 +238,7 @@
                 </div>
             </div>
             <div class="pcAnchor">
-                <form action="/redirect?post_id={{.ID}}" method="post">
+                <form action="javascript:history.back()" method="post">
                     <button type="submit"></button>
                 </form>
             </div>
@@ -564,7 +564,64 @@
                             </div>
                     {{end}}
                 </div>
-                {{end}}     
+                {{end}}    
+                
+                <!-- Categories -->
+                {{range .Post}}
+                {{range .CategoriesPosts}}
+                <div class="createdposts" id="CategoryID={{.CategoryID}} categorypusts">
+                    <div class="post">
+                        <div class="sidePP">
+                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                        </div>
+                        <div class="postContent">
+                            <div class="userDisplay">
+                                <div class="postHeader">
+                                    <p class="nameContent">@{{.Username}} &nbsp<span style="font-weight: normal;">•&nbsp
+                                            {{.FormatDate}}</span></p>
+                                </div>
+                            </div>
+                            <p class="textContent">{{.Content}}</p>
+                            {{if .Media}}
+                            {{range .Media}}
+                            <div class="imageSpace">
+                                <img src="../../{{.FilePath}}" class="image" alt="Post Image">
+                            </div>
+                            {{end}}
+                            {{end}}
+                            <div class="updateInfo">
+                                <div class="combinedlikeDis">
+                                    <label for="likeCheckbox">
+                                        <input type="checkbox" id="likeCheckbox" hidden>
+                                        <form action="/like?post_id={{.ID}}" method="post">
+                                            <button type="submit" class="likeButton">
+                                                <i class='bx bx-like'></i>
+                                                <p>{{.Likes}}</p>
+                                            </button>
+                                        </form>
+                                    </label>
+                                    <label for="dislikeCheckbox">
+                                        <input type="checkbox" id="dislikeCheckbox" hidden>
+                                        <form action="/dislike?post_id={{.ID}}" method="post">
+                                            <button type="submit" class="dislikeButton">
+                                                <i class='bx bx-dislike'></i>
+                                                <p>{{.Dislikes}}</p>
+                                            </button>
+                                        </form>
+                                    </label>
+                                </div>
+                                <a href="#CommentSection={{.ID}}">
+                                    <div class="commentsCon">
+                                        <i class='bx bx-comment comments'></i>
+                                        <p>{{.ComCount}}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+                {{end}} 
                 <!-- Main content with posts -->
                 <main>
                     {{range .Post}}

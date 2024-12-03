@@ -34,7 +34,6 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
-	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/uploads", NotFound)
 	http.HandleFunc("/images", NotFound)
 	http.HandleFunc("/frontend/css", InternalServerError)
@@ -723,14 +722,4 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("#CommentSection=%s", postID), http.StatusSeeOther)
-}
-
-func Redirect(w http.ResponseWriter, r *http.Request) {
-	postID := r.URL.Query().Get("post_id")
-	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
-	fmt.Println(postID)
-	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
 }

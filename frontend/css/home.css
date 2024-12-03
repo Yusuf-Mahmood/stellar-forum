@@ -1417,11 +1417,11 @@ body {
   display: none;
 }
 
-#createdposts:target, #dislikedposts:target, #likedposts:target{
+#createdposts:target, #dislikedposts:target, #likedposts:target, #categorypusts:target{
   display: block;
 }
 
-#createdposts:target ~ main, #dislikedposts:target ~ main, #likedposts:target ~ main{
+#createdposts:target ~ main, #dislikedposts:target ~ main, #likedposts:target ~ main, #categorypusts:target ~ main{
   display: none;
 }
 

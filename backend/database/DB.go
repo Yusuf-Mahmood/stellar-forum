@@ -392,15 +392,15 @@ type Post struct {
 	Dislikes        int
 	ComCount        int
 	Comment         []Comment
-	CategoriesPosts []categoriesPosts
+	CategoriesPosts []CategoryPosts
 }
 
 type CategoryPosts struct {
-    CategoryID int               `json:"category_id"`
-    Posts      []categoriesPosts `json:"posts"`
+    CategoryID int               
+    Posts      []CategoriesPosts 
 }
 
-type categoriesPosts struct {
+type CategoriesPosts struct {
 	CategoriesID int
 	PostID       int
 	UserID       int
@@ -543,12 +543,12 @@ func FetchPostsByCategories() ([]CategoryPosts, error) {
 		// Initialize the CategoryPosts struct for this category
 		categoryPosts := CategoryPosts{
 			CategoryID: category.ID,
-			Posts:      []categoriesPosts{}, // Initialize the slice of posts for the category
+			Posts:      []CategoriesPosts{}, // Initialize the slice of posts for the category
 		}
 
 		// Map each post into the categoriesPosts struct
 		for _, post := range posts {
-			catPost := categoriesPosts{
+			catPost := CategoriesPosts{
 				CategoriesID: category.ID,
 				PostID:       post.ID,
 				UserID:       post.UserID,
