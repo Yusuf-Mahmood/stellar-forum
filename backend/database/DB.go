@@ -396,8 +396,8 @@ type Post struct {
 }
 
 type CategoryPosts struct {
-    CategoryID int               
-    Posts      []CategoriesPosts 
+	CategoryID int
+	Posts      []CategoriesPosts
 }
 
 type CategoriesPosts struct {
@@ -523,90 +523,55 @@ func FetchPostsByCategoryID(categoryID int) ([]Post, error) {
 }
 
 // FetchPostsByCategories retrieves posts grouped by category and returns them as a slice of CategoryPosts
-func FetchPostsByCategories() ([]CategoryPosts, error) {
-	// Fetch all categories
-	categories, err := FetchAllCategories()
-	if err != nil {
-		return nil, fmt.Errorf("Error fetching categories: %w", err)
-	}
-
+func FetchPostsByCategories(categoriesID int) ([]CategoryPosts, error) {
 	// Initialize a slice to hold the CategoryPosts for each category
 	var categoryPostsList []CategoryPosts
 
 	// Fetch posts for each category
-	for _, category := range categories {
-		posts, err := FetchPostsByCategoryID(category.ID)
-		if err != nil {
-			return nil, fmt.Errorf("Error fetching posts for category %d: %w", category.ID, err)
-		}
-
-		// Initialize the CategoryPosts struct for this category
-		categoryPosts := CategoryPosts{
-			CategoryID: category.ID,
-			Posts:      []CategoriesPosts{}, // Initialize the slice of posts for the category
-		}
-
-		// Map each post into the categoriesPosts struct
-		for _, post := range posts {
-			catPost := CategoriesPosts{
-				CategoriesID: category.ID,
-				PostID:       post.ID,
-				UserID:       post.UserID,
-				Username:     post.Username,
-				Content:      post.Content,
-				CreatedAt:    post.CreatedAt,
-				FormatDate:   post.FormatDate,
-				Likes:        post.Likes,
-				Dislikes:     post.Dislikes,
-				ComCount:     post.ComCount,
-				Comment:      post.Comment,
-			}
-
-			// Fetch media for the post
-			media, err := FetchMediaByPostID(post.ID)
-			if err != nil {
-				return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
-			}
-			catPost.Media = media
-
-			// Add the post to the category's list of posts
-			categoryPosts.Posts = append(categoryPosts.Posts, catPost)
-		}
-
-		// Append the categoryPosts to the final result
-		categoryPostsList = append(categoryPostsList, categoryPosts)
+	posts, err := FetchPostsByCategoryID(categoriesID)
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching posts for category %d: %w", categoriesID, err)
 	}
+
+	// Initialize the CategoryPosts struct for this category
+	categoryPosts := CategoryPosts{
+		CategoryID: categoriesID,
+		Posts:      []CategoriesPosts{}, // Initialize the slice of posts for the category
+	}
+
+	// Map each post into the categoriesPosts struct
+	for _, post := range posts {
+		catPost := CategoriesPosts{
+			CategoriesID: categoriesID,
+			PostID:       post.ID,
+			UserID:       post.UserID,
+			Username:     post.Username,
+			Content:      post.Content,
+			CreatedAt:    post.CreatedAt,
+			FormatDate:   post.FormatDate,
+			Likes:        post.Likes,
+			Dislikes:     post.Dislikes,
+			ComCount:     post.ComCount,
+			Comment:      post.Comment,
+		}
+
+		// Fetch media for the post
+		media, err := FetchMediaByPostID(post.ID)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching media for post %d: %w", post.ID, err)
+		}
+		catPost.Media = media
+
+		// Add the post to the category's list of posts
+		categoryPosts.Posts = append(categoryPosts.Posts, catPost)
+	}
+
+	// Append the categoryPosts to the final result
+	categoryPostsList = append(categoryPostsList, categoryPosts)
 
 	// Return the list of CategoryPosts
 	return categoryPostsList, nil
 }
-
-type Category struct {
-	ID   int
-	Name string
-}
-// FetchAllCategories retrieves all categories from the database
-func FetchAllCategories() ([]Category, error) {
-	query := `SELECT id, name FROM categories`
-	rows, err := db.Query(query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var categories []Category
-	for rows.Next() {
-		var category Category
-		err := rows.Scan(&category.ID, &category.Name)
-		if err != nil {
-			return nil, err
-		}
-		categories = append(categories, category)
-	}
-
-	return categories, nil
-}
-
 
 func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
