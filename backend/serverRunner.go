@@ -133,17 +133,108 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	gamingPosts, err := database.FetchGamingPostsByCategoryID(3)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+	educationPosts, err := database.FetcheEducationPostsByCategoryID(4)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+	sciencePosts, err := database.FetchSciencePostsByCategoryID(6)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
+	sportsPosts, err := database.FetchSportsPostsByCategoryID(7)
+	if err != nil {
+		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		if terr != nil {
+			fmt.Println("Here3")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		err = t.Execute(w, posts)
+		if err != nil {
+			fmt.Println("Here6")
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		return
+	}
 	
 	type Data struct {
 		UserProfile []database.UserProfile
 		Post       []database.Post
-		memesPosts []database.MemesPosts
+		MemesPosts []database.MemesPosts
+		GamingPosts []database.GamingPosts
+		EducationPosts []database.EducationPosts
+		TechnologyPosts []database.TechnologyPosts
+		SciencePosts []database.SciencePosts
+		SportsPosts []database.SportsPosts
 	}
 	// Prepare data for the template
 	data := Data{
 		UserProfile: userProfile,
 		Post:       posts,
-		memesPosts: memesPosts,
+		MemesPosts: memesPosts,
+		GamingPosts: gamingPosts,
+		EducationPosts: educationPosts,
+		TechnologyPosts: technologyPosts,
+		SciencePosts: sciencePosts,
+		SportsPosts: sportsPosts,
 	}
 
 	// Pass posts data with like/dislike functionality to the template
