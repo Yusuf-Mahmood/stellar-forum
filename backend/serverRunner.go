@@ -34,6 +34,7 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
+	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/uploads", NotFound)
 	http.HandleFunc("/images", NotFound)
 	http.HandleFunc("/frontend/css", InternalServerError)
@@ -53,6 +54,15 @@ func ServerRunner() {
 	if err != nil {
 		fmt.Println("Server error:", err)
 	}
+}
+
+func Redirect(w http.ResponseWriter, r *http.Request) {
+	postID := r.URL.Query().Get("post_id")
+	if postID == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
 }
 
 // RootHandler checks if a user is logged in and redirects accordingly
@@ -512,7 +522,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		os.MkdirAll(uploadDir, os.ModePerm)
 
 		fileExtension := filepath.Ext(fileHeader.Filename)
-		if fileExtension == "" {
+		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi"{ 
 			http.Error(w, "Invalid file type", http.StatusBadRequest)
 			return
 		}

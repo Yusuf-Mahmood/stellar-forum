@@ -41,17 +41,41 @@
         <input type="checkbox" id="profileActivate" hidden>
         <div class="profileContainer">
             <div class="profileHeader">
-                <form action="profilePicture" method="post">
-                    <label for="chooseProfilePicture">
-                        <!-- <img class="profilePic" src="../../images/moataz.jpg" alt="User Picture"> -->
-                        <i class='bx bxs-user-circle profilePic'></i>
-                        <p class="editPP">Edit Picture</p>
+                <label for="chooseProfilePicture">
+                    <label for="button"><i class='bx bx-palette coloricon'></i></label>
+                    <button popovertarget="pallette" id="button" hidden></button>
+                    <form action="profilePicture" method="post">
+                        <i style="color: #8683dc;" class='bx bxs-user-circle profilePic'></i>
+                        <!-- color 1: #e8d0ef color 2: whitesmoke default color: #8683dc color 4: #fdfcd8 color 5: #f9dab4 color 6: #cef0c4 color 7: #95c9cf-->
+                        <div id="pallette" class="pallette" popover="auto">
+                            <div class="colorSpacing">
+                                <label>
+                                    <input type="radio" name="profileColor" value="#8683dc" hidden checked>
+                                    <span style="background-color: #8683dc;"></span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="profileColor" value="#e8d0ef" hidden>
+                                    <span style="background-color: #e8d0ef;"></span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="profileColor" value="whitesmoke" hidden>
+                                    <span style="background-color: whitesmoke;"></span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="profileColor" value="#f9dab4" hidden>
+                                    <span style="background-color: #f9dab4;"></span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="profileColor" value="#95c9cf" hidden>
+                                    <span style="background-color: #95c9cf;"></span>
+                                </label>
+                            </div>
+                        </div><br>  
                         {{range .UserProfile}}
                         <p class="userProfileName">{{.Username}}</p>
                         {{end}}
                     </label>
-                    <input type="file" name="profilePicture" id="chooseProfilePicture" accept="image/*" required>
-                    <input type="submit" value="Upload" class="uploadPP">
+                    <input type="submit" value="Update" class="uploadPP">
                 </form>
             </div>
             <div class="profileFilter">
@@ -129,7 +153,7 @@
             {{range .Post}}
             <div id="CommentSection={{.ID}}" class="CommentSection">
                 <div class="postCommentHeader">
-                    <form action="javascript:history.back()" method="post">
+                    <form action="/redirect?post_id={{.ID}}" method="post">
                         <button type="submit">
                             <i class='bx bx-x'></i>
                         </button>
@@ -236,7 +260,7 @@
                 </div>
             </div>
             <div class="pcAnchor">
-                <form action="javascript:history.back()" method="post">
+                <form action="/redirect?post_id={{.ID}}" method="post">
                     <button type="submit"></button>
                 </form>
             </div>
