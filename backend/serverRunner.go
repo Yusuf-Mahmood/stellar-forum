@@ -49,8 +49,8 @@ func ServerRunner() {
 	fs3 := http.FileServer(http.Dir("./uploads"))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", fs3))
 
-	fmt.Print("The server is running on https://localhost:8080/\n")
-	err := http.ListenAndServeTLS(":8080", "./certs/cert.pem", "./certs/key.pem", nil)
+	fmt.Print("The server is running on https://localhost:8443/\n")
+	err := http.ListenAndServeTLS(":8443", "./certs/cert.pem", "./certs/key.pem", nil)
 	if err != nil {
 		fmt.Println("Server error:", err)
 	}

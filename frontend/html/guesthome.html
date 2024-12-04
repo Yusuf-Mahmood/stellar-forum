@@ -111,7 +111,7 @@
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                             <div class="postHeader">
                                 <p class="nameCommentContent">@{{.Username}} &nbsp<span
                                         style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
@@ -169,7 +169,7 @@
                     {{range .Comment}}
                     <div class="comment" id="comment={{.ComID}}">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -302,11 +302,11 @@
                 </div>
 
                 <!-- Categories -->
-                 {{range .MemesPosts}}
-                 <div class="createdposts" id="memes">
+                <div class="createdposts" id="memes">
+                     {{range .MemesPosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -327,21 +327,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -353,13 +351,13 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
-                 {{range .GamingPosts}}
                  <div class="createdposts" id="gaming">
+                     {{range .GamingPosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -380,21 +378,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -406,13 +402,13 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
-                 {{range .EducationPosts}}
                  <div class="createdposts" id="education">
+                     {{range .EducationPosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -433,21 +429,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -459,13 +453,13 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
-                 {{range .TechnologyPosts}}
                  <div class="createdposts" id="technology">
+                     {{range .TechnologyPosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -486,21 +480,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -512,13 +504,13 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
-                 {{range .SciencePosts}}
                  <div class="createdposts" id="science">
+                     {{range .SciencePosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -539,21 +531,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -565,13 +555,13 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
-                 {{range .SportsPosts}}
                  <div class="createdposts" id="sports">
+                     {{range .SportsPosts}}
                      <div class="post">
                          <div class="sidePP">
-                             <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -592,21 +582,19 @@
                                  <div class="combinedlikeDis">
                                      <label for="likeCheckbox">
                                          <input type="checkbox" id="likeCheckbox" hidden>
-                                         <form action="/like?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="likeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="likeButton">
                                                  <i class='bx bx-like'></i>
                                                  <p>{{.Likes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                      <label for="dislikeCheckbox">
                                          <input type="checkbox" id="dislikeCheckbox" hidden>
-                                         <form action="/dislike?post_id={{.PostID}}" method="post">
-                                             <button type="submit" class="dislikeButton">
+                                         <a href="#popover-content">                                             <button type="submit" class="dislikeButton">
                                                  <i class='bx bx-dislike'></i>
                                                  <p>{{.Dislikes}}</p>
                                              </button>
-                                         </form>
+                                         </a>
                                      </label>
                                  </div>
                                  <a href="#CommentSection={{.PostID}}">
@@ -618,15 +606,15 @@
                              </div>
                          </div>
                      </div>
+                     {{end}}
                  </div>
-                 {{end}}
 
                 <!-- Main content with posts -->
                 <main>
                     {{range .Post}}
                     <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">

@@ -41,40 +41,39 @@
         <input type="checkbox" id="profileActivate" hidden>
         <div class="profileContainer">
             <div class="profileHeader">
-                <label for="chooseProfilePicture">
-                    <label for="button"><i class='bx bx-palette coloricon'></i></label>
-                    <button popovertarget="pallette" id="button" hidden></button>
-                    <form action="profilePicture" method="post">
+                    <input type="checkbox" id="buttonpp" hidden>
+                    <label for="buttonpp">
+                        <i class='bx bx-palette coloricon'></i>
+                    </label>
+                    <form action="profilePicture" class="formpp" method="post">
                         <i style="color: #8683dc;" class='bx bxs-user-circle profilePic'></i>
-                        <!-- color 1: #e8d0ef color 2: whitesmoke default color: #8683dc color 4: #fdfcd8 color 5: #f9dab4 color 6: #cef0c4 color 7: #95c9cf-->
-                        <div id="pallette" class="pallette" popover="auto">
+                        <div id="pallette" class="pallette">
                             <div class="colorSpacing">
                                 <label>
-                                    <input type="radio" name="profileColor" value="#8683dc" hidden checked>
-                                    <span style="background-color: #8683dc;"></span>
+                                    <input type="radio" name="profileColor" value="#8683dc" hidden>
+                                    <div class="span" style="background-color: #8683dc;"></div>
                                 </label>
                                 <label>
                                     <input type="radio" name="profileColor" value="#e8d0ef" hidden>
-                                    <span style="background-color: #e8d0ef;"></span>
+                                    <div class="span" style="background-color: #e8d0ef;"></div>
                                 </label>
                                 <label>
-                                    <input type="radio" name="profileColor" value="whitesmoke" hidden>
-                                    <span style="background-color: whitesmoke;"></span>
+                                    <input type="radio" name="profileColor" value="#ededed" hidden>
+                                    <div class="span" style="background-color: #ededed;"></div>
                                 </label>
                                 <label>
                                     <input type="radio" name="profileColor" value="#f9dab4" hidden>
-                                    <span style="background-color: #f9dab4;"></span>
+                                    <div class="span" style="background-color: #f9dab4;"></div>
                                 </label>
                                 <label>
                                     <input type="radio" name="profileColor" value="#95c9cf" hidden>
-                                    <span style="background-color: #95c9cf;"></span>
+                                    <div class="span" style="background-color: #95c9cf;"></div>
                                 </label>
                             </div>
                         </div><br>  
                         {{range .UserProfile}}
                         <p class="userProfileName">{{.Username}}</p>
                         {{end}}
-                    </label>
                     <input type="submit" value="Update" class="uploadPP">
                 </form>
             </div>
@@ -162,7 +161,7 @@
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                             <div class="postHeader">
                                 <p class="nameCommentContent">@{{.Username}} &nbsp<span>•&nbsp {{.FormatDate}}</span></p>
                             </div>
@@ -219,7 +218,7 @@
                     {{range .Comment}}
                     <div class="comment">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -259,11 +258,7 @@
                     {{end}}
                 </div>
             </div>
-            <div class="pcAnchor">
-                <form action="/redirect?post_id={{.ID}}" method="post">
-                    <button type="submit"></button>
-                </form>
-            </div>
+            <a href="#home" class="pcAnchor"></a>
             {{end}}
             <div class="mainContainer">
                 <div class="combinedside">
@@ -427,7 +422,7 @@
                     {{range .CreatedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -482,7 +477,7 @@
                     {{range .LikedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -537,7 +532,7 @@
                     {{range .DislikedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -593,7 +588,7 @@
                     {{range .MemesPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -646,7 +641,7 @@
                     {{range .GamingPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -699,7 +694,7 @@
                     {{range .EducationPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -752,7 +747,7 @@
                     {{range .TechnologyPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -805,7 +800,7 @@
                     {{range .SciencePosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -858,7 +853,7 @@
                     {{range .SportsPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -912,7 +907,7 @@
                     {{range .Post}}
                     <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
-                            <img class="ppContent" src="../../images/moataz.jpg" alt="Profile">
+                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
