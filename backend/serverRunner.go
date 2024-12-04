@@ -204,7 +204,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		SportsPosts: sportsPosts,
 	}
 
-	fmt.Println("Memes: ", data.MemesPosts, "Education: ", data.EducationPosts)
 	// Pass posts data with like/dislike functionality to the template
 	err2 := t.Execute(w, data)
 	if err2 != nil {
