@@ -1066,7 +1066,7 @@ func FetchUserProfileBySessionToken(sessionToken string) ([]models.UserProfile, 
 	return []models.UserProfile{userProfile}, nil
 }
 
-func updateProfileColor(userID int, color string) error {
+func UpdateProfileColor(userID int, color string) error {
 	query := `UPDATE users SET profile_color = ? WHERE id = ?`
 
 	_, err := db.Exec(query, color, userID)

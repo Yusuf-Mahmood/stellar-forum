@@ -35,7 +35,7 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
-	http.HandleFunc("/UpdateProfileColor", UpdateProfileColor)
+	// http.HandleFunc("/UpdateProfileColor", UpdateProfileColor)
 	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/assets/uploads", NotFound)
 	http.HandleFunc("/assets/images", NotFound)
@@ -843,7 +843,7 @@ func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the profile color in the database
-	err = database.updateProfileColor(userID, profileColor)
+	err = database.UpdateProfileColor(userID, profileColor)
 	if err != nil {
 		http.Error(w, "Error updating profile color", http.StatusInternalServerError)
 		return
