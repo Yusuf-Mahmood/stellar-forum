@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"root/internal/models"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -15,83 +17,26 @@ var db *sql.DB
 func InitDB() {
 	var err error
 	// Initialize the global db connection
-	db, err = sql.Open("sqlite3", "./backend/database/forum.db")
+	db, err = sql.Open("sqlite3", "./internal/database/forum.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create tables
-	createTableQueries := []string{
-		`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            cookies TEXT
-        );`,
-
-		`CREATE TABLE IF NOT EXISTS posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            content TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        );`,
-
-		`CREATE TABLE IF NOT EXISTS comments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            content TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (post_id) REFERENCES posts (id),
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        );`,
-
-		`CREATE TABLE IF NOT EXISTS categories (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE
-        );`,
-
-		`CREATE TABLE IF NOT EXISTS post_categories  (
-    	post_id INT NOT NULL,
-    	category_id INT NOT NULL,
-    	PRIMARY KEY (post_id, category_id),
-    	FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    	FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-		);`,
-
-		`CREATE TABLE IF NOT EXISTS likes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            post_id INTEGER NOT NULL,
-            comment_id INTEGER,
-            is_like BOOLEAN NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (post_id) REFERENCES posts (id),
-            FOREIGN KEY (comment_id) REFERENCES comments (id)
-        );`,
-
-		`CREATE TABLE IF NOT EXISTS media (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id INTEGER NOT NULL,
-            file_path TEXT NOT NULL,
-            file_type TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (post_id) REFERENCES posts (id)
-        );`,
-		`INSERT OR IGNORE INTO categories (name) VALUES ('Gnrl'), ('Memes'), ('Gaming'), ('Education'), ('Technology'), ('Science'), ('Sports');`,
-	}
-
-	for _, query := range createTableQueries {
-		_, err = db.Exec(query)
-		if err != nil {
-			log.Fatalf("Error creating table: %s", err)
-		}
-	}
+	if err2 := RunSQL(db, "./internal/database/tables.sql"); err2 != nil {
+		log.Fatal(err2)
+	} 
 
 	log.Println("You are connected to the database correctly")
+}
+
+func RunSQL(db *sql.DB, filepath string) error{
+	sql, err := os.ReadFile(filepath)
+	if err != nil{
+		return err
+	}
+	sqlComms := string(sql)
+	_, err = db.Exec(sqlComms)
+	return err
 }
 
 // insertUser inserts a new user into the database
@@ -150,23 +95,17 @@ func InsertMedia(postID int64, filePath, fileType string) error {
 	return err
 }
 
-// Media represents a media file linked to a post
-type Media struct {
-	FilePath string
-	FileType string
-}
-
 // FetchMediaByPostID retrieves all media files associated with a specific post ID
-func FetchMediaByPostID(postID int) ([]Media, error) {
+func FetchMediaByPostID(postID int) ([]models.Media, error) {
 	rows, err := db.Query("SELECT file_path, file_type FROM media WHERE post_id = ?", postID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var mediaFiles []Media
+	var mediaFiles []models.Media
 	for rows.Next() {
-		var media Media
+		var media models.Media
 		if err := rows.Scan(&media.FilePath, &media.FileType); err != nil {
 			return nil, err
 		}
@@ -379,113 +318,8 @@ func AssociatePostWithCategory(postID int64, categoryID int) error {
 	return err
 }
 
-// Post represents a post with user and content information
-type Post struct {
-	ID         int
-	UserID     int
-	Username   string
-	Content    string
-	CreatedAt  time.Time
-	FormatDate string
-	Media      []Media
-	Likes      int
-	Dislikes   int
-	ComCount   int
-	Comment    []Comment
-}
-
-type MemesPosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
-type GamingPosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
-type EducationPosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
-type TechnologyPosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
-type SciencePosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
-type SportsPosts struct {
-	CategoriesID int
-	PostID       int
-	UserID       int
-	Username     string
-	Content      string
-	CreatedAt    time.Time
-	FormatDate   string
-	Media        []Media
-	Likes        int
-	Dislikes     int
-	ComCount     int
-	Comment      []Comment
-}
-
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
-func FetchPosts() ([]Post, error) {
+func FetchPosts() ([]models.Post, error) {
 	rows, err := db.Query(`
         SELECT 
             p.id, p.user_id, u.username, p.content, p.created_at,
@@ -502,9 +336,9 @@ func FetchPosts() ([]Post, error) {
 	}
 	defer rows.Close()
 
-	var posts []Post
+	var posts []models.Post
 	for rows.Next() {
-		var post Post
+		var post models.Post
 		err := rows.Scan(&post.ID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
 			return nil, err
@@ -536,7 +370,7 @@ func FetchPosts() ([]Post, error) {
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchMemesPostsByCategoryID(categoryID int) ([]MemesPosts, error) {
+func FetchMemesPostsByCategoryID(categoryID int) ([]models.MemesPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -556,9 +390,9 @@ func FetchMemesPostsByCategoryID(categoryID int) ([]MemesPosts, error) {
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []MemesPosts
+	var posts []models.MemesPosts
 	for rows.Next() {
-		var post MemesPosts
+		var post models.MemesPosts
 
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -599,7 +433,7 @@ func FetchMemesPostsByCategoryID(categoryID int) ([]MemesPosts, error) {
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchGamingPostsByCategoryID(categoryID int) ([]GamingPosts, error) {
+func FetchGamingPostsByCategoryID(categoryID int) ([]models.GamingPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -619,9 +453,9 @@ func FetchGamingPostsByCategoryID(categoryID int) ([]GamingPosts, error) {
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []GamingPosts
+	var posts []models.GamingPosts
 	for rows.Next() {
-		var post GamingPosts
+		var post models.GamingPosts
 
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -662,7 +496,7 @@ func FetchGamingPostsByCategoryID(categoryID int) ([]GamingPosts, error) {
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetcheEducationPostsByCategoryID(categoryID int) ([]EducationPosts, error) {
+func FetcheEducationPostsByCategoryID(categoryID int) ([]models.EducationPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -682,9 +516,9 @@ func FetcheEducationPostsByCategoryID(categoryID int) ([]EducationPosts, error) 
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []EducationPosts
+	var posts []models.EducationPosts
 	for rows.Next() {
-		var post EducationPosts
+		var post models.EducationPosts
 
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -725,7 +559,7 @@ func FetcheEducationPostsByCategoryID(categoryID int) ([]EducationPosts, error) 
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchTechnologyPostsByCategoryID(categoryID int) ([]TechnologyPosts, error) {
+func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -745,9 +579,9 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]TechnologyPosts, error)
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []TechnologyPosts
+	var posts []models.TechnologyPosts
 	for rows.Next() {
-		var post TechnologyPosts
+		var post models.TechnologyPosts
 		
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -788,7 +622,7 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]TechnologyPosts, error)
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchSciencePostsByCategoryID(categoryID int) ([]SciencePosts, error) {
+func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -808,9 +642,9 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]SciencePosts, error) {
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []SciencePosts
+	var posts []models.SciencePosts
 	for rows.Next() {
-		var post SciencePosts
+		var post models.SciencePosts
 		
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -851,7 +685,7 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]SciencePosts, error) {
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchSportsPostsByCategoryID(categoryID int) ([]SportsPosts, error) {
+func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -871,9 +705,9 @@ func FetchSportsPostsByCategoryID(categoryID int) ([]SportsPosts, error) {
 	defer rows.Close()
 
 	// Initialize an empty slice to store the fetched posts
-	var posts []SportsPosts
+	var posts []models.SportsPosts
 	for rows.Next() {
-		var post SportsPosts
+		var post models.SportsPosts
 		
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
@@ -917,18 +751,8 @@ func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
 }
 
-type Comment struct {
-	ComID         int
-	PostID        int
-	ComUsername   string
-	ComContent    string
-	ComCreatedAt  time.Time
-	ComFormatDate string
-	ComLikes      int
-	ComDislikes   int
-}
 
-func FetchCommentsByPostID(postID int) ([]Comment, error) {
+func FetchCommentsByPostID(postID int) ([]models.Comment, error) {
 	rows, err := db.Query(`
 		SELECT 
 			c.id, 
@@ -953,9 +777,9 @@ func FetchCommentsByPostID(postID int) ([]Comment, error) {
 	}
 	defer rows.Close()
 
-	var comments []Comment
+	var comments []models.Comment
 	for rows.Next() {
-		var comment Comment
+		var comment models.Comment
 		var userID int
 		err := rows.Scan(&comment.ComID, &userID, &comment.ComContent, &comment.ComCreatedAt, &comment.ComLikes, &comment.ComDislikes)
 		if err != nil {
@@ -1061,16 +885,8 @@ func CountComments(postID int) (ComCount int, err error) {
 	return
 }
 
-// UserProfile struct to hold user profile data, including posts liked, created, and disliked
-type UserProfile struct {
-	UserID        int
-	Username      string
-	LikedPosts    []Post
-	CreatedPosts  []Post
-	DislikedPosts []Post
-}
 
-func FetchLikedPosts(userID int) ([]Post, error) {
+func FetchLikedPosts(userID int) ([]models.Post, error) {
 	query := `
         SELECT 
             p.id, p.user_id, u.username, p.content, p.created_at,
@@ -1089,9 +905,9 @@ func FetchLikedPosts(userID int) ([]Post, error) {
 	}
 	defer rows.Close()
 
-	var likedPosts []Post
+	var likedPosts []models.Post
 	for rows.Next() {
-		var post Post
+		var post models.Post
 		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -1117,7 +933,7 @@ func FetchLikedPosts(userID int) ([]Post, error) {
 	return likedPosts, nil
 }
 
-func FetchDislikedPosts(userID int) ([]Post, error) {
+func FetchDislikedPosts(userID int) ([]models.Post, error) {
 	rows, err := db.Query(`
 		SELECT 
 			p.id, p.user_id, u.username, p.content, p.created_at,
@@ -1134,9 +950,9 @@ func FetchDislikedPosts(userID int) ([]Post, error) {
 	}
 	defer rows.Close()
 
-	var dislikedPosts []Post
+	var dislikedPosts []models.Post
 	for rows.Next() {
-		var post Post
+		var post models.Post
 		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -1162,7 +978,7 @@ func FetchDislikedPosts(userID int) ([]Post, error) {
 	return dislikedPosts, nil
 }
 
-func FetchCreatedPosts(userID int) ([]Post, error) {
+func FetchCreatedPosts(userID int) ([]models.Post, error) {
 	rows, err := db.Query(`
 		SELECT 
 			p.id, p.user_id, u.username, p.content, p.created_at,
@@ -1179,9 +995,9 @@ func FetchCreatedPosts(userID int) ([]Post, error) {
 	}
 	defer rows.Close()
 
-	var createdPosts []Post
+	var createdPosts []models.Post
 	for rows.Next() {
-		var post Post
+		var post models.Post
 		var username string
 		err := rows.Scan(&post.ID, &post.UserID, &username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -1207,7 +1023,7 @@ func FetchCreatedPosts(userID int) ([]Post, error) {
 	return createdPosts, nil
 }
 
-func FetchUserProfileBySessionToken(sessionToken string) ([]UserProfile, error) {
+func FetchUserProfileBySessionToken(sessionToken string) ([]models.UserProfile, error) {
 
 	if sessionToken == "" {
 		return nil, nil
@@ -1235,7 +1051,7 @@ func FetchUserProfileBySessionToken(sessionToken string) ([]UserProfile, error) 
 		return nil, err
 	}
 	// Create a UserProfile struct
-	userProfile := UserProfile{
+	userProfile := models.UserProfile{
 		UserID:        userID,
 		Username:      username,
 		LikedPosts:    likedPosts,
@@ -1244,5 +1060,5 @@ func FetchUserProfileBySessionToken(sessionToken string) ([]UserProfile, error) 
 	}
 
 	// Wrap the UserProfile in a slice
-	return []UserProfile{userProfile}, nil
+	return []models.UserProfile{userProfile}, nil
 }

@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	database "root/backend/database"
+	database "root/internal/database"
+	"root/internal/models"
 	"strconv"
 	"strings"
 	"time"
@@ -35,22 +36,22 @@ func ServerRunner() {
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
 	http.HandleFunc("/redirect", Redirect)
-	http.HandleFunc("/uploads", NotFound)
-	http.HandleFunc("/images", NotFound)
-	http.HandleFunc("/frontend/css", InternalServerError)
+	http.HandleFunc("/assets/uploads", NotFound)
+	http.HandleFunc("/assets/images", NotFound)
+	http.HandleFunc("/assets/static", InternalServerError)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
-	fs := http.FileServer(http.Dir("./frontend/css"))
-	http.Handle("/frontend/css/", http.StripPrefix("/frontend/css/", fs))
+	fs := http.FileServer(http.Dir("./assets/static"))
+	http.Handle("/assets/static/", http.StripPrefix("/assets/static/", fs))
 
-	fs2 := http.FileServer(http.Dir("./images"))
-	http.Handle("/images/", http.StripPrefix("/images/", fs2))
+	fs2 := http.FileServer(http.Dir("./assets/images"))
+	http.Handle("/assets/images/", http.StripPrefix("/assets/images/", fs2))
 
-	fs3 := http.FileServer(http.Dir("./uploads"))
-	http.Handle("/uploads/", http.StripPrefix("/uploads/", fs3))
+	fs3 := http.FileServer(http.Dir("./assets/uploads"))
+	http.Handle("/assets/uploads/", http.StripPrefix("/assets/uploads/", fs3))
 
-	fmt.Print("The server is running on https://localhost:8443/\n")
-	err := http.ListenAndServeTLS(":8443", "./certs/cert.pem", "./certs/key.pem", nil)
+	fmt.Print("The server is running on https://localhost:8080/\n")
+	err := http.ListenAndServeTLS(":8080", "./internal/certs/cert.pem", "./internal/certs/key.pem", nil)
 	if err != nil {
 		fmt.Println("Server error:", err)
 	}
@@ -78,7 +79,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render homepage if session is valid
-	t, terr := template.ParseFiles("./frontend/html/home.html")
+	t, terr := template.ParseFiles("./assets/templates/home.html")
 	if terr != nil {
 		fmt.Println("Here4")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -126,20 +127,20 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie("session_token")
 	if err != nil || sessionToken.Value == "" {
 		// Redirect to Guest homepage if no session is found
-		t, terr = template.ParseFiles("./frontend/html/guesthome.html")
+		t, terr = template.ParseFiles("./assets/templates/guesthome.html")
 		if terr != nil {
 			fmt.Println("Here3")
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 		guestData := struct {
-			Post            []database.Post
-			MemesPosts      []database.MemesPosts
-			GamingPosts     []database.GamingPosts
-			EducationPosts  []database.EducationPosts
-			TechnologyPosts []database.TechnologyPosts
-			SciencePosts    []database.SciencePosts
-			SportsPosts     []database.SportsPosts
+			Post            []models.Post
+			MemesPosts      []models.MemesPosts
+			GamingPosts     []models.GamingPosts
+			EducationPosts  []models.EducationPosts
+			TechnologyPosts []models.TechnologyPosts
+			SciencePosts    []models.SciencePosts
+			SportsPosts     []models.SportsPosts
 		}{
 			Post:            posts,
 			MemesPosts:      memesPosts,
@@ -161,20 +162,20 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
 	if err != nil {
 		// Fallback to guest homepage if session is invalid
-		t, terr := template.ParseFiles("./frontend/html/guesthome.html")
+		t, terr := template.ParseFiles("./assets/templates/guesthome.html")
 		if terr != nil {
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 
 		guestData := struct {
-			Post            []database.Post
-			MemesPosts      []database.MemesPosts
-			GamingPosts     []database.GamingPosts
-			EducationPosts  []database.EducationPosts
-			TechnologyPosts []database.TechnologyPosts
-			SciencePosts    []database.SciencePosts
-			SportsPosts     []database.SportsPosts
+			Post            []models.Post
+			MemesPosts      []models.MemesPosts
+			GamingPosts     []models.GamingPosts
+			EducationPosts  []models.EducationPosts
+			TechnologyPosts []models.TechnologyPosts
+			SciencePosts    []models.SciencePosts
+			SportsPosts     []models.SportsPosts
 		}{
 			Post:            posts,
 			MemesPosts:      memesPosts,
@@ -193,14 +194,14 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	type Data struct {
-		UserProfile []database.UserProfile
-		Post       []database.Post
-		MemesPosts []database.MemesPosts
-		GamingPosts []database.GamingPosts
-		EducationPosts []database.EducationPosts
-		TechnologyPosts []database.TechnologyPosts
-		SciencePosts []database.SciencePosts
-		SportsPosts []database.SportsPosts
+		UserProfile []models.UserProfile
+		Post       []models.Post
+		MemesPosts []models.MemesPosts
+		GamingPosts []models.GamingPosts
+		EducationPosts []models.EducationPosts
+		TechnologyPosts []models.TechnologyPosts
+		SciencePosts []models.SciencePosts
+		SportsPosts []models.SportsPosts
 	}
 	// Prepare data for the template
 	data := Data{
@@ -234,7 +235,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := template.ParseFiles("./frontend/html/auth.html")
+	t, err := template.ParseFiles("./assets/templates/auth.html")
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
@@ -319,7 +320,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var templates = template.Must(template.ParseGlob("./frontend/html/*.html"))
+var templates = template.Must(template.ParseGlob("./assets/templates/*.html"))
 
 // Login handles user login and renders the login page with error messages if needed
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -435,7 +436,7 @@ func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
 
 // NotFound handles 404 errors
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("./frontend/html/errors/404.html")
+	t, err := template.ParseFiles("./assets/templates/errors/404.html")
 	if err != nil {
 		http.Error(w, "404 not found", http.StatusNotFound)
 		return
@@ -450,7 +451,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 
 // InternalServerError handles 500 errors
 func InternalServerError(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("./frontend/html/errors/500.html")
+	t, err := template.ParseFiles("./assets/templates/errors/500.html")
 	if err != nil {
 		http.Error(w, "500 not found", http.StatusInternalServerError)
 		return
@@ -518,7 +519,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	mediaFile, fileHeader, err := r.FormFile("postImage")
 	if err == nil {
 		// Create the uploads directory if it doesn't exist
-		uploadDir := "./uploads"
+		uploadDir := "./assets/uploads"
 		os.MkdirAll(uploadDir, os.ModePerm)
 
 		fileExtension := filepath.Ext(fileHeader.Filename)
