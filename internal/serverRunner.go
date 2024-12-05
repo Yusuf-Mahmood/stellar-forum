@@ -849,5 +849,5 @@ func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect or respond with success
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
