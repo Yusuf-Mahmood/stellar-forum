@@ -35,7 +35,7 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
-	// http.HandleFunc("/UpdateProfileColor", UpdateProfileColor)
+	http.HandleFunc("/profilePicture", UpdateProfileColor)
 	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/assets/uploads", NotFound)
 	http.HandleFunc("/assets/images", NotFound)
@@ -194,18 +194,8 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		UserProfile     []models.UserProfile
-		Post            []models.Post
-		MemesPosts      []models.MemesPosts
-		GamingPosts     []models.GamingPosts
-		EducationPosts  []models.EducationPosts
-		TechnologyPosts []models.TechnologyPosts
-		SciencePosts    []models.SciencePosts
-		SportsPosts     []models.SportsPosts
-	}
 	// Prepare data for the template
-	data := Data{
+	data := models.Data{
 		UserProfile:     userProfile,
 		Post:            posts,
 		MemesPosts:      memesPosts,

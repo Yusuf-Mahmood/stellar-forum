@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    cookies TEXT
+    cookies TEXT,
+    profile_color TEXT DEFAULT '#8683dc'
 );
 
 CREATE TABLE IF NOT EXISTS posts (
@@ -59,5 +60,3 @@ CREATE TABLE IF NOT EXISTS media (
 );
 
 INSERT OR IGNORE INTO categories (name) VALUES ('Gnrl'), ('Memes'), ('Gaming'), ('Education'), ('Technology'), ('Science'), ('Sports');
-
-ALTER TABLE users ADD COLUMN profile_color TEXT DEFAULT '#8683dc';

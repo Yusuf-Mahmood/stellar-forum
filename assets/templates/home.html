@@ -45,8 +45,9 @@
                     <label for="buttonpp">
                         <i class='bx bx-palette coloricon'></i>
                     </label>
+                    {{range .UserProfile}}
                     <form action="profilePicture" class="formpp" method="post">
-                        <i style="color: #8683dc;" class='bx bxs-user-circle profilePic'></i>
+                        <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle profilePic'></i>
                         <div id="pallette" class="pallette">
                             <div class="colorSpacing">
                                 <label>
@@ -71,7 +72,6 @@
                                 </label>
                             </div>
                         </div><br>  
-                        {{range .UserProfile}}
                         <p class="userProfileName">{{.Username}}</p>
                         {{end}}
                     <input type="submit" value="Update" class="uploadPP">
@@ -161,7 +161,7 @@
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                             <div class="postHeader">
                                 <p class="nameCommentContent">@{{.Username}} &nbsp<span>•&nbsp {{.FormatDate}}</span></p>
                             </div>
@@ -218,7 +218,7 @@
                     {{range .Comment}}
                     <div class="comment">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ComProfile}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -422,7 +422,7 @@
                     {{range .CreatedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                                    <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -477,7 +477,7 @@
                     {{range .LikedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                                    <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -532,7 +532,7 @@
                     {{range .DislikedPosts}}
                           <div class="post">
                                 <div class="sidePP">
-                                    <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                                    <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                                 </div>
                                 <div class="postContent">
                                     <div class="userDisplay">
@@ -588,7 +588,7 @@
                     {{range .MemesPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -641,7 +641,7 @@
                     {{range .GamingPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -694,7 +694,7 @@
                     {{range .EducationPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -747,7 +747,7 @@
                     {{range .TechnologyPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -800,7 +800,7 @@
                     {{range .SciencePosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -853,7 +853,7 @@
                     {{range .SportsPosts}}
                     <div class="post">
                         <div class="sidePP">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -907,7 +907,7 @@
                     {{range .Post}}
                     <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">

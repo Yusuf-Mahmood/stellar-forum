@@ -111,7 +111,7 @@
                 <div class="post2">
                     <div class="postContent">
                         <div class="userDisplay">
-                            <i style="color: #8683dc;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                             <div class="postHeader">
                                 <p class="nameCommentContent">@{{.Username}} &nbsp<span
                                         style="font-weight: normal;">•&nbsp {{.FormatDate}}</span></p>
@@ -169,7 +169,7 @@
                     {{range .Comment}}
                     <div class="comment" id="comment={{.ComID}}">
                         <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ComProfile}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">
@@ -306,7 +306,7 @@
                      {{range .MemesPosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -357,7 +357,7 @@
                      {{range .GamingPosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -408,7 +408,7 @@
                      {{range .EducationPosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -459,7 +459,7 @@
                      {{range .TechnologyPosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -510,7 +510,7 @@
                      {{range .SciencePosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -561,7 +561,7 @@
                      {{range .SportsPosts}}
                      <div class="post">
                          <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                          </div>
                          <div class="postContent">
                              <div class="userDisplay">
@@ -614,7 +614,7 @@
                     {{range .Post}}
                     <div class="post" id="post={{.ID}}">
                         <div class="sidePP">
-                            <i style="color: #ededed;" class='bx bxs-user-circle ppContent'></i>
+                            <i style="color: {{.ProfileColor}};" class='bx bxs-user-circle ppContent'></i>
                         </div>
                         <div class="postContent">
                             <div class="userDisplay">

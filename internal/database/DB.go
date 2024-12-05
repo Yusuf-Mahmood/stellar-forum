@@ -364,6 +364,12 @@ func FetchPosts() ([]models.Post, error) {
 		}
 		post.ComCount = commentCount
 
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
+
 		posts = append(posts, post)
 	}
 	return posts, nil
@@ -423,6 +429,12 @@ func FetchMemesPostsByCategoryID(categoryID int) ([]models.MemesPosts, error) {
 			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
 		}
 		post.ComCount = commentCount
+
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
@@ -487,6 +499,12 @@ func FetchGamingPostsByCategoryID(categoryID int) ([]models.GamingPosts, error) 
 		}
 		post.ComCount = commentCount
 
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -549,6 +567,12 @@ func FetcheEducationPostsByCategoryID(categoryID int) ([]models.EducationPosts, 
 			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
 		}
 		post.ComCount = commentCount
+
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
@@ -613,6 +637,12 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts,
 		}
 		post.ComCount = commentCount
 
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -675,6 +705,12 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error
 			return nil, fmt.Errorf("Error counting comments for post %d: %w", post.PostID, err)
 		}
 		post.ComCount = commentCount
+
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
@@ -739,6 +775,12 @@ func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) 
 		}
 		post.ComCount = commentCount
 
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -794,6 +836,12 @@ func FetchCommentsByPostID(postID int) ([]models.Comment, error) {
 		}
 		comment.ComUsername = username
 		comment.PostID = postID
+		
+		profileColor, err := getProfileColor(userID)
+		if err != nil {
+			return nil, err
+		}
+		comment.ComProfile = profileColor
 
 		comments = append(comments, comment)
 	}
@@ -924,6 +972,11 @@ func FetchLikedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		likedPosts = append(likedPosts, post)
 	}
@@ -969,6 +1022,11 @@ func FetchDislikedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		dislikedPosts = append(dislikedPosts, post)
 	}
@@ -1014,6 +1072,11 @@ func FetchCreatedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
+		profileColor, err := getProfileColor(post.UserID)
+		if err != nil {
+			return nil, err
+		}
+		post.ProfileColor = profileColor
 
 		createdPosts = append(createdPosts, post)
 	}
