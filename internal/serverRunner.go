@@ -35,6 +35,7 @@ func ServerRunner() {
 	http.HandleFunc("/Commentdislike", DislikeComment) // Comment Dislike Handler
 	http.HandleFunc("/inPostlike", inLikePost)
 	http.HandleFunc("/inPostdislike", inDislikePost)
+	http.HandleFunc("/UpdateProfileColor", UpdateProfileColor)
 	http.HandleFunc("/redirect", Redirect)
 	http.HandleFunc("/assets/uploads", NotFound)
 	http.HandleFunc("/assets/images", NotFound)
