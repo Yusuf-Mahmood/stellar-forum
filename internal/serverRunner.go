@@ -823,7 +823,7 @@ func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
 
 	// Extract the selected color from the form
 	profileColor := r.FormValue("profileColor")
-	if profileColor == "" {
+	if profileColor == "" || !isValidColor(profileColor) {
 		http.Error(w, "Invalid color selection", http.StatusBadRequest)
 		return
 	}

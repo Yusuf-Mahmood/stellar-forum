@@ -17,3 +17,8 @@ func ValidateInput(username, email string) (bool, string) {
 
 	return true, ""
 }
+
+func isValidColor(color string) bool {
+	matched, _ := regexp.MatchString(`^#(?:[0-9a-fA-F]{3}){1,2}$`, color)
+	return matched
+}
