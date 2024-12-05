@@ -24,14 +24,14 @@ func InitDB() {
 
 	if err2 := RunSQL(db, "./internal/database/tables.sql"); err2 != nil {
 		log.Fatal(err2)
-	} 
+	}
 
 	log.Println("You are connected to the database correctly")
 }
 
-func RunSQL(db *sql.DB, filepath string) error{
+func RunSQL(db *sql.DB, filepath string) error {
 	sql, err := os.ReadFile(filepath)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	sqlComms := string(sql)
@@ -582,7 +582,7 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts,
 	var posts []models.TechnologyPosts
 	for rows.Next() {
 		var post models.TechnologyPosts
-		
+
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -645,7 +645,7 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error
 	var posts []models.SciencePosts
 	for rows.Next() {
 		var post models.SciencePosts
-		
+
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -708,7 +708,7 @@ func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) 
 	var posts []models.SportsPosts
 	for rows.Next() {
 		var post models.SportsPosts
-		
+
 		// Scan the database row into the MemesPosts struct
 		err := rows.Scan(&post.PostID, &post.CategoriesID, &post.UserID, &post.Username, &post.Content, &post.CreatedAt, &post.Likes, &post.Dislikes)
 		if err != nil {
@@ -750,7 +750,6 @@ func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) 
 func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
 }
-
 
 func FetchCommentsByPostID(postID int) ([]models.Comment, error) {
 	rows, err := db.Query(`
@@ -884,7 +883,6 @@ func CountComments(postID int) (ComCount int, err error) {
 	err = db.QueryRow(query, postID).Scan(&ComCount)
 	return
 }
-
 
 func FetchLikedPosts(userID int) ([]models.Post, error) {
 	query := `
@@ -1050,10 +1048,15 @@ func FetchUserProfileBySessionToken(sessionToken string) ([]models.UserProfile, 
 	if err != nil {
 		return nil, err
 	}
+	profileColor, err := getProfileColor(userID)
+	if err != nil {
+		return nil, err
+	}
 	// Create a UserProfile struct
 	userProfile := models.UserProfile{
 		UserID:        userID,
 		Username:      username,
+		ProfileColor:  profileColor,
 		LikedPosts:    likedPosts,
 		DislikedPosts: dislikedPosts,
 		CreatedPosts:  createdPosts,
@@ -1061,4 +1064,26 @@ func FetchUserProfileBySessionToken(sessionToken string) ([]models.UserProfile, 
 
 	// Wrap the UserProfile in a slice
 	return []models.UserProfile{userProfile}, nil
+}
+
+func updateProfileColor(userID int, color string) error {
+	query := `UPDATE users SET profile_color = ? WHERE id = ?`
+
+	_, err := db.Exec(query, color, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getProfileColor(userID int) (string, error) {
+	var color string
+	query := `SELECT profile_color FROM users WHERE id = ?`
+
+	err := db.QueryRow(query, userID).Scan(&color)
+	if err != nil {
+		return "", err
+	}
+
+	return color, nil
 }

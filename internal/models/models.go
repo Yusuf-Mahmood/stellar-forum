@@ -17,7 +17,6 @@ type Post struct {
 	Comment    []Comment
 }
 
-
 type MemesPosts struct {
 	CategoriesID int
 	PostID       int
@@ -123,11 +122,11 @@ type Comment struct {
 type UserProfile struct {
 	UserID        int
 	Username      string
+	ProfileColor  string
 	LikedPosts    []Post
 	CreatedPosts  []Post
 	DislikedPosts []Post
 }
-
 
 // Media represents a media file linked to a post
 type Media struct {

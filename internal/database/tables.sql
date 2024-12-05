@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     cookies TEXT
+    profile_color TEXT DEFAULT '#8683dc'
 );
 
 CREATE TABLE IF NOT EXISTS posts (

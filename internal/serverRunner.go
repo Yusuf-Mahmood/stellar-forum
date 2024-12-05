@@ -192,27 +192,27 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	type Data struct {
-		UserProfile []models.UserProfile
-		Post       []models.Post
-		MemesPosts []models.MemesPosts
-		GamingPosts []models.GamingPosts
-		EducationPosts []models.EducationPosts
+		UserProfile     []models.UserProfile
+		Post            []models.Post
+		MemesPosts      []models.MemesPosts
+		GamingPosts     []models.GamingPosts
+		EducationPosts  []models.EducationPosts
 		TechnologyPosts []models.TechnologyPosts
-		SciencePosts []models.SciencePosts
-		SportsPosts []models.SportsPosts
+		SciencePosts    []models.SciencePosts
+		SportsPosts     []models.SportsPosts
 	}
 	// Prepare data for the template
 	data := Data{
-		UserProfile: userProfile,
-		Post:       posts,
-		MemesPosts: memesPosts,
-		GamingPosts: gamingPosts,
-		EducationPosts: educationPosts,
+		UserProfile:     userProfile,
+		Post:            posts,
+		MemesPosts:      memesPosts,
+		GamingPosts:     gamingPosts,
+		EducationPosts:  educationPosts,
 		TechnologyPosts: technologyPosts,
-		SciencePosts: sciencePosts,
-		SportsPosts: sportsPosts,
+		SciencePosts:    sciencePosts,
+		SportsPosts:     sportsPosts,
 	}
 
 	// Pass posts data with like/dislike functionality to the template
@@ -523,7 +523,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		os.MkdirAll(uploadDir, os.ModePerm)
 
 		fileExtension := filepath.Ext(fileHeader.Filename)
-		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi"{ 
+		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi" {
 			http.Error(w, "Invalid file type", http.StatusBadRequest)
 			return
 		}
@@ -811,4 +811,43 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("#CommentSection=%s", postID), http.StatusSeeOther)
+}
+
+func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
+	// Allow only POST requests
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract the selected color from the form
+	profileColor := r.FormValue("profileColor")
+	if profileColor == "" {
+		http.Error(w, "Invalid color selection", http.StatusBadRequest)
+		return
+	}
+
+	// Retrieve the session token from the cookie
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		http.Redirect(w, r, "/auth", http.StatusUnauthorized)
+		return
+	}
+
+	// Fetch the user ID using the session token
+	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Update the profile color in the database
+	err = database.updateProfileColor(userID, profileColor)
+	if err != nil {
+		http.Error(w, "Error updating profile color", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect or respond with success
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
