@@ -1308,27 +1308,27 @@ body {
   font-size: 1.125rem;
   width: 20rem;
   height: 15rem;
-  top: 35%;  
+  top: 35vh;  
+  right: 40vw;
   opacity: 0;
-  transform: translateX(-188%);
+  /* transform: translateX(188vw); */
   box-shadow: 0 0 5px var(--dark-color);
 }
 
 #popover-content:target{
-  transition: 1s ease;
-  transform: translateX(188%);
+  transition: opacity 1s ease, top 1s ease;
   display: flex;
-  animation: popup 0.3s ease forwards; 
+  animation: popup 0.4s ease forwards; 
 }
 
 @keyframes popup {
   from{
     opacity: 0;
-    transform: translateX(0%);
+    top: 65vh;
   }
   to{
     opacity: 1;
-    transform: translateX(188%);
+    top: 35vh;
   }
 }
 
@@ -1345,7 +1345,6 @@ body {
   height: 100vh;
   z-index: 9998;
   top: 0;
-  transition: 0.3s ease;
 }
 
 .popupHeader{
