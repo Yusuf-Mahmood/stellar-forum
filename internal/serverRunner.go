@@ -43,6 +43,7 @@ func ServerRunner() {
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
 	http.HandleFunc("/400", BadRequest)
+	http.HandleFunc("/405", Mnotallowed)
 	fs := http.FileServer(http.Dir("./assets/static"))
 	http.Handle("/assets/static/", http.StripPrefix("/assets/static/", fs))
 
@@ -459,6 +460,22 @@ func BadRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// Mnotallowed handles 405 errors
+func Mnotallowed(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./assets/templates/errors/405.html")
+	if err != nil {
+		http.Error(w, "405 method not allowed", http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusBadRequest)
+	err = t.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "405 method not allowed", http.StatusBadRequest)
+		return
+	}
+}
+
 
 // InternalServerError handles 500 errors
 func InternalServerError(w http.ResponseWriter, r *http.Request) {
