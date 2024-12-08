@@ -193,6 +193,7 @@ nav{
   box-shadow: 0 0 20px var(--dark-color);
   z-index: 35;
   transition: transform 0.3s ease, opacity 0.3s ease;
+
 }
 
 .spaceNav i{
@@ -452,7 +453,7 @@ input[type="checkbox"]{
 .mainContainer{
   display: flex;
   justify-content: flex-start;
-  box-shadow: 0 0 5px var(--dark-color);
+  box-shadow: 0 0 8px var(--dark-color);
   border-radius: 10px;
   flex-direction: row;
   width: 90rem;

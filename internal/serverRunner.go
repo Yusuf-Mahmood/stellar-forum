@@ -58,6 +58,10 @@ func ServerRunner() {
 	}
 }
 
+var (
+	maxPosts = 0 
+)
+
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	postID := r.URL.Query().Get("post_id")
 	if postID == "" {
@@ -551,6 +555,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	maxPosts++
 	// Redirect to the homepage after successful post creation
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -563,9 +569,15 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	content := strings.TrimSpace(r.FormValue("commentInput"))
 	postID := strings.TrimSpace(r.FormValue("hiddenID"))
+
 	intPostID, err := strconv.Atoi(postID)
 	if err != nil {
 		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	if intPostID > maxPosts || intPostID <= 0 {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
