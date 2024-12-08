@@ -66,7 +66,7 @@ var (
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	postID := r.URL.Query().Get("post_id")
 	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/#post=%s", postID), http.StatusSeeOther)
@@ -75,7 +75,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 // RootHandler checks if a user is logged in and redirects accordingly
 func RootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
@@ -88,7 +88,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	t, terr := template.ParseFiles("./assets/templates/home.html")
 	if terr != nil {
 		fmt.Println("Here4")
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -222,7 +222,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 // Auth handles the authentication page
 func Auth(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
@@ -247,64 +247,64 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
 			return
 		}
 
 		username, password, secondpass, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("secondpass"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			renderRegisterPage(w, "Username must be between 3-5 character and password must be between 8-50 character")
+			renderRegisterPage(w,r, "Username must be between 3-5 character and password must be between 8-50 character")
 			return
 		}
 		if secondpass != password {
-			renderRegisterPage(w, "Passwords do not match")
+			renderRegisterPage(w,r, "Passwords do not match")
 			return
 		}
 		if username == "" || password == "" || email == "" {
-			renderRegisterPage(w, "All fields are required!")
+			renderRegisterPage(w,r, "All fields are required!")
 			return
 		}
 
 		valid, msg := ValidateInput(username, email)
 		if !valid {
-			renderRegisterPage(w, msg)
+			renderRegisterPage(w,r, msg)
 			return
 		}
 
 		// Check if the username already exists
 		exists, err := database.CheckUsernameExists(username)
 		if err != nil {
-			http.Error(w, "Error checking username availability", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 		if exists {
-			renderRegisterPage(w, "Username already taken")
+			renderRegisterPage(w,r, "Username already taken")
 			return
 		}
 
 		// Check if the username already exists
 		existsEmail, err := database.CheckEmailExists(email)
 		if err != nil {
-			http.Error(w, "Error checking Email availability", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 		if existsEmail {
-			renderRegisterPage(w, "Email already taken")
+			renderRegisterPage(w,r, "Email already taken")
 			return
 		}
 
 		// Hash the password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 
 		// Save the new user in the database using the existing InsertUser function
 		err = database.InsertUser(email, username, string(hashedPassword))
 		if err != nil {
-			http.Error(w, "Error saving user to database", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 
@@ -322,35 +322,35 @@ var templates = template.Must(template.ParseGlob("./assets/templates/*.html"))
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if err := r.ParseForm(); err != nil {
-			renderLoginPage(w, "Invalid form data")
+			renderLoginPage(w,r, "Invalid form data")
 			return
 		}
 
 		username, password := r.FormValue("username"), r.FormValue("password")
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			renderLoginPage(w, "Username must be between 3-50 characters and password between 8-50 characters")
+			renderLoginPage(w,r, "Username must be between 3-50 characters and password between 8-50 characters")
 			return
 		}
 		if username == "" || password == "" {
-			renderLoginPage(w, "All fields are required")
+			renderLoginPage(w,r, "All fields are required")
 			return
 		}
 
 		storedHashedPassword, err := database.FetchUserByUsername(username)
 		if err != nil || bcrypt.CompareHashAndPassword([]byte(storedHashedPassword), []byte(password)) != nil {
-			renderLoginPage(w, "Invalid username or password")
+			renderLoginPage(w, r,"Invalid username or password")
 			return
 		}
 
 		sessionToken, err := uuid.NewV4()
 		if err != nil {
-			renderLoginPage(w, "Error creating session")
+			renderLoginPage(w,r, "Error creating session")
 			return
 		}
 
 		err = database.StoreSessionToken(username, sessionToken.String())
 		if err != nil {
-			renderLoginPage(w, "Error storing session")
+			renderLoginPage(w,r, "Error storing session")
 			return
 		}
 
@@ -364,7 +364,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		renderLoginPage(w, "")
+		renderLoginPage(w, r,"")
 	}
 }
 
@@ -381,7 +381,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	// Remove the session from the database
 	err = database.DeleteSession(cookie.Value)
 	if err != nil {
-		http.Error(w, "Error logging out", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -399,7 +399,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 // renderLoginPage renders the login page with an optional error message
-func renderLoginPage(w http.ResponseWriter, errorMessage string) {
+func renderLoginPage(w http.ResponseWriter,r *http.Request, errorMessage string) {
 	data := struct {
 		ErrorMessage    string
 		RegErrorMessage string
@@ -410,12 +410,12 @@ func renderLoginPage(w http.ResponseWriter, errorMessage string) {
 
 	err := templates.ExecuteTemplate(w, "auth.html", data)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }
 
 // renderLoginPage renders the login page with an optional error message
-func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
+func renderRegisterPage(w http.ResponseWriter,r *http.Request, errorMessage string) {
 	data := struct {
 		ErrorMessage    string
 		RegErrorMessage string
@@ -426,7 +426,7 @@ func renderRegisterPage(w http.ResponseWriter, errorMessage string) {
 
 	err := templates.ExecuteTemplate(w, "authreg.html", data)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }
 
@@ -477,13 +477,13 @@ func InternalServerError(w http.ResponseWriter, r *http.Request) {
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	content := strings.TrimSpace(r.FormValue("postText"))
 	if content == "" || len(content) > 366 {
-		http.Error(w, "Post content cannot be empty or exceeded limits", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -503,26 +503,26 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	postID, err := database.InsertPost(userID, content)
 	if err != nil {
-		http.Error(w, "Failed to create post", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 	if len(categories) > 0 {
 		for _, category := range categories {
 			categoryID, err := database.GetOrCreateCategory(category)
 			if err != nil {
-				http.Error(w, "Failed to process category: "+category, http.StatusInternalServerError)
+				http.Redirect(w, r, "/500", http.StatusSeeOther)
 				return
 			}
 			err = database.AssociatePostWithCategory(postID, categoryID)
 			if err != nil {
-				http.Error(w, "Failed to associate category: "+category, http.StatusInternalServerError)
+				http.Redirect(w, r, "/500", http.StatusSeeOther)
 				return
 			}
 		}
 	} else {
 		err = database.AssociatePostWithCategory(postID, 1)
 		if err != nil {
-			http.Error(w, "Failed to associate category: General", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 	}
@@ -535,7 +535,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 		fileExtension := filepath.Ext(fileHeader.Filename)
 		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi" {
-			http.Error(w, "Invalid file type", http.StatusBadRequest)
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
 			return
 		}
 		// Create a unique file name and save the file
@@ -546,14 +546,14 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		// Save the uploaded file
 		dst, err := os.Create(filePath)
 		if err != nil {
-			http.Error(w, "Failed to save media file", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 		defer dst.Close()
 
 		_, err = io.Copy(dst, mediaFile)
 		if err != nil {
-			http.Error(w, "Failed to save media file", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 
@@ -567,7 +567,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		// Save media details in the database
 		err = database.InsertMedia(postID, filePath, fileType)
 		if err != nil {
-			http.Error(w, "Error saving media details", http.StatusInternalServerError)
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
 			return
 		}
 	}
@@ -579,7 +579,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
@@ -588,17 +588,17 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	intPostID, err := strconv.Atoi(postID)
 	if err != nil {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
-	// if intPostID > maxPosts {
-	// 	http.Redirect(w, r, "/400", http.StatusBadRequest)
-	// 	return
-	// }
+	if intPostID > maxPosts || intPostID <= 0 {
+		http.Redirect(w, r, "/400", http.StatusFound)
+		return
+	}
 
 	if content == "" || len(content) > 366 {
-		http.Redirect(w, r, "/400", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusFound)
 		return
 	}
 
@@ -616,7 +616,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	_, err = database.InsertComment(userID, intPostID, content)
 	if err != nil {
-		http.Error(w, "Failed to create comment", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -627,13 +627,13 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 // LikePost handles like action
 func LikePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	postID := r.FormValue("post_id")
 	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -652,7 +652,7 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.LikePost(userID, postID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -662,13 +662,13 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 // DislikePost handles dislike action
 func DislikePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	postID := r.FormValue("post_id")
 	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -687,7 +687,7 @@ func DislikePost(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.DislikePost(userID, postID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -696,13 +696,13 @@ func DislikePost(w http.ResponseWriter, r *http.Request) {
 
 func inLikePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	postID := r.FormValue("post_id")
 	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -721,7 +721,7 @@ func inLikePost(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.LikePost(userID, postID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -730,13 +730,13 @@ func inLikePost(w http.ResponseWriter, r *http.Request) {
 
 func inDislikePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	postID := r.FormValue("post_id")
 	if postID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -755,7 +755,7 @@ func inDislikePost(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.DislikePost(userID, postID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -764,14 +764,14 @@ func inDislikePost(w http.ResponseWriter, r *http.Request) {
 
 func LikeComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	CommentID := r.FormValue("comment_id")
 	postID := r.FormValue("post_id")
 	if CommentID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -790,7 +790,7 @@ func LikeComment(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.LikeComment(userID, postID, CommentID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -799,14 +799,14 @@ func LikeComment(w http.ResponseWriter, r *http.Request) {
 
 func DislikeComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	CommentID := r.FormValue("comment_id")
 	postID := r.FormValue("post_id")
 	if CommentID == "" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -825,7 +825,7 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 
 	err2 := database.DislikeComment(userID, postID, CommentID)
 	if err2 != nil {
-		http.Error(w, "Error processing like/dislike", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
@@ -835,14 +835,14 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
 	// Allow only POST requests
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Redirect(w, r, "/405", http.StatusSeeOther)
 		return
 	}
 
 	// Extract the selected color from the form
 	profileColor := r.FormValue("profileColor")
 	if profileColor == "" || !isValidColor(profileColor) {
-		http.Error(w, "Invalid color selection", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
 
@@ -863,7 +863,7 @@ func UpdateProfileColor(w http.ResponseWriter, r *http.Request) {
 	// Update the profile color in the database
 	err = database.UpdateProfileColor(userID, profileColor)
 	if err != nil {
-		http.Error(w, "Error updating profile color", http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
