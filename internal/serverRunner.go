@@ -42,6 +42,7 @@ func ServerRunner() {
 	http.HandleFunc("/assets/static", InternalServerError)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/500", InternalServerError)
+	http.HandleFunc("/400", BadRequest)
 	fs := http.FileServer(http.Dir("./assets/static"))
 	http.Handle("/assets/static/", http.StripPrefix("/assets/static/", fs))
 
@@ -444,6 +445,21 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// BadRequest handles 400 errors
+func BadRequest(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./assets/templates/errors/400.html")
+	if err != nil {
+		http.Error(w, "400 bad request", http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusBadRequest)
+	err = t.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "400 bad request", http.StatusBadRequest)
+		return
+	}
+}
+
 // InternalServerError handles 500 errors
 func InternalServerError(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("./assets/templates/errors/500.html")
@@ -577,12 +593,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if intPostID > maxPosts || intPostID <= 0 {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusFound)
 		return
 	}
 
 	if content == "" || len(content) > 366 {
-		http.Error(w, "Comment content cannot be empty or exceeded limits", http.StatusBadRequest)
+		http.Redirect(w, r, "/400", http.StatusFound)
 		return
 	}
 
