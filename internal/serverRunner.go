@@ -592,13 +592,13 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if intPostID > maxPosts || intPostID <= 0 {
-		http.Redirect(w, r, "/400", http.StatusFound)
-		return
-	}
+	// if intPostID > maxPosts {
+	// 	http.Redirect(w, r, "/400", http.StatusBadRequest)
+	// 	return
+	// }
 
 	if content == "" || len(content) > 366 {
-		http.Redirect(w, r, "/400", http.StatusFound)
+		http.Redirect(w, r, "/400", http.StatusBadRequest)
 		return
 	}
 
