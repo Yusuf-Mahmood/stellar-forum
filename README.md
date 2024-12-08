@@ -1,7 +1,7 @@
-# Web Forum Project
+# Forum Project
 
 ## Overview
-A simple web forum for user communication and interaction. It includes features like user authentication, post categorization, likes/dislikes, and filtering. Uses SQLite for data storage and Docker for containerization.
+A simple forum for user communication and interaction. It includes features like user authentication, post categorization, likes/dislikes, and filtering. Uses SQLite for data storage and Docker for containerization.
 
 ## Features
 - User registration and login with cookies for session management.
@@ -14,6 +14,7 @@ A simple web forum for user communication and interaction. It includes features 
 - Authentication: Cookies for sessions and optional password encryption.
 - Frontend: Basic HTML (no frameworks allowed).
 - Docker: Application containerized with Docker.
+- HTTPS enabled for secure connections.
 
 ## Installation
 ### Prerequisites
@@ -28,21 +29,33 @@ A simple web forum for user communication and interaction. It includes features 
    ```
 2. Build and run the Docker container:
    ```bash
-   docker build -t web-forum .
-   docker run -p 8080:8080 web-forum
+   docker build -t forum .
+   docker run -p 8080:8080 forum
    ```
-3. Access at [http://localhost:8080](http://localhost:8080).
+3. Access at [https://localhost:8080](https://localhost:8080).
 
 ## Project Structure
 ```plaintext
 .
-|-- Dockerfile            # Container setup
-|-- main.go               # Main application logic
-|-- handlers/             # Request handlers
-|-- models/               # Database models
-|-- templates/            # HTML templates
-|-- test/                 # Unit tests
-|-- README.md             # Documentation
+├── LICENSE
+├── README.md
+├── assets
+│   ├── images
+│   ├── static
+│   ├── templates
+│   └── uploads
+├── cmd
+│   └── main.go
+├── dockerfile
+├── go.mod
+├── go.sum
+└── internal
+    ├── certs
+    ├── database
+    ├── loginOptions.go
+    ├── models
+    ├── serverRunner.go
+    └── validate.go
 ```
 
 ## Contributions
@@ -50,4 +63,3 @@ Fork the repository and create a pull request with your changes.
 
 ## License
 MIT License.
-
