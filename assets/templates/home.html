@@ -51,30 +51,29 @@
                         <div id="pallette" class="pallette">
                             <div class="colorSpacing">
                                 <label>
-                                    <input type="radio" name="profileColor" value="#8683dc" hidden>
+                                    <input type="radio" name="profileColor" value="#8683dc" hidden onchange="this.form.submit()">
                                     <div class="span" style="background-color: #8683dc;"></div>
                                 </label>
                                 <label>
-                                    <input type="radio" name="profileColor" value="#e8d0ef" hidden>
+                                    <input type="radio" name="profileColor" value="#e8d0ef" hidden onchange="this.form.submit()">
                                     <div class="span" style="background-color: #e8d0ef;"></div>
                                 </label>
                                 <label>
-                                    <input type="radio" name="profileColor" value="#ededed" hidden>
+                                    <input type="radio" name="profileColor" value="#ededed" hidden onchange="this.form.submit()">
                                     <div class="span" style="background-color: #ededed;"></div>
                                 </label>
                                 <label>
-                                    <input type="radio" name="profileColor" value="#f9dab4" hidden>
+                                    <input type="radio" name="profileColor" value="#f9dab4" hidden onchange="this.form.submit()">
                                     <div class="span" style="background-color: #f9dab4;"></div>
                                 </label>
                                 <label>
-                                    <input type="radio" name="profileColor" value="#95c9cf" hidden>
+                                    <input type="radio" name="profileColor" value="#95c9cf" hidden onchange="this.form.submit()">
                                     <div class="span" style="background-color: #95c9cf;"></div>
                                 </label>
                             </div>
                         </div><br>  
                         <p class="userProfileName">{{.Username}}</p>
                         {{end}}
-                    <input type="submit" value="Update" class="uploadPP">
                 </form>
             </div>
             <div class="profileFilter">

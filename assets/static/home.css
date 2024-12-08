@@ -1441,7 +1441,7 @@ body {
   justify-content: center;
   position: absolute;
   right: 3%;
-  top: 7.5%;
+  top: 7%;
   width: 2rem;
   height: 9rem;
   overflow-x: auto;
@@ -1459,8 +1459,7 @@ body {
   display: grid;
   justify-content: space-around;
   align-items: center;
-  height: 100%;
-  box-shadow: 0 0 10px var(--dark-color);
+  height: 85%;
 }
 
 .colorSpacing .span{
