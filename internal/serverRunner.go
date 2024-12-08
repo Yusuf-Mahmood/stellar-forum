@@ -577,7 +577,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if intPostID > maxPosts || intPostID <= 0 {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
 		return
 	}
 
