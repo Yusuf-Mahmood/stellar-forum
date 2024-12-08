@@ -58,8 +58,5 @@ A simple forum for user communication and interaction. It includes features like
     └── validate.go
 ```
 
-## Contributions
-Fork the repository and create a pull request with your changes.
-
 ## License
 MIT License.
