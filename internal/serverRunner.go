@@ -61,7 +61,7 @@ func ServerRunner() {
 }
 
 var (
-	maxPosts = 0 
+	maxPosts = 0
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
@@ -255,21 +255,21 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		username, password, secondpass, email := strings.TrimSpace(r.FormValue("username")), r.FormValue("password"), r.FormValue("secondpass"), r.FormValue("email")
 		// Validate input lengths
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			renderRegisterPage(w,r, "Username must be between 3-5 character and password must be between 8-50 character")
+			renderRegisterPage(w, r, "Username must be between 3-5 character and password must be between 8-50 character")
 			return
 		}
 		if secondpass != password {
-			renderRegisterPage(w,r, "Passwords do not match")
+			renderRegisterPage(w, r, "Passwords do not match")
 			return
 		}
 		if username == "" || password == "" || email == "" {
-			renderRegisterPage(w,r, "All fields are required!")
+			renderRegisterPage(w, r, "All fields are required!")
 			return
 		}
 
 		valid, msg := ValidateInput(username, email)
 		if !valid {
-			renderRegisterPage(w,r, msg)
+			renderRegisterPage(w, r, msg)
 			return
 		}
 
@@ -280,7 +280,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if exists {
-			renderRegisterPage(w,r, "Username already taken")
+			renderRegisterPage(w, r, "Username already taken")
 			return
 		}
 
@@ -291,7 +291,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if existsEmail {
-			renderRegisterPage(w,r, "Email already taken")
+			renderRegisterPage(w, r, "Email already taken")
 			return
 		}
 
@@ -323,35 +323,35 @@ var templates = template.Must(template.ParseGlob("./assets/templates/*.html"))
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if err := r.ParseForm(); err != nil {
-			renderLoginPage(w,r, "Invalid form data")
+			renderLoginPage(w, r, "Invalid form data")
 			return
 		}
 
 		username, password := r.FormValue("username"), r.FormValue("password")
 		if len(username) > 50 || len(password) > 50 || len(username) < 3 || len(password) < 8 {
-			renderLoginPage(w,r, "Username must be between 3-50 characters and password between 8-50 characters")
+			renderLoginPage(w, r, "Username must be between 3-50 characters and password between 8-50 characters")
 			return
 		}
 		if username == "" || password == "" {
-			renderLoginPage(w,r, "All fields are required")
+			renderLoginPage(w, r, "All fields are required")
 			return
 		}
 
 		storedHashedPassword, err := database.FetchUserByUsername(username)
 		if err != nil || bcrypt.CompareHashAndPassword([]byte(storedHashedPassword), []byte(password)) != nil {
-			renderLoginPage(w, r,"Invalid username or password")
+			renderLoginPage(w, r, "Invalid username or password")
 			return
 		}
 
 		sessionToken, err := uuid.NewV4()
 		if err != nil {
-			renderLoginPage(w,r, "Error creating session")
+			renderLoginPage(w, r, "Error creating session")
 			return
 		}
 
 		err = database.StoreSessionToken(username, sessionToken.String())
 		if err != nil {
-			renderLoginPage(w,r, "Error storing session")
+			renderLoginPage(w, r, "Error storing session")
 			return
 		}
 
@@ -365,7 +365,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		renderLoginPage(w, r,"")
+		renderLoginPage(w, r, "")
 	}
 }
 
@@ -400,7 +400,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 // renderLoginPage renders the login page with an optional error message
-func renderLoginPage(w http.ResponseWriter,r *http.Request, errorMessage string) {
+func renderLoginPage(w http.ResponseWriter, r *http.Request, errorMessage string) {
 	data := struct {
 		ErrorMessage    string
 		RegErrorMessage string
@@ -416,7 +416,7 @@ func renderLoginPage(w http.ResponseWriter,r *http.Request, errorMessage string)
 }
 
 // renderLoginPage renders the login page with an optional error message
-func renderRegisterPage(w http.ResponseWriter,r *http.Request, errorMessage string) {
+func renderRegisterPage(w http.ResponseWriter, r *http.Request, errorMessage string) {
 	data := struct {
 		ErrorMessage    string
 		RegErrorMessage string
@@ -475,7 +475,6 @@ func Mnotallowed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
 
 // InternalServerError handles 500 errors
 func InternalServerError(w http.ResponseWriter, r *http.Request) {
@@ -609,9 +608,18 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if intPostID > maxPosts || intPostID <= 0 {
+	posts, err := database.FetchPosts()
+	if err != nil {
 		http.Redirect(w, r, "/400", http.StatusFound)
 		return
+	}
+	for i, post := range posts {
+		if post.ID == intPostID {
+			break
+		} else if i == len(posts)-1 {
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
+			return
+		}
 	}
 
 	if content == "" || len(content) > 366 {
