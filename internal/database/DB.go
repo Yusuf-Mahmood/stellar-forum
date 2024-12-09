@@ -185,18 +185,18 @@ func DislikePost(userID int, postID string) error {
 	// First, check if the user has already liked or disliked this post
 	var existingLikeCount int
 	var existingDislikeCount int
-	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID).Scan(&existingLikeCount)
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 1", userID, postID).Scan(&existingLikeCount)
 	if err != nil {
 		return err
 	}
-	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
 	if err != nil {
 		return err
 	}
 
 	// If the user already disliked this post, do nothing
 	if existingDislikeCount > 0 {
-		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID)
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 0", userID, postID)
 		if err != nil {
 			return err
 		}
@@ -205,7 +205,7 @@ func DislikePost(userID int, postID string) error {
 
 	// If the user liked the post, remove the like and add a dislike
 	if existingLikeCount > 0 {
-		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID)
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 1", userID, postID)
 		if err != nil {
 			return err
 		}
@@ -218,6 +218,102 @@ func DislikePost(userID int, postID string) error {
 	}
 
 	return nil
+}
+
+func LikeIconsCom(postID,commentID,userID int) string {
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 1", userID, postID,commentID).Scan(&existingLikeCount)
+	if err != nil {
+		return ""
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 0", userID, postID,commentID).Scan(&existingDislikeCount)
+	if err != nil {
+		return ""
+	}
+
+	// If the user already disliked this post, do nothing
+	if existingDislikeCount > 0 {
+		return ""
+	}
+
+	// If the user liked the post, remove the like and add a dislike
+	if existingLikeCount > 0 {
+		return "s"
+	}
+	return ""
+}
+
+func DislikeIconsCom(postID,commentID,userID int) string {
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 1", userID, postID,commentID).Scan(&existingLikeCount)
+	if err != nil {
+		return ""
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id = ? AND is_like = 0", userID, postID,commentID).Scan(&existingDislikeCount)
+	if err != nil {
+		return ""
+	}
+
+	// If the user already disliked this post, do nothing
+	if existingDislikeCount > 0 {
+		return "s"
+	}
+
+	// If the user liked the post, remove the like and add a dislike
+	if existingLikeCount > 0 {
+		return ""
+	}
+	return ""
+}
+
+func LikeIconsPosts(postID int,userID int) string {
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 1", userID, postID).Scan(&existingLikeCount)
+	if err != nil {
+		return ""
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+	if err != nil {
+		return ""
+	}
+
+	// If the user already disliked this post, do nothing
+	if existingDislikeCount > 0 {
+		return ""
+	}
+
+	// If the user liked the post, remove the like and add a dislike
+	if existingLikeCount > 0 {
+		return "s"
+	}
+	return ""
+}
+
+func DislikeIconsPosts(postID int,userID int) string {
+	var existingLikeCount int
+	var existingDislikeCount int
+	err := db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 1", userID, postID).Scan(&existingLikeCount)
+	if err != nil {
+		return ""
+	}
+	err = db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ? AND comment_id IS NULL AND is_like = 0", userID, postID).Scan(&existingDislikeCount)
+	if err != nil {
+		return ""
+	}
+
+	// If the user already disliked this post, do nothing
+	if existingDislikeCount > 0 {
+		return "s"
+	}
+
+	// If the user liked the post, remove the like and add a dislike
+	if existingLikeCount > 0 {
+		return ""
+	}
+	return ""
 }
 
 // FetchUserLikes retrieves all likes made by a user.
@@ -327,7 +423,7 @@ func AssociatePostWithCategory(postID int64, categoryID int) error {
 }
 
 // FetchPosts retrieves all posts from the database and includes like and dislike counts.
-func FetchPosts() ([]models.Post, error) {
+func FetchPosts(user int) ([]models.Post, error) {
 	rows, err := db.Query(`
         SELECT 
             p.id, p.user_id, u.username, p.content, p.created_at,
@@ -361,7 +457,7 @@ func FetchPosts() ([]models.Post, error) {
 		}
 		post.Media = media
 
-		comments, err := FetchCommentsByPostID(post.ID)
+		comments, err := FetchCommentsByPostID(post.ID,user)
 		if err != nil {
 			return nil, err
 		}
@@ -378,13 +474,15 @@ func FetchPosts() ([]models.Post, error) {
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.ID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.ID,user)
 		posts = append(posts, post)
 	}
 	return posts, nil
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchMemesPostsByCategoryID(categoryID int) ([]models.MemesPosts, error) {
+func FetchMemesPostsByCategoryID(categoryID,user int) ([]models.MemesPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -425,7 +523,7 @@ func FetchMemesPostsByCategoryID(categoryID int) ([]models.MemesPosts, error) {
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -453,7 +551,7 @@ func FetchMemesPostsByCategoryID(categoryID int) ([]models.MemesPosts, error) {
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchGamingPostsByCategoryID(categoryID int) ([]models.GamingPosts, error) {
+func FetchGamingPostsByCategoryID(categoryID,user int) ([]models.GamingPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -494,7 +592,7 @@ func FetchGamingPostsByCategoryID(categoryID int) ([]models.GamingPosts, error) 
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -522,7 +620,7 @@ func FetchGamingPostsByCategoryID(categoryID int) ([]models.GamingPosts, error) 
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetcheEducationPostsByCategoryID(categoryID int) ([]models.EducationPosts, error) {
+func FetcheEducationPostsByCategoryID(categoryID,user int) ([]models.EducationPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -563,7 +661,7 @@ func FetcheEducationPostsByCategoryID(categoryID int) ([]models.EducationPosts, 
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -591,7 +689,7 @@ func FetcheEducationPostsByCategoryID(categoryID int) ([]models.EducationPosts, 
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts, error) {
+func FetchTechnologyPostsByCategoryID(categoryID,user int) ([]models.TechnologyPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -632,7 +730,7 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts,
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -660,7 +758,7 @@ func FetchTechnologyPostsByCategoryID(categoryID int) ([]models.TechnologyPosts,
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error) {
+func FetchSciencePostsByCategoryID(categoryID,user int) ([]models.SciencePosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -701,7 +799,7 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -729,7 +827,7 @@ func FetchSciencePostsByCategoryID(categoryID int) ([]models.SciencePosts, error
 }
 
 // FetchMemesPostsByCategoryID retrieves posts for the Memes category by its ID
-func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) {
+func FetchSportsPostsByCategoryID(categoryID,user int) ([]models.SportsPosts, error) {
 	// Query to retrieve posts in the Memes category
 	rows, err := db.Query(`
 		SELECT p.id, pc.category_id, p.user_id, u.username, p.content, p.created_at,
@@ -770,7 +868,7 @@ func FetchSportsPostsByCategoryID(categoryID int) ([]models.SportsPosts, error) 
 		post.Media = media
 
 		// Fetch comments for the post
-		comments, err := FetchCommentsByPostID(post.PostID)
+		comments, err := FetchCommentsByPostID(post.PostID,user)
 		if err != nil {
 			return nil, fmt.Errorf("Error fetching comments for post %d: %w", post.PostID, err)
 		}
@@ -801,7 +899,7 @@ func FormatDate(date time.Time) string {
 	return date.Format("02 Jan 2006")
 }
 
-func FetchCommentsByPostID(postID int) ([]models.Comment, error) {
+func FetchCommentsByPostID(postID,user int) ([]models.Comment, error) {
 	rows, err := db.Query(`
 		SELECT 
 			c.id, 
@@ -850,6 +948,9 @@ func FetchCommentsByPostID(postID int) ([]models.Comment, error) {
 			return nil, err
 		}
 		comment.ComProfile = profileColor
+
+		comment.LikeIcon = LikeIconsCom(comment.PostID,comment.ComID,user)
+		comment.DislikeIcon = DislikeIconsCom(comment.PostID,comment.ComID,user)
 
 		comments = append(comments, comment)
 	}
@@ -984,7 +1085,7 @@ func FetchLikedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
-		post.Comment, err = FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID,userID)
 		if err != nil {
 			return nil, err
 		}
@@ -1034,7 +1135,7 @@ func FetchDislikedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
-		post.Comment, err = FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID,userID)
 		if err != nil {
 			return nil, err
 		}
@@ -1084,7 +1185,7 @@ func FetchCreatedPosts(userID int) ([]models.Post, error) {
 		if err != nil {
 			return nil, err
 		}
-		post.Comment, err = FetchCommentsByPostID(post.ID)
+		post.Comment, err = FetchCommentsByPostID(post.ID,userID)
 		if err != nil {
 			return nil, err
 		}

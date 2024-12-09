@@ -24,6 +24,8 @@ type Post struct {
 	Media      []Media
 	Likes      int
 	Dislikes   int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount   int
 	Comment    []Comment
@@ -134,6 +136,8 @@ type Comment struct {
 	ComFormatDate string
 	ComLikes      int
 	ComDislikes   int
+	LikeIcon 	  string
+	DislikeIcon string
 	ComProfile string
 }
 

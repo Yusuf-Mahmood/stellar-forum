@@ -92,46 +92,50 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-
-	posts, err := database.FetchPosts()
+	sessionToken, err := r.Cookie("session_token")
+	userID, err := database.FetchUserIDBySessionToken(sessionToken.Value)
+	if err != nil {
+		return
+	}
+	posts, err := database.FetchPosts(userID)
 	if err != nil {
 		fmt.Println("Here2")
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 	// Fetch category posts
-	memesPosts, err := database.FetchMemesPostsByCategoryID(2)
+	memesPosts, err := database.FetchMemesPostsByCategoryID(2,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	gamingPosts, err := database.FetchGamingPostsByCategoryID(3)
+	gamingPosts, err := database.FetchGamingPostsByCategoryID(3,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	educationPosts, err := database.FetcheEducationPostsByCategoryID(4)
+	educationPosts, err := database.FetcheEducationPostsByCategoryID(4,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5)
+	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	sciencePosts, err := database.FetchSciencePostsByCategoryID(6)
+	sciencePosts, err := database.FetchSciencePostsByCategoryID(6,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
-	sportsPosts, err := database.FetchSportsPostsByCategoryID(7)
+	sportsPosts, err := database.FetchSportsPostsByCategoryID(7,userID)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
-	sessionToken, err := r.Cookie("session_token")
+	sessionToken, err = r.Cookie("session_token")
 	if err != nil || sessionToken.Value == "" {
 		// Redirect to Guest homepage if no session is found
 		t, terr = template.ParseFiles("./assets/templates/guesthome.html")
@@ -607,8 +611,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/400", http.StatusSeeOther)
 		return
 	}
-
-	posts, err := database.FetchPosts()
+	sessionToken, _ := r.Cookie("session_token")
+	userID, err := database.FetchUserIDBySessionToken(sessionToken.Value)
+	if err != nil {
+		return
+	}
+	posts, err := database.FetchPosts(userID)
 	if err != nil {
 		http.Redirect(w, r, "/400", http.StatusFound)
 		return
@@ -633,7 +641,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := database.FetchUserIDBySessionToken(cookie.Value)
+	userID, err = database.FetchUserIDBySessionToken(cookie.Value)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
