@@ -42,6 +42,8 @@ type MemesPosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -58,6 +60,8 @@ type GamingPosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -74,6 +78,8 @@ type EducationPosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -90,6 +96,8 @@ type TechnologyPosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -106,6 +114,8 @@ type SciencePosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -122,6 +132,8 @@ type SportsPosts struct {
 	Media        []Media
 	Likes        int
 	Dislikes     int
+	LikeIcon string
+	DislikeIcon string
 	ProfileColor string
 	ComCount     int
 	Comment      []Comment
@@ -136,8 +148,8 @@ type Comment struct {
 	ComFormatDate string
 	ComLikes      int
 	ComDislikes   int
-	LikeIcon 	  string
-	DislikeIcon string
+	ComLikeIcon 	  string
+	ComDislikeIcon string
 	ComProfile string
 }
 

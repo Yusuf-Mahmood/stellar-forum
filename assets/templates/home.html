@@ -179,7 +179,7 @@
                                     <input type="checkbox" id="likeCheckbox" hidden>
                                     <form action="/inPostlike?post_id={{.ID}}" method="post">
                                         <button type="submit" class="likeButton">
-                                            <i class='bx bx-like'></i>
+                                            <i class='bx bx{{.LikeIcon}}-like'></i>
                                             <p>{{.Likes}}</p>
                                         </button>
                                     </form>
@@ -188,7 +188,7 @@
                                     <input type="checkbox" id="dislikeCheckbox" hidden>
                                     <form action="/inPostdislike?post_id={{.ID}}" method="post">
                                         <button type="submit" class="dislikeButton">
-                                            <i class='bx bx-dislike'></i>
+                                            <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                             <p>{{.Dislikes}}</p>
                                         </button>
                                     </form>
@@ -235,7 +235,7 @@
                                         <form action="/Commentlike?comment_id={{.ComID}}" method="post">
                                             <input type="hidden" name="post_id" value="{{.PostID}}">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.ComLikeIcon}}-like'></i>
                                                 <p>{{.ComLikes}}</p>
                                             </button>
                                         </form>
@@ -245,7 +245,7 @@
                                         <form action="/Commentdislike?comment_id={{.ComID}}" method="post">
                                             <input type="hidden" name="post_id" value="{{.PostID}}">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.ComDislikeIcon}}-dislike'></i>
                                                 <p>{{.ComDislikes}}</p>
                                             </button>
                                         </form>
@@ -444,7 +444,7 @@
                                                 <input type="checkbox" id="likeCheckbox" hidden>
                                                 <form action="/like?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="likeButton">
-                                                        <i class='bx bx-like'></i>
+                                                        <i class='bx bx{{.LikeIcon}}-like'></i>
                                                         <p>{{.Likes}}</p>
                                                     </button>
                                                 </form>
@@ -453,7 +453,7 @@
                                                 <input type="checkbox" id="dislikeCheckbox" hidden>
                                                 <form action="/dislike?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="dislikeButton">
-                                                        <i class='bx bx-dislike'></i>
+                                                        <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                         <p>{{.Dislikes}}</p>
                                                     </button>
                                                 </form>
@@ -499,7 +499,7 @@
                                                 <input type="checkbox" id="likeCheckbox" hidden>
                                                 <form action="/like?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="likeButton">
-                                                        <i class='bx bx-like'></i>
+                                                        <i class='bx bx{{.LikeIcon}}-like'></i>
                                                         <p>{{.Likes}}</p>
                                                     </button>
                                                 </form>
@@ -508,7 +508,7 @@
                                                 <input type="checkbox" id="dislikeCheckbox" hidden>
                                                 <form action="/dislike?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="dislikeButton">
-                                                        <i class='bx bx-dislike'></i>
+                                                        <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                         <p>{{.Dislikes}}</p>
                                                     </button>
                                                 </form>
@@ -554,7 +554,7 @@
                                                 <input type="checkbox" id="likeCheckbox" hidden>
                                                 <form action="/like?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="likeButton">
-                                                        <i class='bx bx-like'></i>
+                                                        <i class='bx bx{{.LikeIcon}}-like'></i>
                                                         <p>{{.Likes}}</p>
                                                     </button>
                                                 </form>
@@ -563,7 +563,7 @@
                                                 <input type="checkbox" id="dislikeCheckbox" hidden>
                                                 <form action="/dislike?post_id={{.ID}}" method="post">
                                                     <button type="submit" class="dislikeButton">
-                                                        <i class='bx bx-dislike'></i>
+                                                        <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                         <p>{{.Dislikes}}</p>
                                                     </button>
                                                 </form>
@@ -610,7 +610,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -619,7 +619,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -663,7 +663,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -672,7 +672,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -716,7 +716,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -725,7 +725,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -769,7 +769,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -778,7 +778,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -822,7 +822,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -831,7 +831,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -875,7 +875,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -884,7 +884,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.PostID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>
@@ -929,7 +929,7 @@
                                         <input type="checkbox" id="likeCheckbox" hidden>
                                         <form action="/like?post_id={{.ID}}" method="post">
                                             <button type="submit" class="likeButton">
-                                                <i class='bx bx-like'></i>
+                                                <i class='bx bx{{.LikeIcon}}-like'></i>
                                                 <p>{{.Likes}}</p>
                                             </button>
                                         </form>
@@ -938,7 +938,7 @@
                                         <input type="checkbox" id="dislikeCheckbox" hidden>
                                         <form action="/dislike?post_id={{.ID}}" method="post">
                                             <button type="submit" class="dislikeButton">
-                                                <i class='bx bx-dislike'></i>
+                                                <i class='bx bx{{.DislikeIcon}}-dislike'></i>
                                                 <p>{{.Dislikes}}</p>
                                             </button>
                                         </form>

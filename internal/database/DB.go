@@ -542,6 +542,8 @@ func FetchMemesPostsByCategoryID(categoryID,user int) ([]models.MemesPosts, erro
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -610,6 +612,9 @@ func FetchGamingPostsByCategoryID(categoryID,user int) ([]models.GamingPosts, er
 			return nil, err
 		}
 		post.ProfileColor = profileColor
+
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
 
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
@@ -680,6 +685,9 @@ func FetcheEducationPostsByCategoryID(categoryID,user int) ([]models.EducationPo
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -748,6 +756,9 @@ func FetchTechnologyPostsByCategoryID(categoryID,user int) ([]models.TechnologyP
 			return nil, err
 		}
 		post.ProfileColor = profileColor
+
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
 
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
@@ -818,6 +829,9 @@ func FetchSciencePostsByCategoryID(categoryID,user int) ([]models.SciencePosts, 
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -887,6 +901,9 @@ func FetchSportsPostsByCategoryID(categoryID,user int) ([]models.SportsPosts, er
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.PostID,user)
+		post.DislikeIcon = DislikeIconsPosts(post.PostID,user)
+
 		// Append the populated post to the posts slice
 		posts = append(posts, post)
 	}
@@ -949,8 +966,8 @@ func FetchCommentsByPostID(postID,user int) ([]models.Comment, error) {
 		}
 		comment.ComProfile = profileColor
 
-		comment.LikeIcon = LikeIconsCom(comment.PostID,comment.ComID,user)
-		comment.DislikeIcon = DislikeIconsCom(comment.PostID,comment.ComID,user)
+		comment.ComLikeIcon = LikeIconsCom(comment.PostID,comment.ComID,user)
+		comment.ComDislikeIcon = DislikeIconsCom(comment.PostID,comment.ComID,user)
 
 		comments = append(comments, comment)
 	}
@@ -1058,7 +1075,7 @@ func FetchLikedPosts(userID int) ([]models.Post, error) {
         FROM likes l
         JOIN posts p ON l.post_id = p.id
         JOIN users u ON p.user_id = u.id
-        WHERE l.user_id = ? AND l.is_like = 1
+        WHERE l.user_id = ? AND l.comment_id IS NULL AND l.is_like = 1
         GROUP BY p.id
         ORDER BY p.created_at DESC`
 
@@ -1095,6 +1112,9 @@ func FetchLikedPosts(userID int) ([]models.Post, error) {
 		}
 		post.ProfileColor = profileColor
 
+		post.LikeIcon = LikeIconsPosts(post.ID,userID)
+		post.DislikeIcon = DislikeIconsPosts(post.ID,userID)
+
 		likedPosts = append(likedPosts, post)
 	}
 
@@ -1110,7 +1130,7 @@ func FetchDislikedPosts(userID int) ([]models.Post, error) {
 		FROM likes l
 		JOIN posts p ON l.post_id = p.id
 		JOIN users u ON p.user_id = u.id
-		WHERE l.user_id = ? AND l.is_like = 0
+		WHERE l.user_id = ? AND l.comment_id IS NULL AND l.is_like = 0
 		GROUP BY p.id
 		ORDER BY p.created_at DESC`, userID)
 	if err != nil {
@@ -1144,6 +1164,9 @@ func FetchDislikedPosts(userID int) ([]models.Post, error) {
 			return nil, err
 		}
 		post.ProfileColor = profileColor
+
+		post.LikeIcon = LikeIconsPosts(post.ID,userID)
+		post.DislikeIcon = DislikeIconsPosts(post.ID,userID)
 
 		dislikedPosts = append(dislikedPosts, post)
 	}
@@ -1194,6 +1217,9 @@ func FetchCreatedPosts(userID int) ([]models.Post, error) {
 			return nil, err
 		}
 		post.ProfileColor = profileColor
+
+		post.LikeIcon = LikeIconsPosts(post.ID,userID)
+		post.DislikeIcon = DislikeIconsPosts(post.ID,userID)
 
 		createdPosts = append(createdPosts, post)
 	}
