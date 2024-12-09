@@ -85,94 +85,70 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Render homepage if session is valid
-	t, terr := template.ParseFiles("./assets/templates/home.html")
-	if terr != nil {
-		fmt.Println("Here4")
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
+	isGuest := false
+	var userID int
+
+	// Check session token
 	sessionToken, err := r.Cookie("session_token")
-	userID, err := database.FetchUserIDBySessionToken(sessionToken.Value)
-	if err != nil {
-		return
-	}
-	posts, err := database.FetchPosts(userID)
-	if err != nil {
-		fmt.Println("Here2")
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	// Fetch category posts
-	memesPosts, err := database.FetchMemesPostsByCategoryID(2,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	gamingPosts, err := database.FetchGamingPostsByCategoryID(3,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	educationPosts, err := database.FetcheEducationPostsByCategoryID(4,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	technologyPosts, err := database.FetchTechnologyPostsByCategoryID(5,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	sciencePosts, err := database.FetchSciencePostsByCategoryID(6,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-	sportsPosts, err := database.FetchSportsPostsByCategoryID(7,userID)
-	if err != nil {
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
-		return
-	}
-
-	sessionToken, err = r.Cookie("session_token")
-	if err != nil || sessionToken.Value == "" {
-		// Redirect to Guest homepage if no session is found
-		t, terr = template.ParseFiles("./assets/templates/guesthome.html")
-		if terr != nil {
-			fmt.Println("Here3")
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		guestData := struct {
-			Post            []models.Post
-			MemesPosts      []models.MemesPosts
-			GamingPosts     []models.GamingPosts
-			EducationPosts  []models.EducationPosts
-			TechnologyPosts []models.TechnologyPosts
-			SciencePosts    []models.SciencePosts
-			SportsPosts     []models.SportsPosts
-		}{
-			Post:            posts,
-			MemesPosts:      memesPosts,
-			GamingPosts:     gamingPosts,
-			EducationPosts:  educationPosts,
-			TechnologyPosts: technologyPosts,
-			SciencePosts:    sciencePosts,
-			SportsPosts:     sportsPosts,
-		}
-
-		err = t.Execute(w, guestData)
+	if err != nil || sessionToken == nil || sessionToken.Value == "" {
+		isGuest = true
+	} else {
+		userID, err = database.FetchUserIDBySessionToken(sessionToken.Value)
 		if err != nil {
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			isGuest = true
 		}
+	}
+
+	// Initialize post variables
+	var posts []models.Post
+	var memesPosts []models.MemesPosts
+	var gamingPosts []models.GamingPosts
+	var educationPosts []models.EducationPosts
+	var technologyPosts []models.TechnologyPosts
+	var sciencePosts []models.SciencePosts
+	var sportsPosts []models.SportsPosts
+
+	// Fetch posts and categories for both guests and logged-in users
+	posts, err = database.FetchPosts(userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
 
-	// Fetch user profile
-	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
+	// Fetch category posts
+	memesPosts, err = database.FetchMemesPostsByCategoryID(2, userID)
 	if err != nil {
-		// Fallback to guest homepage if session is invalid
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	gamingPosts, err = database.FetchGamingPostsByCategoryID(3, userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	educationPosts, err = database.FetcheEducationPostsByCategoryID(4, userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	technologyPosts, err = database.FetchTechnologyPostsByCategoryID(5, userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	sciencePosts, err = database.FetchSciencePostsByCategoryID(6, userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+	sportsPosts, err = database.FetchSportsPostsByCategoryID(7, userID)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+
+	if isGuest {
+		// Load guest template
 		t, terr := template.ParseFiles("./assets/templates/guesthome.html")
 		if terr != nil {
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -204,6 +180,20 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Load logged-in user template and continue with user-specific logic
+	t, terr := template.ParseFiles("./assets/templates/home.html")
+	if terr != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+
+	// Fetch user profile
+	userProfile, err := database.FetchUserProfileBySessionToken(sessionToken.Value)
+	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		return
+	}
+
 	// Prepare data for the template
 	data := models.Data{
 		UserProfile:     userProfile,
@@ -216,9 +206,9 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		SportsPosts:     sportsPosts,
 	}
 
-	// Pass posts data with like/dislike functionality to the template
-	err2 := t.Execute(w, data)
-	if err2 != nil {
+	// Execute template with user data
+	err = t.Execute(w, data)
+	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
