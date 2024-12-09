@@ -156,6 +156,10 @@ func LikePost(userID int, postID string) error {
 
 	// If the user already liked this post, do nothing
 	if existingLikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 1", userID, postID)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -192,6 +196,10 @@ func DislikePost(userID int, postID string) error {
 
 	// If the user already disliked this post, do nothing
 	if existingDislikeCount > 0 {
+		_, err := db.Exec("DELETE FROM likes WHERE user_id = ? AND post_id = ? AND is_like = 0", userID, postID)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
