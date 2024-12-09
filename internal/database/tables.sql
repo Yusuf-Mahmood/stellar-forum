@@ -39,12 +39,23 @@ CREATE TABLE IF NOT EXISTS post_categories (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
+-- CREATE TABLE IF NOT EXISTS likes (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     user_id INTEGER NOT NULL,
+--     post_id INTEGER NOT NULL,
+--     comment_id INTEGER,
+--     is_like BOOLEAN NOT NULL,
+--     FOREIGN KEY (user_id) REFERENCES users (id),
+--     FOREIGN KEY (post_id) REFERENCES posts (id),
+--     FOREIGN KEY (comment_id) REFERENCES comments (id)
+-- );
+
 CREATE TABLE IF NOT EXISTS likes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     post_id INTEGER NOT NULL,
     comment_id INTEGER,
     is_like BOOLEAN NOT NULL,
+    PRIMARY KEY (comment_id,user_id),
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (post_id) REFERENCES posts (id),
     FOREIGN KEY (comment_id) REFERENCES comments (id)
