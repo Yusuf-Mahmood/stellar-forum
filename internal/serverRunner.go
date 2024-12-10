@@ -497,8 +497,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categories := r.Form["catInputs"] // Extract selected categories
-
 	cookie, err := r.Cookie("session_token")
 	if err != nil || cookie.Value == "" {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -511,11 +509,69 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Handle media upload if present in the form
+	mediaFile, fileHeader, err := r.FormFile("postImage")
+	var filePath string
+	var fileType string
+
+	if err == nil {
+		// Check file size
+		if fileHeader.Size >= 20*1024*1024 {
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
+			return
+		}
+
+		// Create the uploads directory if it doesn't exist
+		uploadDir := "./assets/uploads"
+		os.MkdirAll(uploadDir, os.ModePerm)
+
+		// Check file extension
+		fileExtension := filepath.Ext(fileHeader.Filename)
+		validExtensions := map[string]string{
+			".jpg":  "image",
+			".jpeg": "image",
+			".png":  "image",
+			".svg":  "image",
+			".gif":  "image",
+			".mp4":  "video",
+			".mov":  "video",
+			".avi":  "video",
+		}
+		_, valid := validExtensions[fileExtension]
+		if !valid {
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
+			return
+		}
+
+		// Create a unique file name and save the file
+		fileName := fmt.Sprintf("%d-%s%s", time.Now().Unix(), "postImage", fileExtension)
+		filePath = filepath.Join(uploadDir, fileName)
+		filePath = filepath.ToSlash(filePath)
+
+		// Save the uploaded file
+		dst, err := os.Create(filePath)
+		if err != nil {
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+		defer dst.Close()
+
+		_, err = io.Copy(dst, mediaFile)
+		if err != nil {
+			http.Redirect(w, r, "/500", http.StatusSeeOther)
+			return
+		}
+	}
+
+	// Create the post in the database
 	postID, err := database.InsertPost(userID, content)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return
 	}
+
+	// Associate categories with the post
+	categories := r.Form["catInputs"] // Extract selected categories
 	if len(categories) > 0 {
 		for _, category := range categories {
 			categoryID, err := database.GetOrCreateCategory(category)
@@ -536,49 +592,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	// Handle media upload if present in the form
-	mediaFile, fileHeader, err := r.FormFile("postImage")
-	if err == nil {
-		if fileHeader.Size >= 20*1024*1024 {
-			http.Redirect(w, r, "/400", http.StatusSeeOther)
-			return
-		}
-		// Create the uploads directory if it doesn't exist
-		uploadDir := "./assets/uploads"
-		os.MkdirAll(uploadDir, os.ModePerm)
 
-		fileExtension := filepath.Ext(fileHeader.Filename)
-		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi" || fileExtension != ".jpg" && fileExtension != ".png" && fileExtension != ".jpeg" && fileExtension != ".svg" && fileExtension != ".gif" {
-			http.Redirect(w, r, "/400", http.StatusSeeOther)
-			return
-		}
-		// Create a unique file name and save the file
-		fileName := fmt.Sprintf("%d-%s%s", time.Now().Unix(), "postImage", fileExtension)
-		filePath := filepath.Join(uploadDir, fileName)
-		filePath = filepath.ToSlash(filePath)
-
-		// Save the uploaded file
-		dst, err := os.Create(filePath)
-		if err != nil {
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-		defer dst.Close()
-
-		_, err = io.Copy(dst, mediaFile)
-		if err != nil {
-			http.Redirect(w, r, "/500", http.StatusSeeOther)
-			return
-		}
-
-		// Determine file type (image or video) based on the file extension
-		fileType := "image"
-		ext := filepath.Ext(r.FormValue("postImage"))
-		if ext == ".mp4" || ext == ".mov" || ext == ".avi" {
-			fileType = "video"
-		}
-
-		// Save media details in the database
+	// Save media details in the database if a file was uploaded
+	if filePath != "" {
 		err = database.InsertMedia(postID, filePath, fileType)
 		if err != nil {
 			http.Redirect(w, r, "/500", http.StatusSeeOther)
