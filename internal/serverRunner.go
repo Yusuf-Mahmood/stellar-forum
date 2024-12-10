@@ -539,12 +539,16 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	// Handle media upload if present in the form
 	mediaFile, fileHeader, err := r.FormFile("postImage")
 	if err == nil {
+		if fileHeader.Size >= 20*1024*1024 {
+			http.Redirect(w, r, "/400", http.StatusSeeOther)
+			return
+		}
 		// Create the uploads directory if it doesn't exist
 		uploadDir := "./assets/uploads"
 		os.MkdirAll(uploadDir, os.ModePerm)
 
 		fileExtension := filepath.Ext(fileHeader.Filename)
-		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi" {
+		if fileExtension == "" || fileExtension == ".mp4" || fileExtension == ".mov" || fileExtension == ".avi" || fileExtension != ".jpg" && fileExtension != ".png" && fileExtension != ".jpeg" && fileExtension != ".svg" && fileExtension != ".gif" {
 			http.Redirect(w, r, "/400", http.StatusSeeOther)
 			return
 		}
