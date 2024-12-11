@@ -533,6 +533,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			".png":  "image",
 			".svg":  "image",
 			".gif":  "image",
+			".webp": "image",
 			".mp4":  "video",
 			".mov":  "video",
 			".avi":  "video",
