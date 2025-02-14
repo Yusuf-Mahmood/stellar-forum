@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	clientID        = "216542017821-1n8c6f6qvllcbcis3g4ohjl99imgju6r.apps.googleusercontent.com"
-	clientSecret    = "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"
+	clientID        = ""
+	clientSecret    = ""
 	redirectURI     = "https://localhost:8080/auth/callback"
-	gitclientID     = "Ov23liPieKMThOkBnEuc"
-	gitclientSecret = "9b0898e61a95e167e657106a2cabce9ceb448a8d"
+	gitclientID     = ""
+	gitclientSecret = ""
 	gitRedirectURI  = "https://localhost:8080/auth/github/callback"
 )
 
