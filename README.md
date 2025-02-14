@@ -1,4 +1,4 @@
-# Forum Project
+# Stellar Project
 
 ## Overview
 A simple forum for user communication and interaction. It includes features like user authentication, post categorization, likes/dislikes, and filtering. Uses SQLite for data storage and Docker for containerization.
